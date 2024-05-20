@@ -1,0 +1,11 @@
+/* /src/components/LoginForm/LoginForm.module.css */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .inputField {
+    margin-bottom: 8px;
+  }
+  
