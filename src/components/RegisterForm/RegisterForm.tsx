@@ -1,25 +1,50 @@
-// /src/components/MyForm/MyForm.tsx
-import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { Container, Box, Grid, TextField, Button } from '@mui/material';
-import { IFormInput } from './types';
-import styles from './RegisterForm.module.css';
+import React from "react";
+import styles from "./registerForm.module.css";
+import { IFormInput } from "./types";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { Container, Box, Grid, TextField, Button } from "@mui/material";
 
 const RegisterForm: React.FC = () => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      email: "example@example.com",
+      compagnyName: "Default Company",
+      siretNumber: "12345678901234",
+      name: "John",
+      surname: "Doe",
+    },
+  });
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    try {
+      const response = await fetch("http://localhost:3333/api/register", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        console.log(responseData.message);
+      } else {
+        console.log(responseData.errors[0].message)
+      }
+    } catch (error) {
+      console.log("An error odddccured ");
+    }
   };
 
   return (
     <Container>
       <Box
-        component={'form'}
+        component={"form"}
         onSubmit={handleSubmit(onSubmit)}
         className={styles.form}
       >
@@ -27,20 +52,20 @@ const RegisterForm: React.FC = () => {
           name="email"
           control={control}
           defaultValue=""
-          rules={{
-            required: 'Email obligatoire',
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "L'email renseigné est incorrect",
-            },
-          }}
+          // rules={{
+          //   required: "Email obligatoire",
+          //   pattern: {
+          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+          //     message: "L'email renseigné est incorrect",
+          //   },
+          // }}
           render={({ field }) => (
             <TextField
               {...field}
               label="Email"
               variant="outlined"
               error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ''}
+              helperText={errors.email ? errors.email.message : ""}
             />
           )}
         />
@@ -48,14 +73,16 @@ const RegisterForm: React.FC = () => {
           name="compagnyName"
           control={control}
           defaultValue=""
-          rules={{ required: 'Dénomination sociale est obligatoire' }}
+          rules={{ required: "Dénomination sociale est obligatoire" }}
           render={({ field }) => (
             <TextField
               {...field}
               label="Dénomination Sociale"
               variant="outlined"
               error={!!errors.compagnyName}
-              helperText={errors.compagnyName ? errors.compagnyName.message : ''}
+              helperText={
+                errors.compagnyName ? errors.compagnyName.message : ""
+              }
             />
           )}
         />
@@ -64,10 +91,10 @@ const RegisterForm: React.FC = () => {
           control={control}
           defaultValue=""
           rules={{
-            required: 'Le Numéro SIRET est obligatoire',
+            required: "Le Numéro SIRET est obligatoire",
             pattern: {
               value: /^[0-9]{14}$/,
-              message: 'Le numéro siret est incorrect',
+              message: "Le numéro siret est incorrect",
             },
           }}
           render={({ field }) => (
@@ -76,7 +103,7 @@ const RegisterForm: React.FC = () => {
               label="Numéro SIRET"
               variant="outlined"
               error={!!errors.siretNumber}
-              helperText={errors.siretNumber ? errors.siretNumber.message : ''}
+              helperText={errors.siretNumber ? errors.siretNumber.message : ""}
             />
           )}
         />
@@ -86,14 +113,14 @@ const RegisterForm: React.FC = () => {
               name="name"
               control={control}
               defaultValue=""
-              rules={{ required: 'Le nom est obligatoire' }}
+              rules={{ required: "Le nom est obligatoire" }}
               render={({ field }) => (
                 <TextField
                   {...field}
                   label="Nom"
                   variant="outlined"
                   error={!!errors.name}
-                  helperText={errors.name ? errors.name.message : ''}
+                  helperText={errors.name ? errors.name.message : ""}
                   fullWidth
                 />
               )}
@@ -104,14 +131,14 @@ const RegisterForm: React.FC = () => {
               name="surname"
               control={control}
               defaultValue=""
-              rules={{ required: 'Le prenom est obligatoire' }}
+              rules={{ required: "Le prenom est obligatoire" }}
               render={({ field }) => (
                 <TextField
                   {...field}
                   label="Prénom"
                   variant="outlined"
                   error={!!errors.surname}
-                  helperText={errors.surname ? errors.surname.message : ''}
+                  helperText={errors.surname ? errors.surname.message : ""}
                   fullWidth
                 />
               )}

@@ -1,4 +1,4 @@
-// /src/components/MyForm/types.ts
+// /src/components/RegisterForm/types.ts
 export interface IFormInput {
     email: string;
     compagnyName: string;
