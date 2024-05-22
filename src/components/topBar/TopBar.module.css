@@ -1,0 +1,22 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #22223b;
+  margin-bottom: 30px;
+}
+
+.logo {
+  margin-right: 10px;
+}
+
+.logo img {
+  width: 50px;
+  height: auto;
+}
+
+.company-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}

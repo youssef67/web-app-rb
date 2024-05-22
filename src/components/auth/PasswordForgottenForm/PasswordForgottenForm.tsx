@@ -2,7 +2,7 @@
 import React from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Container, Box, TextField, Button } from '@mui/material';
-import styles from './PasswordForgottenForm.module.css';
+import styles from './passwordForgottenForm.module.css';
 
 interface PasswordForgottenFormInputs {
   siretNumber: string;

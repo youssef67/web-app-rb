@@ -3,7 +3,7 @@ export interface IFormInput {
     email: string;
     compagnyName: string;
     siretNumber: string;
-    name: string;
-    surname: string;
+    password: string;
+    confirmPassword: string;
   }
   

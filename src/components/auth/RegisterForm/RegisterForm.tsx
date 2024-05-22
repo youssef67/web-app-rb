@@ -2,22 +2,26 @@ import React from "react";
 import styles from "./registerForm.module.css";
 import { IFormInput } from "./types";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Container, Box, Grid, TextField, Button } from "@mui/material";
+import { Container, Box, TextField, Button } from "@mui/material";
 
 const RegisterForm: React.FC = () => {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
       email: "example@example.com",
       compagnyName: "Default Company",
       siretNumber: "12345678901234",
-      name: "John",
-      surname: "Doe",
+      password: "12345678",
+      confirmPassword: "12345678",
     },
   });
+
+  const password = watch('password');
+  // const confirmPassword = watch('confirmPassword');
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
@@ -107,44 +111,56 @@ const RegisterForm: React.FC = () => {
             />
           )}
         />
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Controller
-              name="name"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Le nom est obligatoire" }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Nom"
-                  variant="outlined"
-                  error={!!errors.name}
-                  helperText={errors.name ? errors.name.message : ""}
-                  fullWidth
-                />
-              )}
+        <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: 'Nouveau mot de passe requis',
+            minLength: {
+              value: 8,
+              message: 'Le mot de passe doit avoir au moins 8 caractères',
+            },
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              type="password"
+              label="Nouveau Mot de Passe"
+              variant="outlined"
+              fullWidth
+              className={styles.inputField}
+              error={!!errors.password}
+              helperText={errors.password ? errors.password.message : ''}
             />
-          </Grid>
-          <Grid item xs={6}>
-            <Controller
-              name="surname"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Le prenom est obligatoire" }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Prénom"
-                  variant="outlined"
-                  error={!!errors.surname}
-                  helperText={errors.surname ? errors.surname.message : ""}
-                  fullWidth
-                />
-              )}
+          )}
+        />
+        <Controller
+          name="confirmPassword"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: 'Confirmation du mot de passe requise',
+            validate: (value) =>
+              value === password || 'Les mots de passe ne correspondent pas',
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              type="password"
+              label="Confirmer le Mot de Passe"
+              variant="outlined"
+              fullWidth
+              className={styles.inputField}
+              error={!!errors.confirmPassword}
+              helperText={
+                errors.confirmPassword
+                  ? errors.confirmPassword.message
+                  : ''
+              }
             />
-          </Grid>
-        </Grid>
+          )}
+        />
         <Button type="submit" variant="contained" color="primary">
           Envoyer
         </Button>

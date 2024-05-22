@@ -1,15 +1,14 @@
-import RegisterForm from "./components/RegisterForm/RegisterForm"
+import RegisterForm from '@components/auth/RegisterForm/RegisterForm';
+import TopBar from '@components/topBar/TopBar';
 // import LoginForm from "./components/LoginForm/LoginForm"
 // import PasswordForgottenForm from "./components/PasswordForgottenForm/PasswordForgottenForm"
 // import ResetPasswordForm from "./components/ResetPasswordForm/ResetPasswordForm"
 
-
 function App() {
-    
-
     return (
         <>
-          <RegisterForm/>        
+        <TopBar/>
+        <RegisterForm/>        
         </>
     )
 }
