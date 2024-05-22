@@ -2,7 +2,8 @@
 import React from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Container, Box, TextField, Button } from '@mui/material';
-import styles from './LoginForm.module.css';
+import { useAuth } from "@hooks/useAuth"
+// import styles from './LoginForm.module.css';
 
 interface LoginFormInputs {
   email: string;
@@ -11,9 +12,15 @@ interface LoginFormInputs {
 
 const LoginForm: React.FC = () => {
   const { handleSubmit, control } = useForm<LoginFormInputs>();
+  const { login } = useAuth();
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    console.log(data.email);
+    if (data.email === "user" && data.password === "password") {
+      await login({ username: data.email }) // Provide an initializer for the 'username' property
+    } else {
+      alert("invalide username or password")
+    }
   };
 
   return (
@@ -21,7 +28,7 @@ const LoginForm: React.FC = () => {
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
-        className={styles.form}
+        // className={styles.form}
       >
         <Controller
           name="email"
@@ -33,7 +40,7 @@ const LoginForm: React.FC = () => {
               label="Email"
               variant="outlined"
               fullWidth
-              className={styles.inputField}
+              // className={styles.inputField}
             />
           )}
         />
@@ -48,7 +55,7 @@ const LoginForm: React.FC = () => {
               label="Mot de passe"
               variant="outlined"
               fullWidth
-              className={styles.inputField}
+              // className={styles.inputField}
             />
           )}
         />
