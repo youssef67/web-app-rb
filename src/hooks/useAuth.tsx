@@ -1,52 +1,62 @@
-import React from 'react'; // Add this line
+import React from "react"; // Add this line
 
-import { createContext, useContext, useMemo, ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useLocalStorage } from './useLocalStorage'
+import { createContext, useContext, useMemo, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLocalStorage } from "./useLocalStorage";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
-    user: any
-    login: (data: any) => void
-    logout: () => void
+  user: any;
+  login: (data: any) => void;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
-    children: ReactNode
+  children: ReactNode;
 }
 
-export const AuthProvider = ({children}: AuthProviderProps) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useLocalStorage<any>("user", null);
+  const navigate = useNavigate();
 
-    const [user, setUser] = useLocalStorage<any>("user", null)
-    const navigate = useNavigate()
+  const login = async (data: any) => {
+    setUser(data.email);
 
-    const login = async (data: any) => {
-        setUser(data)
-        navigate('/')
-    }
+    const expirationDays = 90;
+    const secureCookies = import.meta.env.VITE_SECURE_COOKIES === "true";
 
-    const logout = () => {
-        setUser(null)
-        navigate('/login', { replace: true})
-    }
+    Cookies.set("token", data.token, {
+      secure: secureCookies,
+      sameSite: "strict",
+      expires: expirationDays,
+    });
+    
+    navigate("/");
+  };
 
-    const value = useMemo(
-        () => ({
-            user,
-            login,
-            logout,
-        }),
-        [user]
-    )
+  const logout = () => {
+    setUser(null);
+    navigate("/login", { replace: true });
+  };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+  const value = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+    }),
+    [user]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
 
 export const useAuth = (): AuthContextType => {
-    const context = useContext(AuthContext)
-    if (context === undefined) {
-        throw new Error("useAuth must be use within an AuthProvider")
-    }
-    return context
-}
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be use within an AuthProvider");
+  }
+  return context;
+};

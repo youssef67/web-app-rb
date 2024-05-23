@@ -1,8 +1,14 @@
 import React from "react";
-import styles from "./registerForm.module.css";
-import { IFormInput } from "./types";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Container, Box, TextField, Button } from "@mui/material";
+
+interface IFormInput {
+  email: string
+  compagnyName: string
+  siretNumber: string
+  password: string
+  confirmPassword: string
+}
 
 const RegisterForm: React.FC = () => {
   const {
@@ -50,19 +56,18 @@ const RegisterForm: React.FC = () => {
       <Box
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
-        className={styles.form}
       >
         <Controller
           name="email"
           control={control}
           defaultValue=""
-          // rules={{
-          //   required: "Email obligatoire",
-          //   pattern: {
-          //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-          //     message: "L'email renseigné est incorrect",
-          //   },
-          // }}
+          rules={{
+            required: "Email obligatoire",
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "L'email renseigné est incorrect",
+            },
+          }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -129,7 +134,6 @@ const RegisterForm: React.FC = () => {
               label="Nouveau Mot de Passe"
               variant="outlined"
               fullWidth
-              className={styles.inputField}
               error={!!errors.password}
               helperText={errors.password ? errors.password.message : ''}
             />
@@ -151,7 +155,6 @@ const RegisterForm: React.FC = () => {
               label="Confirmer le Mot de Passe"
               variant="outlined"
               fullWidth
-              className={styles.inputField}
               error={!!errors.confirmPassword}
               helperText={
                 errors.confirmPassword

@@ -1,9 +1,9 @@
 // /src/components/LoginForm/LoginForm.tsx
-import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { Container, Box, TextField, Button } from '@mui/material';
-import { useAuth } from "@hooks/useAuth"
-// import styles from './LoginForm.module.css';
+import React from "react";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { Container, Box, TextField, Button } from "@mui/material";
+import axios from "axios";
+import { useAuth } from "@hooks/useAuth";
 
 interface LoginFormInputs {
   email: string;
@@ -11,16 +11,32 @@ interface LoginFormInputs {
 }
 
 const LoginForm: React.FC = () => {
-  const { handleSubmit, control } = useForm<LoginFormInputs>();
+  const { handleSubmit, control } = useForm<LoginFormInputs>({
+    defaultValues: {
+      email: "youssef@gmail.com",
+      password: "12345678",
+    },
+  });
   const { login } = useAuth();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    console.log(data.email);
-    if (data.email === "user" && data.password === "password") {
-      await login({ username: data.email }) // Provide an initializer for the 'username' property
-    } else {
-      alert("invalide username or password")
-    }
+    axios
+      .post("http://localhost:3333/api/login", data)
+      .then((res) => {
+
+        if (res.data.token) {
+          login({ email: data.email, token : res.data.token })
+        } else {
+          throw new Error("absence de token");
+        }
+      })
+      .catch((error) => console.log(error));
+    // console.log(data.email);
+    // if (data.email === "user" && data.password === "password") {
+    //   await login({ username: data.email }) // Provide an initializer for the 'username' property
+    // } else {
+    //   alert("invalide username or password")
+    // }
   };
 
   return (

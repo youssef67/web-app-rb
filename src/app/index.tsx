@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 
 import { ProtectedRoute } from '@components/auth/ProtectedRoute'
 import { AuthProvider } from '@hooks/useAuth'
-// import RegisterForm from '@components/auth/RegisterForm/RegisterForm';
+import RegisterForm from '@components/auth/RegisterForm';
 // import TopBar from '@components/topBar/TopBar';
 import OrdersOfDay from '@components/interfaces/OrdersOfDay'
 import AllOrders from '@components/interfaces/AllOrders'
@@ -15,6 +15,7 @@ function App() {
         <AuthProvider>
             <Routes>
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
                 <Route
                     path="/"
                     element={
