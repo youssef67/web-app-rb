@@ -1,29 +1,44 @@
-import { useAuth } from "@hooks/useAuth";
-import axios from "axios";
-import Cookies from "js-cookie";
-
+import { useAuth } from '@hooks/useAuth'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const OrdersOfDay: React.FC = () => {
-  const { logout } = useAuth();
+    const { logout } = useAuth()
 
-  const allCookies = Cookies.get()
-  console.log(allCookies)
+    const accessToken = Cookies.get('accessToken')
 
-  const handleLogout = () => {
-    logout();
-  };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+    }
 
-  const handleOrder = () => {
-    console.log("validation de la commande")
-  }
+    const handleLogout = () => {
+        axios
+            .get('http://localhost:3333/api/logout', { headers })
+            .then(() => {
+              logout()
+            })
+            .catch((error) => console.log(error))
 
-  return (
-    <>
-      <div>OrderOfDay</div>
-      <button onClick={handleLogout}>Logout</button>
-      <button onClick={handleOrder}>Valider une commande</button>
-    </>
-  );
+        
+    }
+
+    const handleValidateOrder = () => {
+        axios
+            .get('http://localhost:3333/api/order-validate', { headers })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((error) => console.log(error))
+    }
+
+    return (
+        <>
+            <div>OrderOfDay</div>
+            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleValidateOrder}>Valider une commande</button>
+        </>
+    )
 }
 
 export default OrdersOfDay

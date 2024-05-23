@@ -6,7 +6,7 @@ import RegisterForm from '@components/auth/RegisterForm';
 // import TopBar from '@components/topBar/TopBar';
 import OrdersOfDay from '@components/interfaces/OrdersOfDay'
 import AllOrders from '@components/interfaces/AllOrders'
-import LoginForm from '@components/auth/LoginForm'
+import Home from '@components/Home'
 // import PasswordForgottenForm from "./components/PasswordForgottenForm/PasswordForgottenForm"
 // import ResetPasswordForm from "./components/ResetPasswordForm/ResetPasswordForm"
 
@@ -14,10 +14,10 @@ function App() {
     return (
         <AuthProvider>
             <Routes>
-                <Route path="/login" element={<LoginForm />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/register" element={<RegisterForm />} />
                 <Route
-                    path="/"
+                    path="/orders-of-day"
                     element={
                         <ProtectedRoute>
                             <OrdersOfDay />

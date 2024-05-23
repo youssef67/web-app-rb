@@ -1,9 +1,9 @@
-import React from "react"; // Add this line
-
+import React from "react";
 import { createContext, useContext, useMemo, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
 import Cookies from "js-cookie";
+
 
 interface AuthContextType {
   user: any;
@@ -27,18 +27,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const expirationDays = 90;
     const secureCookies = import.meta.env.VITE_SECURE_COOKIES === "true";
 
-    Cookies.set("token", data.token, {
+    Cookies.set("accessToken", data.token.token, {
       secure: secureCookies,
       sameSite: "strict",
       expires: expirationDays,
     });
     
-    navigate("/");
+    navigate("/orders-of-day");
   };
 
   const logout = () => {
     setUser(null);
-    navigate("/login", { replace: true });
+    Cookies.remove('accessToken');
+    navigate("/", { replace: true });
   };
 
   const value = useMemo(

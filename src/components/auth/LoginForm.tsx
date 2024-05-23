@@ -14,16 +14,16 @@ const LoginForm: React.FC = () => {
   const { handleSubmit, control } = useForm<LoginFormInputs>({
     defaultValues: {
       email: "youssef@gmail.com",
-      password: "12345678",
+      password: "youssefmoudni",
     },
   });
   const { login } = useAuth();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    console.log(data)
     axios
       .post("http://localhost:3333/api/login", data)
       .then((res) => {
-
         if (res.data.token) {
           login({ email: data.email, token : res.data.token })
         } else {
@@ -31,6 +31,9 @@ const LoginForm: React.FC = () => {
         }
       })
       .catch((error) => console.log(error));
+
+
+
     // console.log(data.email);
     // if (data.email === "user" && data.password === "password") {
     //   await login({ username: data.email }) // Provide an initializer for the 'username' property
@@ -56,7 +59,7 @@ const LoginForm: React.FC = () => {
               label="Email"
               variant="outlined"
               fullWidth
-              // className={styles.inputField}
+              margin="normal"
             />
           )}
         />
@@ -71,7 +74,7 @@ const LoginForm: React.FC = () => {
               label="Mot de passe"
               variant="outlined"
               fullWidth
-              // className={styles.inputField}
+              margin="normal"
             />
           )}
         />
@@ -82,5 +85,6 @@ const LoginForm: React.FC = () => {
     </Container>
   );
 };
+
 
 export default LoginForm;

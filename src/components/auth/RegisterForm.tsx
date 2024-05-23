@@ -1,13 +1,16 @@
 import React from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Container, Box, TextField, Button } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 interface IFormInput {
   email: string
-  compagnyName: string
-  siretNumber: string
+  compagny_name: string
+  siret_number: string
   password: string
-  confirmPassword: string
+  confirm_password: string
 }
 
 const RegisterForm: React.FC = () => {
@@ -18,37 +21,33 @@ const RegisterForm: React.FC = () => {
     formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
-      email: "example@example.com",
-      compagnyName: "Default Company",
-      siretNumber: "12345678901234",
-      password: "12345678",
-      confirmPassword: "12345678",
+      email: "youssef@gmail.com",
+      compagny_name: "Default Company",
+      siret_number: "12345678901234",
+      password: "youssefmoudni",
+      confirm_password: "youssefmoudni",
     },
   });
 
+  const navigate = useNavigate()
+
+  const handleMoveToLoginPage = () => {
+    navigate("/")
+  }
   const password = watch('password');
-  // const confirmPassword = watch('confirmPassword');
+  // const confirm_password = watch('confirm_password');
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    try {
-      const response = await fetch("http://localhost:3333/api/register", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const responseData = await response.json();
-
-      if (response.status === 200) {
-        console.log(responseData.message);
-      } else {
-        console.log(responseData.errors[0].message)
-      }
-    } catch (error) {
-      console.log("An error odddccured ");
-    }
+    axios
+      .post("http://localhost:3333/api/register", data)
+      .then((res) => {
+        if (res.status === 201) {
+          navigate('/')
+        } else {
+          throw new Error("erreur survenu");
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -75,11 +74,12 @@ const RegisterForm: React.FC = () => {
               variant="outlined"
               error={!!errors.email}
               helperText={errors.email ? errors.email.message : ""}
+              margin="normal"
             />
           )}
         />
         <Controller
-          name="compagnyName"
+          name="compagny_name"
           control={control}
           defaultValue=""
           rules={{ required: "Dénomination sociale est obligatoire" }}
@@ -88,15 +88,16 @@ const RegisterForm: React.FC = () => {
               {...field}
               label="Dénomination Sociale"
               variant="outlined"
-              error={!!errors.compagnyName}
+              error={!!errors.compagny_name}
               helperText={
-                errors.compagnyName ? errors.compagnyName.message : ""
+                errors.compagny_name ? errors.compagny_name.message : ""
               }
+              margin="normal"
             />
           )}
         />
         <Controller
-          name="siretNumber"
+          name="siret_number"
           control={control}
           defaultValue=""
           rules={{
@@ -111,8 +112,9 @@ const RegisterForm: React.FC = () => {
               {...field}
               label="Numéro SIRET"
               variant="outlined"
-              error={!!errors.siretNumber}
-              helperText={errors.siretNumber ? errors.siretNumber.message : ""}
+              error={!!errors.siret_number}
+              helperText={errors.siret_number ? errors.siret_number.message : ""}
+              margin="normal"
             />
           )}
         />
@@ -136,11 +138,12 @@ const RegisterForm: React.FC = () => {
               fullWidth
               error={!!errors.password}
               helperText={errors.password ? errors.password.message : ''}
+              margin="normal"
             />
           )}
         />
         <Controller
-          name="confirmPassword"
+          name="confirm_password"
           control={control}
           defaultValue=""
           rules={{
@@ -155,12 +158,13 @@ const RegisterForm: React.FC = () => {
               label="Confirmer le Mot de Passe"
               variant="outlined"
               fullWidth
-              error={!!errors.confirmPassword}
+              error={!!errors.confirm_password}
               helperText={
-                errors.confirmPassword
-                  ? errors.confirmPassword.message
+                errors.confirm_password
+                  ? errors.confirm_password.message
                   : ''
               }
+              margin="normal"
             />
           )}
         />
@@ -168,6 +172,7 @@ const RegisterForm: React.FC = () => {
           Envoyer
         </Button>
       </Box>
+      <button onClick={handleMoveToLoginPage}>Page login</button>
     </Container>
   );
 };

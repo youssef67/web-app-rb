@@ -1,15 +1,13 @@
 import React from 'react';
-import styles from './TopBar.module.css'
-// import logo from '@assets/logo.svg';
 
 const TopBar: React.FC = () => {
     return (
         <>
-        <div className={styles.topbar}>
-            <div className={styles.logo}>
+        <div>
+            <div>
                 {/* <img src={logo} alt="logo" /> */}
             </div>
-            <div className={styles.companyName}>
+            <div>
                 RABBIT BUTCHER
             </div>
         </div>
@@ -17,6 +15,4 @@ const TopBar: React.FC = () => {
     );
 }
 
-
-
-export default TopBar;
+export default TopBar
