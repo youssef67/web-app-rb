@@ -7,6 +7,7 @@ const OrdersOfDay: React.FC = () => {
 
     const accessToken = Cookies.get('accessToken')
 
+    console.log(accessToken)
     const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,

@@ -13,11 +13,17 @@ const Home: React.FC = () => {
         navigate('/register')
     }
 
+    const handlePasswordForgottent = () => {
+        console.log("password forgotten")
+    }
+
     return (
         <>
             <h1>home</h1>
             <LoginForm />
             <button onClick={handleRegister}>Pas encore de compte</button>
+            <button onClick={handlePasswordForgottent}>mot de passe oublié</button>
+
         </>
     )
 }
