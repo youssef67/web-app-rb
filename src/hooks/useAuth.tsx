@@ -1,4 +1,3 @@
-import React from "react";
 import { createContext, useContext, useMemo, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
@@ -24,10 +23,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (data: any) => {
     setUser(data.email);
 
+    const contentCookies = {
+      id: data.id,
+      email: data.email,
+      token: data.token.token
+    }
+
     const expirationDays = 90;
     const secureCookies = import.meta.env.VITE_SECURE_COOKIES === "true";
 
-    Cookies.set("accessToken", data.token.token, {
+    Cookies.set("userConnection", JSON.stringify(contentCookies), {
       secure: secureCookies,
       sameSite: "strict",
       expires: expirationDays,
@@ -38,8 +43,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     setUser(null);
-    Cookies.remove('accessToken');
-    navigate("/", { replace: true });
+    Cookies.remove('userConnection');
+    navigate("/login", { replace: true });
   };
 
   const value = useMemo(

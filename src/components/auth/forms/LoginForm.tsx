@@ -13,33 +13,27 @@ interface LoginFormInputs {
 const LoginForm: React.FC = () => {
   const { handleSubmit, control } = useForm<LoginFormInputs>({
     defaultValues: {
-      email: "youssef@gmail.com",
+      email: "you.moudni@gmail.com",
       password: "youssefmoudni",
     },
   });
   const { login } = useAuth();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    console.log(data)
     axios
-      .post("http://localhost:3333/api/login", data)
+      .post("http://localhost:3333/api/v1/auth/login", data)
       .then((res) => {
         if (res.data.token) {
-          login({ email: data.email, token : res.data.token })
+          login({
+            id: res.data.id,
+            email: res.data.email,
+            token: res.data.token,
+          });
         } else {
           throw new Error("absence de token");
         }
       })
       .catch((error) => console.log(error));
-
-
-
-    // console.log(data.email);
-    // if (data.email === "user" && data.password === "password") {
-    //   await login({ username: data.email }) // Provide an initializer for the 'username' property
-    // } else {
-    //   alert("invalide username or password")
-    // }
   };
 
   return (
@@ -85,6 +79,5 @@ const LoginForm: React.FC = () => {
     </Container>
   );
 };
-
 
 export default LoginForm;

@@ -14,6 +14,8 @@ interface IFormInput {
 }
 
 const RegisterForm: React.FC = () => {
+  const navigate = useNavigate()
+
   const {
     handleSubmit,
     control,
@@ -21,7 +23,7 @@ const RegisterForm: React.FC = () => {
     formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
-      email: "youssef@gmail.com",
+      email: "you.moudni@gmail.com",
       compagny_name: "Default Company",
       siret_number: "12345678901234",
       password: "youssefmoudni",
@@ -29,20 +31,17 @@ const RegisterForm: React.FC = () => {
     },
   });
 
-  const navigate = useNavigate()
-
-  const handleMoveToLoginPage = () => {
-    navigate("/")
-  }
+  
   const password = watch('password');
-  // const confirm_password = watch('confirm_password');
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     axios
-      .post("http://localhost:3333/api/register", data)
+      .post("http://localhost:3333/api/v1/auth/register", data)
       .then((res) => {
+        console.log(res)
         if (res.status === 201) {
-          navigate('/')
+          console.log("response 201")
+          navigate("/login")
         } else {
           throw new Error("erreur survenu");
         }
@@ -172,7 +171,6 @@ const RegisterForm: React.FC = () => {
           Envoyer
         </Button>
       </Box>
-      <button onClick={handleMoveToLoginPage}>Page login</button>
     </Container>
   );
 };
