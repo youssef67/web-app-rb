@@ -42,7 +42,6 @@ const LoginForm: React.FC = () => {
       container
       component="form"
       onSubmit={handleSubmit(onSubmit)}
-      // className={styles.form}
     >
       <Controller
         name="email"

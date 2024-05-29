@@ -1,20 +1,19 @@
 import React from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Container, Box, TextField, Button } from "@mui/material";
+import { Grid, TextField, Button } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 interface IFormInput {
-  email: string
-  compagny_name: string
-  siret_number: string
-  password: string
-  confirm_password: string
+  email: string;
+  compagny_name: string;
+  siret_number: string;
+  password: string;
+  confirm_password: string;
 }
 
 const RegisterForm: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -31,17 +30,16 @@ const RegisterForm: React.FC = () => {
     },
   });
 
-  
-  const password = watch('password');
+  const password = watch("password");
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     axios
       .post("http://localhost:3333/api/v1/auth/register", data)
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.status === 201) {
-          console.log("response 201")
-          navigate("/login")
+          console.log("response 201");
+          navigate("/login");
         } else {
           throw new Error("erreur survenu");
         }
@@ -50,128 +48,117 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <Container>
-      <Box
-        component={"form"}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Controller
-          name="email"
-          control={control}
-          defaultValue=""
-          rules={{
-            required: "Email obligatoire",
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "L'email renseigné est incorrect",
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Email"
-              variant="outlined"
-              error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ""}
-              margin="normal"
-            />
-          )}
-        />
-        <Controller
-          name="compagny_name"
-          control={control}
-          defaultValue=""
-          rules={{ required: "Dénomination sociale est obligatoire" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Dénomination Sociale"
-              variant="outlined"
-              error={!!errors.compagny_name}
-              helperText={
-                errors.compagny_name ? errors.compagny_name.message : ""
-              }
-              margin="normal"
-            />
-          )}
-        />
-        <Controller
-          name="siret_number"
-          control={control}
-          defaultValue=""
-          rules={{
-            required: "Le Numéro SIRET est obligatoire",
-            pattern: {
-              value: /^[0-9]{14}$/,
-              message: "Le numéro siret est incorrect",
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Numéro SIRET"
-              variant="outlined"
-              error={!!errors.siret_number}
-              helperText={errors.siret_number ? errors.siret_number.message : ""}
-              margin="normal"
-            />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          defaultValue=""
-          rules={{
-            required: 'Nouveau mot de passe requis',
-            minLength: {
-              value: 8,
-              message: 'Le mot de passe doit avoir au moins 8 caractères',
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              type="password"
-              label="Nouveau Mot de Passe"
-              variant="outlined"
-              fullWidth
-              error={!!errors.password}
-              helperText={errors.password ? errors.password.message : ''}
-              margin="normal"
-            />
-          )}
-        />
-        <Controller
-          name="confirm_password"
-          control={control}
-          defaultValue=""
-          rules={{
-            required: 'Confirmation du mot de passe requise',
-            validate: (value) =>
-              value === password || 'Les mots de passe ne correspondent pas',
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              type="password"
-              label="Confirmer le Mot de Passe"
-              variant="outlined"
-              fullWidth
-              error={!!errors.confirm_password}
-              helperText={
-                errors.confirm_password
-                  ? errors.confirm_password.message
-                  : ''
-              }
-              margin="normal"
-            />
-          )}
-        />
-        <Button type="submit" variant="contained" color="primary">
-          Envoyer
-        </Button>
-      </Box>
-    </Container>
+    <Grid container component={"form"} onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        name="email"
+        control={control}
+        rules={{ required: true, pattern: /^\S+@\S+$/i }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Email"
+            variant="filled"
+            fullWidth
+            margin="normal"
+            error={!!errors.email}
+            helperText={errors.email ? "Format d'email invalide" : ""}
+          />
+        )}
+      />
+      <Controller
+        name="compagny_name"
+        control={control}
+        rules={{ required: "Dénomination sociale est obligatoire" }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Dénomination Sociale"
+            variant="filled"
+            fullWidth
+            margin="normal"
+            error={!!errors.compagny_name}
+            helperText={
+              errors.compagny_name ? errors.compagny_name.message : ""
+            }
+          />
+        )}
+      />
+      <Controller
+        name="siret_number"
+        control={control}
+        defaultValue=""
+        rules={{
+          required: "Le Numéro SIRET est obligatoire",
+          pattern: {
+            value: /^[0-9]{14}$/,
+            message: "Le numéro siret est incorrect",
+          },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Numéro SIRET"
+            variant="filled"
+            fullWidth
+            margin="normal"
+            error={!!errors.siret_number}
+            helperText={errors.siret_number ? errors.siret_number.message : ""}
+          />
+        )}
+      />
+      <Controller
+        name="password"
+        control={control}
+        defaultValue=""
+        rules={{
+          required: "Nouveau mot de passe requis",
+          minLength: {
+            value: 8,
+            message: "Le mot de passe doit avoir au moins 8 caractères",
+          },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            type="password"
+            label="Nouveau Mot de Passe"
+            variant="filled"
+            fullWidth
+            error={!!errors.password}
+            helperText={errors.password ? errors.password.message : ""}
+            margin="normal"
+          />
+        )}
+      />
+      <Controller
+        name="confirm_password"
+        control={control}
+        defaultValue=""
+        rules={{
+          required: "Confirmation du mot de passe requise",
+          validate: (value) =>
+            value === password || "Les mots de passe ne correspondent pas",
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            type="password"
+            label="Confirmer le Mot de Passe"
+            variant="filled"
+            fullWidth
+            error={!!errors.confirm_password}
+            helperText={
+              errors.confirm_password ? errors.confirm_password.message : ""
+            }
+            margin="normal"
+          />
+        )}
+      />
+
+      <Button type="submit" variant="contained" color="primary" style={{marginBottom: '50px', background: "#ed2025"}}>
+            Envoyer
+      </Button>
+    </Grid>
   );
 };
 
