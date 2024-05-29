@@ -1,74 +1,73 @@
-import React from "react";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Container, Box, TextField, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React from 'react'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { Grid, TextField, Button } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 interface PasswordForgottenFormInputs {
-  email: string;
+    email: string
 }
 
 const PasswordForgottenForm: React.FC = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate()
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<PasswordForgottenFormInputs>({
-    defaultValues: {
-      email: "you.moudni@gmail.com",
-    },
-  });
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm<PasswordForgottenFormInputs>()
 
-  const onSubmit: SubmitHandler<PasswordForgottenFormInputs> = (data) => {
-    console.log(data);
+    const onSubmit: SubmitHandler<PasswordForgottenFormInputs> = (data) => {
+        axios
+            .post('http://localhost:3333/api/v1/user/forgot-password', data)
+            .then((res) => {
+                if (res) {
+                    console.log('email envoyé')
+                    navigate('/')
+                    console.log(res)
+                } else {
+                    throw new Error('absence de token')
+                }
+            })
+            .catch((error) => console.log(error))
+    }
 
-    axios
-      .post("http://localhost:3333/api/v1/user/forgot-password", data)
-      .then((res) => {
-        if (res) {
-          console.log("email envoyé");
-          navigate("/");
-          console.log(res);
-        } else {
-          throw new Error("absence de token");
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
-  return (
-    <Container>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="email"
-          control={control}
-          defaultValue=""
-          rules={{
-            required: "L'email est requis",
-            pattern: {
-              value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-              message: "L'email n'est pas valide",
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Email"
-              variant="outlined"
-              fullWidth
-              error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ""}
+    return (
+        <Grid container component="form" onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+                name="email"
+                control={control}
+                rules={{ required: true, pattern: /^\S+@\S+$/i }}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="Email"
+                        variant="filled"
+                        fullWidth
+                        margin="normal"
+                        error={!!errors.email}
+                        helperText={
+                            errors.email ? "Format d'email invalide" : ''
+                        }
+                    />
+                )}
             />
-          )}
-        />
-        <Button type="submit" variant="contained" color="primary">
-          Recevoir un email de réinitialisation
-        </Button>
-      </Box>
-    </Container>
-  );
-};
+            <Grid container direction="column" alignItems={'center'} my={10}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    style={{
+                        marginBottom: '50px',
+                        background: '#ed2025',
+                        width: '70%',
+                    }}
+                >
+                    Recevoir un email de réinitialisation
+                </Button>
+            </Grid>
+        </Grid>
+    )
+}
 
-export default PasswordForgottenForm;
+export default PasswordForgottenForm
