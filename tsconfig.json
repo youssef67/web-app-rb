@@ -26,6 +26,7 @@
       "@hooks/*": ["hooks/*"],
       "@routes/*": ["routes/*"],
       "@assets/*": ["assets/*"],
+      "@styles/*": ["styles/*"],
       "@app/*": ["app/*"]
     }
   },
