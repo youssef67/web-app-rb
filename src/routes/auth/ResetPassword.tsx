@@ -20,7 +20,7 @@ const ResetPassword: React.FC = () => {
             }}
         >
             <AppBarBeforeLogin />
-            <Container style={{ maxWidth: '50%' }}>
+            <Container maxWidth="sm">
                 <Grid
                     container
                     justifyContent="center"

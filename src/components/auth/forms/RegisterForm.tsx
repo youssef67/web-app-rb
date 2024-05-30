@@ -20,15 +20,7 @@ const RegisterForm: React.FC = () => {
         control,
         watch,
         formState: { errors },
-    } = useForm<IFormInput>({
-        defaultValues: {
-            email: 'you.moudni@gmail.com',
-            compagny_name: 'Default Company',
-            siret_number: '12345678901234',
-            password: 'youssefmoudni',
-            confirm_password: 'youssefmoudni',
-        },
-    })
+    } = useForm<IFormInput>()
 
     const password = watch('password')
 
@@ -62,7 +54,7 @@ const RegisterForm: React.FC = () => {
                         margin="normal"
                         error={!!errors.email}
                         helperText={
-                            errors.email ? "Format d'email invalide" : ''
+                            errors.email ? "Format d'email invalide" : ' '
                         }
                     />
                 )}
@@ -74,7 +66,7 @@ const RegisterForm: React.FC = () => {
                 render={({ field }) => (
                     <TextField
                         {...field}
-                        label="Dénomination Sociale"
+                        label="Dénomination sociale"
                         variant="filled"
                         fullWidth
                         margin="normal"
@@ -82,7 +74,7 @@ const RegisterForm: React.FC = () => {
                         helperText={
                             errors.compagny_name
                                 ? errors.compagny_name.message
-                                : ''
+                                : ' '
                         }
                     />
                 )}
@@ -90,7 +82,6 @@ const RegisterForm: React.FC = () => {
             <Controller
                 name="siret_number"
                 control={control}
-                defaultValue=""
                 rules={{
                     required: 'Le Numéro SIRET est obligatoire',
                     pattern: {
@@ -109,7 +100,7 @@ const RegisterForm: React.FC = () => {
                         helperText={
                             errors.siret_number
                                 ? errors.siret_number.message
-                                : ''
+                                : ' '
                         }
                     />
                 )}
@@ -117,7 +108,6 @@ const RegisterForm: React.FC = () => {
             <Controller
                 name="password"
                 control={control}
-                defaultValue=""
                 rules={{
                     required: 'Nouveau mot de passe requis',
                     minLength: {
@@ -130,12 +120,12 @@ const RegisterForm: React.FC = () => {
                     <TextField
                         {...field}
                         type="password"
-                        label="Nouveau Mot de Passe"
+                        label="Nouveau mot de Passe"
                         variant="filled"
                         fullWidth
                         error={!!errors.password}
                         helperText={
-                            errors.password ? errors.password.message : ''
+                            errors.password ? errors.password.message : ' '
                         }
                         margin="normal"
                     />
@@ -144,7 +134,6 @@ const RegisterForm: React.FC = () => {
             <Controller
                 name="confirm_password"
                 control={control}
-                defaultValue=""
                 rules={{
                     required: 'Confirmation du mot de passe requise',
                     validate: (value) =>
@@ -155,14 +144,14 @@ const RegisterForm: React.FC = () => {
                     <TextField
                         {...field}
                         type="password"
-                        label="Confirmer le Mot de Passe"
+                        label="Confirmer le mot de Passe"
                         variant="filled"
                         fullWidth
                         error={!!errors.confirm_password}
                         helperText={
                             errors.confirm_password
                                 ? errors.confirm_password.message
-                                : ''
+                                : ' '
                         }
                         margin="normal"
                     />

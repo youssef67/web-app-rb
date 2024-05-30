@@ -53,9 +53,8 @@ const LoginForm: React.FC = () => {
             label="Email"
             variant="filled"
             fullWidth
-            margin="normal"
             error={!!errors.email}
-            helperText={errors.email ? 'Format d\'email invalide' : ''}
+            helperText={errors.email ? 'Format d\'email invalide' : ' '}
           />
         )}
       />
@@ -72,7 +71,7 @@ const LoginForm: React.FC = () => {
             fullWidth
             margin="normal"
             error={!!errors.password}
-            helperText={errors.password ? 'Le mot de passe doit contenir entre 8 et 64 caractères' : ''}
+            helperText={errors.password ? 'Le mot de passe doit contenir entre 8 et 64 caractères' : ' '}
           />
         )}
       />

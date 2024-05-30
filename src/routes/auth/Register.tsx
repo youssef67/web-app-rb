@@ -2,7 +2,7 @@ import React from 'react'
 import RegisterForm from '@components/auth/forms/RegisterForm'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Container, Grid, Typography } from '@mui/material'
+import { Container, Grid, Typography, Divider } from '@mui/material'
 import AppBarBeforeLogin from '@components/common/AppBarBeforeLogin'
 
 const Register: React.FC = () => {
@@ -20,7 +20,7 @@ const Register: React.FC = () => {
             }}
         >
             <AppBarBeforeLogin />
-            <Container style={{ maxWidth: '50%' }}>
+            <Container maxWidth="sm">
                 <Grid
                     container
                     justifyContent="center"
@@ -52,6 +52,9 @@ const Register: React.FC = () => {
                                     Revenir sur la page de connexion
                                 </span>
                             </Typography>
+                        </Grid>
+                        <Grid item xs={12} style={{ width: '100%' }}>
+                            <Divider variant="middle" style={{ margin: '20px 0' }} />
                         </Grid>
                     </Grid>
                 </Grid>
