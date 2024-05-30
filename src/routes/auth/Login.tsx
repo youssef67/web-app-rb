@@ -1,15 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LoginForm from "@components/auth/forms/LoginForm";
 import AppBarBeforeLogin from "@components/common/AppBarBeforeLogin";
 import { Container, Grid, Divider, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
-
-
+import { useNotification } from '@contexts/NotificationContext'
+import { useSnackbar } from 'notistack';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
+  const { notification, setNotification } = useNotification();
+
+  useEffect(() => {
+    if (notification) {
+      enqueueSnackbar(notification.message, { variant: notification.variant });
+      setNotification(null); // Réinitialiser la notification après l'affichage
+    }
+  }, [notification, enqueueSnackbar, setNotification]);
 
   const handleRegister = () => {
     navigate("/register");

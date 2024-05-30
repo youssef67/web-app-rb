@@ -27,6 +27,7 @@
       "@routes/*": ["routes/*"],
       "@assets/*": ["assets/*"],
       "@styles/*": ["styles/*"],
+      "@contexts/*": ["contexts/*"],
       "@app/*": ["app/*"]
     }
   },

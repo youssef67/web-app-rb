@@ -22,9 +22,7 @@ const PasswordForgottenForm: React.FC = () => {
             .post('http://localhost:3333/api/v1/user/forgot-password', data)
             .then((res) => {
                 if (res) {
-                    console.log('email envoyé')
                     navigate('/')
-                    console.log(res)
                 } else {
                     throw new Error('absence de token')
                 }
