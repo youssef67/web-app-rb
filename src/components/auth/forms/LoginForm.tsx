@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useNotification } from "@contexts/NotificationContext";
 import { Grid, TextField, Button, Box } from "@mui/material";
 import axios from "axios";
 import { useAuth } from "@hooks/useAuth";
@@ -12,6 +13,7 @@ interface LoginFormInputs {
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  const { setNotification } = useNotification();
   const { handleSubmit, control, formState: { errors } } = useForm<LoginFormInputs>();
 
   const handlePasswordForgotten = () => {
@@ -31,10 +33,12 @@ const LoginForm: React.FC = () => {
             token: res.data.token,
           });
         } else {
-          throw new Error("absence de token");
+          setNotification({ message: "Impossible de s'inscrire", variant: "error" });
         }
       })
-      .catch((error) => console.log(error));
+      .catch(() => {
+        setNotification({ message: "Impossible de s'inscrire", variant: "error" });
+      });
   };
 
   return (
