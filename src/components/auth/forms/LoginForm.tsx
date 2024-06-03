@@ -14,7 +14,9 @@ interface LoginFormInputs {
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { setNotification } = useNotification();
-  const { handleSubmit, control, formState: { errors } } = useForm<LoginFormInputs>();
+  const { handleSubmit, control, formState: { errors } } = useForm<LoginFormInputs>({
+    defaultValues: { email: "you.moudni@gmail.com", password: "kurosaki67" },
+  });
 
   const handlePasswordForgotten = () => {
     navigate("/password-forgotten");

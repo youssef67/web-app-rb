@@ -27,7 +27,6 @@ function App() {
           path="/confirmation-send-email"
           element={<SendEmailConfirmation />}
         />
-
         <Route
           path="/orders-of-day"
           element={
