@@ -1,6 +1,7 @@
 import React from "react";
 import { useNotification } from "@contexts/NotificationContext";
 import { useHeader } from "@hooks/useHeader";
+import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Grid, TextField, Button } from "@mui/material";
 import axios from "axios";
@@ -8,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 interface IFormInput {
   name: string;
-  surname: string;
+  lastname: string;
   email: string;
   phone: string;
   amount: number;
@@ -17,8 +18,8 @@ interface IFormInput {
 
 const CreateOrderForm: React.FC = () => {
   const { setNotification } = useNotification();
+  const currentUser = useCurrentUser();
   const headers = useHeader();
-  console.log(headers)
 
   const {
     handleSubmit,
@@ -27,7 +28,7 @@ const CreateOrderForm: React.FC = () => {
   } = useForm<IFormInput>({
     defaultValues: {
       name: "youssef",
-      surname: "moudni",
+      lastname: "moudni",
       email: "you.moudni@gmail.com",
       phone: "0668735937",
       amount: 20,
@@ -36,14 +37,21 @@ const CreateOrderForm: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log(data);
+    // console.log(data)
+    // console.log(currentUser)
+    console.log( {...data, userId : currentUser?.userId })
     axios
-      .post("http://localhost:3333/api/v1/order/add", data, { headers })
+      .post(
+        "http://localhost:3333/api/v1/order/add",
+        { ...data, ...currentUser },
+        { headers }
+      )
       .then((res) => {
         console.log(res);
-      }).catch((err) => { 
-        console.log(err)
       })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -65,7 +73,7 @@ const CreateOrderForm: React.FC = () => {
         )}
       />
       <Controller
-        name="surname"
+        name="lastname"
         control={control}
         rules={{ required: "Le prénom est obligatoire" }}
         render={({ field }) => (
@@ -75,8 +83,8 @@ const CreateOrderForm: React.FC = () => {
             variant="filled"
             fullWidth
             margin="normal"
-            error={!!errors.surname}
-            helperText={errors.surname ? errors.surname.message : " "}
+            error={!!errors.lastname}
+            helperText={errors.lastname ? errors.lastname.message : " "}
           />
         )}
       />

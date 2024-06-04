@@ -1,5 +1,6 @@
 import { useAuth } from "@hooks/useAuth";
 import { useHeader } from "@hooks/useHeader";
+import { useCurrentUser } from "@hooks/useCurrentUser"
 import axios from "axios";
 import { useTheme } from "@mui/material/styles";
 import { Container, Grid } from "@mui/material";
@@ -10,6 +11,7 @@ const OrdersOfDay: React.FC = () => {
   const { logout } = useAuth();
   const theme = useTheme();
   const headers = useHeader();
+  const currentUser = useCurrentUser()
 
   const handleLogout = () => {
     axios
