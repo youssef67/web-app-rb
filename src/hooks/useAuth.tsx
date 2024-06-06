@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
 
   const login = async (data: any) => {
-    setUser(data.email);
+    setUser({email : data.email, id : data.id, token : data.token.token});
 
     const contentCookies = {
       id: data.id,

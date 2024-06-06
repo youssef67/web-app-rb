@@ -15,7 +15,7 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { setNotification } = useNotification();
   const { handleSubmit, control, formState: { errors } } = useForm<LoginFormInputs>({
-    defaultValues: { email: "you.moudni@gmail.com", password: "kurosaki67" },
+    defaultValues: { email: "you.moudni+user-1@gmail.com", password: "12345678" },
   });
 
   const handlePasswordForgotten = () => {

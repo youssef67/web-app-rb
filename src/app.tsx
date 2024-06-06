@@ -11,6 +11,7 @@ import ResetPassword from "@routes/auth/ResetPassword";
 import SendEmailConfirmation from "@routes/auth/SendEmailConfirmation.tsx";
 // Interface
 import OrdersOfDay from "routes/user/OrdersOfDay";
+import CreateOrder from "@routes/user/CreateOrder";
 import AllOrders from "@routes/user/AllOrders";
 
 function App() {
@@ -32,6 +33,14 @@ function App() {
           element={
             <ProtectedRoute>
               <OrdersOfDay />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/add-order"
+          element={
+            <ProtectedRoute>
+              <CreateOrder />
             </ProtectedRoute>
           }
         />

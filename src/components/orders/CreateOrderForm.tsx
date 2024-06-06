@@ -17,6 +17,7 @@ interface IFormInput {
 }
 
 const CreateOrderForm: React.FC = () => {
+  const navigate = useNavigate()
   const { setNotification } = useNotification();
   const currentUser = useCurrentUser();
   const headers = useHeader();
@@ -37,9 +38,6 @@ const CreateOrderForm: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    // console.log(data)
-    // console.log(currentUser)
-    console.log( {...data, userId : currentUser?.userId })
     axios
       .post(
         "http://localhost:3333/api/v1/order/add",
@@ -47,10 +45,16 @@ const CreateOrderForm: React.FC = () => {
         { headers }
       )
       .then((res) => {
-        console.log(res);
+        if (res.status === 201) {
+          setNotification({ message: "Commande enregistré avec succès", variant: "success" });
+        } else {
+          setNotification({ message: "Une erreur est survenu", variant: "error" });
+        }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        setNotification({ message: "Une erreur est survenu", variant: "error" });
+      }).finally(() => {
+        navigate("/orders-of-day")
       });
   };
 

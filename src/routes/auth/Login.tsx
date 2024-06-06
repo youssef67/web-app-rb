@@ -16,7 +16,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     if (notification) {
       enqueueSnackbar(notification.message, { variant: notification.variant });
-      setNotification(null); // Réinitialiser la notification après l'affichage
+      setNotification(null); 
     }
   }, [notification, enqueueSnackbar, setNotification]);
 
