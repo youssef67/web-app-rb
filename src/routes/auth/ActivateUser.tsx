@@ -11,8 +11,6 @@ const ActivateUser: React.FC = () => {
     const token: string | null = useQuery().get('token')
     const email: string | null = useQuery().get('email')
 
-    console.log(email)
-
     return (
         <div
             style={{

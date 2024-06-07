@@ -28,6 +28,8 @@
       "@assets/*": ["assets/*"],
       "@styles/*": ["styles/*"],
       "@contexts/*": ["contexts/*"],
+      "@utils/*": ["utils/*"],
+      "@interfaces/*": ["interfaces/*"],
       "@app/*": ["app/*"]
     }
   },

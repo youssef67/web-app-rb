@@ -38,7 +38,6 @@ const RegisterForm: React.FC = () => {
     axios
       .post("http://localhost:3333/api/v1/auth/register", data)
       .then((res) => {
-        console.log('ok')
         if (res.status === 201) {
           setNotification({ message: "Mail envoyé", variant: "success" });
         } else {

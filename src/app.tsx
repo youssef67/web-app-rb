@@ -10,7 +10,7 @@ import ActivateUser from "@routes/auth/ActivateUser";
 import ResetPassword from "@routes/auth/ResetPassword";
 import SendEmailConfirmation from "@routes/auth/SendEmailConfirmation.tsx";
 // Interface
-import OrdersOfDay from "routes/user/OrdersOfDay";
+import DaysOrderDashboard from "routes/user/DaysOrderDashboard";
 import CreateOrder from "@routes/user/CreateOrder";
 import AllOrders from "@routes/user/AllOrders";
 
@@ -32,7 +32,7 @@ function App() {
           path="/orders-of-day"
           element={
             <ProtectedRoute>
-              <OrdersOfDay />
+              <DaysOrderDashboard />
             </ProtectedRoute>
           }
         />
