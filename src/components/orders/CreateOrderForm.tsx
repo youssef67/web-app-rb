@@ -4,6 +4,9 @@ import { useHeader } from "@hooks/useHeader";
 import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Grid, TextField, Button } from "@mui/material";
+import Stack from '@mui/joy/Stack';
+import Input from '@mui/joy/Input';
+
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +20,7 @@ interface IFormInput {
 }
 
 const CreateOrderForm: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { setNotification } = useNotification();
   const currentUser = useCurrentUser();
   const headers = useHeader();
@@ -46,15 +49,25 @@ const CreateOrderForm: React.FC = () => {
       )
       .then((res) => {
         if (res.status === 201) {
-          setNotification({ message: "Commande enregistré avec succès", variant: "success" });
+          setNotification({
+            message: "Commande enregistré avec succès",
+            variant: "success",
+          });
         } else {
-          setNotification({ message: "Une erreur est survenu", variant: "error" });
+          setNotification({
+            message: "Une erreur est survenu",
+            variant: "error",
+          });
         }
       })
       .catch(() => {
-        setNotification({ message: "Une erreur est survenu", variant: "error" });
-      }).finally(() => {
-        navigate("/orders-of-day")
+        setNotification({
+          message: "Une erreur est survenu",
+          variant: "error",
+        });
+      })
+      .finally(() => {
+        navigate("/orders-of-day");
       });
   };
 
@@ -159,7 +172,6 @@ const CreateOrderForm: React.FC = () => {
           />
         )}
       />
-
       <Controller
         name="pickupDate"
         control={control}

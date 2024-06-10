@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import { useAuth } from "@hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { useNotification } from "@contexts/NotificationContext";
 import { useSnackbar } from "notistack";
+import { useQuery } from "@tanstack/react-query";
 
-import { CssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/joy/CssBaseline";
-import Box from "@mui/joy/Box";
+import { CssVarsProvider } from "@mui/joy/styles";
 import Button from "@mui/joy/Button";
 import Breadcrumbs from "@mui/joy/Breadcrumbs";
 import Link from "@mui/joy/Link";
@@ -15,23 +13,32 @@ import Typography from "@mui/joy/Typography";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import Add from '@mui/icons-material/Add';
+import Box from "@mui/joy/Box";
+
 
 import Sidebar from "@components/common/Sidebar";
 import OrderTable from "@components/common/OrderTable";
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
+import ModalAddOrder from "@components/orders/ModalAddOrder";
 
-import { Order } from '@interfaces/interfaces'
-
-
+import { fetchOrders } from "@utils/apiUtils";
 
 const DaysOrderDashboard: React.FC = () => {
-  const navigate = useNavigate();
+  const [open, setOpen] = React.useState<boolean>(false);
   const { user } = useAuth();
-  const [ listOfOrders, setListOfOrders ] = useState<Order[] | []>([])
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
+
+  const {
+    data: ordersList,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["orders"],
+    queryFn: () => fetchOrders(user),
+  });
 
   useEffect(() => {
     if (notification) {
@@ -40,33 +47,13 @@ const DaysOrderDashboard: React.FC = () => {
     }
   }, [notification, enqueueSnackbar, setNotification]);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      axios
-        .get(
-          `http://localhost:3333/api/v1/order/day-orders?userId=${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          setListOfOrders(res.data)
-        })
-        .catch((error) => console.log(error));
-    };
-
-    fetchOrders();
-  }, []);
 
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
       <Box sx={{ display: "flex", minHeight: "100dvh" }}>
         <Header />
-        <Sidebar currentDashboard = "dayOrders" />
+        <Sidebar currentDashboard="dayOrders" />
         <Box
           component="main"
           className="MainContent"
@@ -130,16 +117,23 @@ const DaysOrderDashboard: React.FC = () => {
               Commandes du jour
             </Typography>
             <Button
-              color="primary"
-              startDecorator={<AddRoundedIcon />}
-              size="sm"
-              onClick={() => navigate("/add-order")}
+              variant="outlined"
+              color="neutral"
+              startDecorator={<Add />}
+              onClick={() => setOpen(true)}
             >
               Ajouter une commande
             </Button>
+            <ModalAddOrder open={open} setOpen={setOpen} />
           </Box>
-          <OrderTable ordersList={listOfOrders}/>
-          <OrderList ordersList={listOfOrders}/>
+          {isLoading && <div>Loading...</div>}
+          {error && <div>Error: {error.message}</div>}
+          {!isLoading && !error && (
+            <>
+              <OrderTable ordersList={ordersList} />
+              <OrderList ordersList={ordersList} />
+            </>
+          )}
         </Box>
       </Box>
     </CssVarsProvider>

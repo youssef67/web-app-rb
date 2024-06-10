@@ -7,7 +7,6 @@ import { useHeader } from "@hooks/useHeader";
 
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import Avatar from "@mui/joy/Avatar";
-import Box from "@mui/joy/Box";
 import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import IconButton from "@mui/joy/IconButton";
@@ -21,6 +20,8 @@ import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
+import Box from "@mui/joy/Box";
+
 
 import QuestionAnswerRoundedIcon from "@mui/icons-material/QuestionAnswerRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import { ProtectedRoute } from "@routes/ProtectedRoute";
 import { AuthProvider } from "@hooks/useAuth";
+
 // Auth pages
 import Login from "@routes/auth/Login";
 import Register from "@routes/auth/Register";
@@ -33,14 +34,6 @@ function App() {
           element={
             <ProtectedRoute>
               <DaysOrderDashboard />
-            </ProtectedRoute>
-          }
-        />
-         <Route
-          path="/add-order"
-          element={
-            <ProtectedRoute>
-              <CreateOrder />
             </ProtectedRoute>
           }
         />
