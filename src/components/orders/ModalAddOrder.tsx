@@ -1,22 +1,26 @@
-import * as React from "react";
+import React from "react";
 import Button from "@mui/joy/Button";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import Modal from "@mui/joy/Modal";
+import ModalClose from "@mui/joy/ModalClose";
 import ModalDialog from "@mui/joy/ModalDialog";
-import DialogTitle from "@mui/joy/DialogTitle";
-import DialogContent from "@mui/joy/DialogContent";
+import FormHelperText from "@mui/joy/FormHelperText";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import Box from '@mui/joy/Box';
+
+
+
 import Stack from "@mui/joy/Stack";
 import { useNotification } from "@contexts/NotificationContext";
 import { useHeader } from "@hooks/useHeader";
 import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Grid, TextField } from "@mui/material";
-import Add from "@mui/icons-material/Add";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { NumericFormatAdapter } from "@utils/modalUtils";
 
 interface ModalAddOrderProps {
   open: boolean;
@@ -53,74 +57,130 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
     },
   });
 
+  console.log(errors);
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    axios
-      .post(
-        "http://localhost:3333/api/v1/order/add",
-        { ...data, ...currentUser },
-        { headers }
-      )
-      .then((res) => {
-        if (res.status === 201) {
-          setNotification({
-            message: "Commande enregistré avec succès",
-            variant: "success",
-          });
-        } else {
-          setNotification({
-            message: "Une erreur est survenu",
-            variant: "error",
-          });
-        }
-      })
-      .catch(() => {
-        setNotification({
-          message: "Une erreur est survenu",
-          variant: "error",
-        });
-      })
-      .finally(() => {
-        navigate("/orders-of-day");
-      });
+    console.log(data);
+    // axios
+    //   .post(
+    //     "http://localhost:3333/api/v1/order/add",
+    //     { ...data, ...currentUser },
+    //     { headers }
+    //   )
+    //   .then((res) => {
+    //     if (res.status === 201) {
+    //       setNotification({
+    //         message: "Commande enregistré avec succès",
+    //         variant: "success",
+    //       });
+    //     } else {
+    //       setNotification({
+    //         message: "Une erreur est survenu",
+    //         variant: "error",
+    //       });
+    //     }
+    //   })
+    //   .catch(() => {
+    //     setNotification({
+    //       message: "Une erreur est survenu",
+    //       variant: "error",
+    //     });
+    //   })
+    //   .finally(() => {
+    //     navigate("/orders-of-day");
+    //   });
   };
 
   return (
     <React.Fragment>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog>
-          <DialogTitle>Create new project</DialogTitle>
-          <DialogContent>Fill in the information of the project.</DialogContent>
+          <Box sx={{ display: "flex", justifyContent: "flex-end",  mb: 2 }}>
+            <ModalClose variant="plain" sx={{ mb: 1 }} />
+          </Box>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>Nom</FormLabel>
                 <Controller
                   name="name"
                   control={control}
-                  rules={{ required: "Le nom est obligatoire" }}
-                  render={({ field }) => <Input {...field} required />}
+                  rules={{
+                    required: "Le nom est obligatoire",
+                    minLength: {
+                      value: 2,
+                      message: "Le nom doit contenir au moins 2 caractères",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <Input placeholder="Nom du client" {...field} required />
+                      {errors.name && (
+                        <FormHelperText style={{ color: "red" }}>
+                          <InfoOutlined style={{ color: "red" }} />
+                          {errors.name.message}
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Prénom</FormLabel>
                 <Controller
                   name="lastname"
                   control={control}
-                  rules={{ required: "Le prénom est obligatoire" }}
-                  render={({ field }) => <Input {...field} required />}
+                  rules={{
+                    required: "Le prénom est obligatoire",
+                    minLength: {
+                      value: 2,
+                      message: "Le prénom doit contenir au moins 2 caractères",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <Input
+                        placeholder="Prénom du client"
+                        {...field}
+                        required
+                      />
+                      {errors.lastname && (
+                        <FormHelperText style={{ color: "red" }}>
+                          <InfoOutlined style={{ color: "red" }} />
+                          {errors.lastname.message}
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Email</FormLabel>
                 <Controller
                   name="email"
                   control={control}
-                  rules={{ required: true, pattern: /^\S+@\S+$/i }}
-                  render={({ field }) => <Input {...field} required />}
+                  rules={{
+                    required: "L'email est obligatoire",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "L'email n'est pas valide",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <Input
+                        placeholder="Email du client"
+                        {...field}
+                        required
+                      />
+                      {errors.email && (
+                        <FormHelperText style={{ color: "red" }}>
+                          <InfoOutlined style={{ color: "red" }} />
+                          {errors.email.message}
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Téléphone</FormLabel>
                 <Controller
                   name="phone"
                   control={control}
@@ -131,11 +191,24 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                       message: "Le numéro de téléphone est incorrect",
                     },
                   }}
-                  render={({ field }) => <Input {...field} required />}
+                  render={({ field }) => (
+                    <>
+                      <Input
+                        placeholder="Téléphone du client"
+                        {...field}
+                        required
+                      />
+                      {errors.phone && (
+                        <FormHelperText style={{ color: "red" }}>
+                          <InfoOutlined style={{ color: "red" }} />
+                          {errors.phone.message}
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Montant</FormLabel>
                 <Controller
                   name="amount"
                   control={control}
@@ -155,11 +228,30 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                       },
                     },
                   }}
-                  render={({ field }) => <Input {...field} required />}
+                  render={({ field }) => (
+                    <>
+                      <Input
+                        placeholder="Montant de la commande"
+                        slotProps={{
+                          input: {
+                            component: NumericFormatAdapter,
+                          },
+                        }}
+                        {...field}
+                        required
+                      />
+                      {errors.amount && (
+                        <FormHelperText style={{ color: "red" }}>
+                          <InfoOutlined style={{ color: "red" }} />
+                          {errors.amount.message}
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Montant</FormLabel>
+                <FormLabel>Date de la commande</FormLabel>
                 <Controller
                   name="pickupDate"
                   control={control}
@@ -177,10 +269,21 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                       },
                     },
                   }}
-                  render={({ field }) => <Input {...field} required />}
+                  render={({ field }) => (
+                    <>
+                      <Input type="date" {...field} required />
+                      {errors.pickupDate && (
+                        <FormHelperText style={{ color: "red" }}>
+                          <InfoOutlined style={{ color: "red" }} />
+                          {errors.pickupDate.message}
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
                 />
               </FormControl>
-              <Button type="submit">Submit</Button>
+
+              <Button type="submit">Enregistrer la commande</Button>
             </Stack>
           </form>
         </ModalDialog>
