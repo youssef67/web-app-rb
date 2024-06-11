@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ColorPaletteProp } from "@mui/joy/styles";
 import Button from "@mui/joy/Button";
 import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
-// import Link from "@mui/joy/Link";
 import Input from "@mui/joy/Input";
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
@@ -22,7 +21,6 @@ import MenuItem from "@mui/joy/MenuItem";
 import Dropdown from "@mui/joy/Dropdown";
 import Box from "@mui/joy/Box";
 
-
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
@@ -33,7 +31,6 @@ import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 
 import { Order, AscOrDesc } from "@interfaces/interfaces";
 import { getComparator, stableSort } from "@utils/orderTableUtils";
-
 
 interface OrderProps {
   ordersList: Order[];
@@ -57,8 +54,7 @@ function RowMenu() {
 }
 
 const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
-
-  const [order, setOrder] = useState<AscOrDesc>("desc");
+  const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
   const renderFilters = () => (
     <React.Fragment>
@@ -112,7 +108,7 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
           <FilterAltIcon />
         </IconButton>
         <Modal open={open} onClose={() => setOpen(false)}>
-          <ModalDialog aria-labelledby="filter-modal" layout="fullscreen">
+          <ModalDialog aria-labelledby="filter-modal" layout="center">
             <ModalClose />
             <Typography id="filter-modal" level="h2">
               Filtres

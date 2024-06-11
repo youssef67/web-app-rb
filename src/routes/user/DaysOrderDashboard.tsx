@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@hooks/useAuth";
 import { useNotification } from "@contexts/NotificationContext";
 import { useSnackbar } from "notistack";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import CssBaseline from "@mui/joy/CssBaseline";
 import { CssVarsProvider } from "@mui/joy/styles";
@@ -13,23 +13,29 @@ import Typography from "@mui/joy/Typography";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import Add from '@mui/icons-material/Add';
+import Add from "@mui/icons-material/Add";
 import Box from "@mui/joy/Box";
-
 
 import Sidebar from "@components/common/Sidebar";
 import OrderTable from "@components/common/OrderTable";
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
-import ModalAddOrder from "@components/orders/ModalAddOrder";
+import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
 
 import { fetchOrders } from "@utils/apiUtils";
 
 const DaysOrderDashboard: React.FC = () => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
+  const [dummyState, setDummyState] = useState(0); // État inutile pour forcer le re-render
+
+  const handleOrderAdded = () => {
+    setDummyState(dummyState + 1); // Mettre à jour l'état pour forcer le re-render
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
 
   const {
     data: ordersList,
@@ -46,7 +52,6 @@ const DaysOrderDashboard: React.FC = () => {
       setNotification(null);
     }
   }, [notification, enqueueSnackbar, setNotification]);
-
 
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -124,7 +129,11 @@ const DaysOrderDashboard: React.FC = () => {
             >
               Ajouter une commande
             </Button>
-            <ModalAddOrder open={open} setOpen={setOpen} />
+            <CustomModalAddOrder
+              open={open}
+              setOpen={setOpen}
+              onOrderAdded={handleOrderAdded}
+            />
           </Box>
           {isLoading && <div>Loading...</div>}
           {error && <div>Error: {error.message}</div>}

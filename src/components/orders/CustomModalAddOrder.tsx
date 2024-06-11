@@ -1,46 +1,53 @@
 import React from "react";
 import Button from "@mui/joy/Button";
 import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import ModalDialog from "@mui/joy/ModalDialog";
 import FormHelperText from "@mui/joy/FormHelperText";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
-import Box from '@mui/joy/Box';
-
-
+import Box from "@mui/joy/Box";
 
 import Stack from "@mui/joy/Stack";
 import { useNotification } from "@contexts/NotificationContext";
 import { useHeader } from "@hooks/useHeader";
 import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { NumericFormatAdapter } from "@utils/modalUtils";
+import { addOrder } from "@utils/apiUtils";
+import { IFormInput } from "@interfaces/interfaces";
 
-interface ModalAddOrderProps {
+interface CustomModalAddOrderProps {
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
+  onOrderAdded: () => void;
 }
 
-interface IFormInput {
-  name: string;
-  lastname: string;
-  email: string;
-  phone: string;
-  amount: number;
-  pickupDate: string;
-}
-
-export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
-  const navigate = useNavigate();
+const CustomModalAddOrder = ({ open, setOpen, onOrderAdded }: CustomModalAddOrderProps) => {
   const { setNotification } = useNotification();
   const currentUser = useCurrentUser();
   const headers = useHeader();
+
+  const mutation = useMutation({
+    mutationFn: (data: IFormInput) => addOrder(data, currentUser, headers),
+    onSuccess: () => {
+      onOrderAdded(); // Appel de la fonction pour notifier le parent
+      setNotification({
+        message: "Commande enregistrée avec succès",
+        variant: "success",
+      });
+      setOpen(false); // Fermer la modal ici
+    },
+    onError: () => {
+      setNotification({
+        message: "Une erreur est survenue",
+        variant: "error",
+      });
+    },
+  });
 
   const {
     handleSubmit,
@@ -57,45 +64,15 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
     },
   });
 
-  console.log(errors);
-
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log(data);
-    // axios
-    //   .post(
-    //     "http://localhost:3333/api/v1/order/add",
-    //     { ...data, ...currentUser },
-    //     { headers }
-    //   )
-    //   .then((res) => {
-    //     if (res.status === 201) {
-    //       setNotification({
-    //         message: "Commande enregistré avec succès",
-    //         variant: "success",
-    //       });
-    //     } else {
-    //       setNotification({
-    //         message: "Une erreur est survenu",
-    //         variant: "error",
-    //       });
-    //     }
-    //   })
-    //   .catch(() => {
-    //     setNotification({
-    //       message: "Une erreur est survenu",
-    //       variant: "error",
-    //     });
-    //   })
-    //   .finally(() => {
-    //     navigate("/orders-of-day");
-    //   });
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    mutation.mutate(data);
   };
 
   return (
     <React.Fragment>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog>
-          <Box sx={{ display: "flex", justifyContent: "flex-end",  mb: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
             <ModalClose variant="plain" sx={{ mb: 1 }} />
           </Box>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -137,11 +114,7 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                   }}
                   render={({ field }) => (
                     <>
-                      <Input
-                        placeholder="Prénom du client"
-                        {...field}
-                        required
-                      />
+                      <Input placeholder="Prénom du client" {...field} required />
                       {errors.lastname && (
                         <FormHelperText style={{ color: "red" }}>
                           <InfoOutlined style={{ color: "red" }} />
@@ -159,17 +132,13 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                   rules={{
                     required: "L'email est obligatoire",
                     pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "L'email n'est pas valide",
+                      value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
+                      message: "L'email est invalide",
                     },
                   }}
                   render={({ field }) => (
                     <>
-                      <Input
-                        placeholder="Email du client"
-                        {...field}
-                        required
-                      />
+                      <Input type="email" placeholder="Email" {...field} required />
                       {errors.email && (
                         <FormHelperText style={{ color: "red" }}>
                           <InfoOutlined style={{ color: "red" }} />
@@ -185,19 +154,15 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                   name="phone"
                   control={control}
                   rules={{
-                    required: "Le numéro de téléphone est obligatoire",
+                    required: "Le téléphone est obligatoire",
                     pattern: {
-                      value: /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/,
-                      message: "Le numéro de téléphone est incorrect",
+                      value: /^0[0-9]{9}$/,
+                      message: "Le téléphone est invalide",
                     },
                   }}
                   render={({ field }) => (
                     <>
-                      <Input
-                        placeholder="Téléphone du client"
-                        {...field}
-                        required
-                      />
+                      <Input placeholder="Téléphone" {...field} required />
                       {errors.phone && (
                         <FormHelperText style={{ color: "red" }}>
                           <InfoOutlined style={{ color: "red" }} />
@@ -209,7 +174,7 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                 />
               </FormControl>
               <FormControl>
-                <Controller
+              <Controller
                   name="amount"
                   control={control}
                   rules={{
@@ -251,23 +216,11 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Date de la commande</FormLabel>
                 <Controller
                   name="pickupDate"
                   control={control}
                   rules={{
-                    required: "Date de commande requise",
-                    validate: {
-                      futureDate: (value) => {
-                        const selectedDate = new Date(value);
-                        const currentDate = new Date();
-                        currentDate.setHours(0, 0, 0, 0);
-                        if (!value || selectedDate < currentDate) {
-                          return "Veuillez sélectionner une date future pour la commande";
-                        }
-                        return true;
-                      },
-                    },
+                    required: "La date de retrait est obligatoire",
                   }}
                   render={({ field }) => (
                     <>
@@ -282,8 +235,7 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
                   )}
                 />
               </FormControl>
-
-              <Button type="submit">Enregistrer la commande</Button>
+              <Button type="submit">Ajouter</Button>
             </Stack>
           </form>
         </ModalDialog>
@@ -291,3 +243,5 @@ export default function ModalAddOrder({ open, setOpen }: ModalAddOrderProps) {
     </React.Fragment>
   );
 }
+
+export default CustomModalAddOrder

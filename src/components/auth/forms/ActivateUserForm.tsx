@@ -36,7 +36,8 @@ const ActivateUserForm: React.FC<ActivateUserFormProps> = ({
       })
       .catch(() => {
         setNotification({ message: "Confirmation echoué", variant: "success" });
-      }).finally(() => {
+      })
+      .finally(() => {
         navigate("/login");
       });
   };

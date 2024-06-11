@@ -1,10 +1,5 @@
 import axios from "axios";
-
-interface User {
-  email: string;
-  id: number;
-  token: string;
-}
+import { IFormInput, User } from "@interfaces/interfaces";
 
 export const fetchOrders = async (user: User | null) => {
   const orderList = axios
@@ -15,9 +10,20 @@ export const fetchOrders = async (user: User | null) => {
       },
     })
     .then((res) => {
-      // console.log(res.data);
       return res.data;
-    })
+    });
 
-    return orderList
+  return orderList;
+};
+
+export const addOrder = async (data: IFormInput, currentUser: { userId: number; emailUser: string; } |  null, headers: object) => {
+  axios
+      .post(
+        "http://localhost:3333/api/v1/order/add",
+        { ...data, ...currentUser },
+        { headers }
+      )
+      .then((res) => {
+        return res.data
+      })
 };

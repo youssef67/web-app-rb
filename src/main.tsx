@@ -5,6 +5,8 @@ import App from "./app";
 import { ThemeProvider } from "@mui/material/styles";
 import { SnackbarProvider } from "notistack";
 import { NotificationProvider } from "@contexts/NotificationContext";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import theme from "@styles/theme";
 import "@styles/main.css";
 import "@fontsource/roboto/300.css";
@@ -26,6 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <QueryClientProvider client={queryClient}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <App />
+              <ReactQueryDevtools initialIsOpen={false} />
             </LocalizationProvider>
           </QueryClientProvider>
         </ThemeProvider>
