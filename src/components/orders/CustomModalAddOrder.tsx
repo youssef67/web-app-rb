@@ -14,7 +14,7 @@ import { useNotification } from "@contexts/NotificationContext";
 import { useHeader } from "@hooks/useHeader";
 import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { NumericFormatAdapter } from "@utils/modalUtils";
 import { addOrder } from "@utils/apiUtils";
@@ -23,10 +23,10 @@ import { IFormInput } from "@interfaces/interfaces";
 interface CustomModalAddOrderProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onOrderAdded: () => void;
+  onChangeMade: () => void;
 }
 
-const CustomModalAddOrder = ({ open, setOpen, onOrderAdded }: CustomModalAddOrderProps) => {
+const CustomModalAddOrder = ({ open, setOpen, onChangeMade }: CustomModalAddOrderProps) => {
   const { setNotification } = useNotification();
   const currentUser = useCurrentUser();
   const headers = useHeader();
@@ -34,12 +34,12 @@ const CustomModalAddOrder = ({ open, setOpen, onOrderAdded }: CustomModalAddOrde
   const mutation = useMutation({
     mutationFn: (data: IFormInput) => addOrder(data, currentUser, headers),
     onSuccess: () => {
-      onOrderAdded(); // Appel de la fonction pour notifier le parent
+      onChangeMade();
       setNotification({
         message: "Commande enregistrée avec succès",
         variant: "success",
       });
-      setOpen(false); // Fermer la modal ici
+      setOpen(false);
     },
     onError: () => {
       setNotification({
@@ -66,6 +66,7 @@ const CustomModalAddOrder = ({ open, setOpen, onOrderAdded }: CustomModalAddOrde
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     mutation.mutate(data);
+    onChangeMade()
   };
 
   return (

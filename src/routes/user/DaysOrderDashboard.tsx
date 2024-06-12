@@ -18,7 +18,6 @@ import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
 import OrderTable from "@components/common/OrderTable";
-import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
 
@@ -32,9 +31,11 @@ const DaysOrderDashboard: React.FC = () => {
   const { notification, setNotification } = useNotification();
   const [dummyState, setDummyState] = useState(0); // État inutile pour forcer le re-render
 
-  const handleOrderAdded = () => {
-    setDummyState(dummyState + 1); // Mettre à jour l'état pour forcer le re-render
+  const handleChangeMade = () => {
+    setDummyState(dummyState + 1); 
     queryClient.invalidateQueries({ queryKey: ["orders"] });
+    console.log("handleChangeMade du composant daysDashBoard")
+    console.log(ordersList)
   };
 
   const {
@@ -132,15 +133,15 @@ const DaysOrderDashboard: React.FC = () => {
             <CustomModalAddOrder
               open={open}
               setOpen={setOpen}
-              onOrderAdded={handleOrderAdded}
+              onChangeMade={handleChangeMade}
             />
           </Box>
           {isLoading && <div>Loading...</div>}
           {error && <div>Error: {error.message}</div>}
-          {!isLoading && !error && (
+          {!isLoading && !error && ordersList && (
             <>
               <OrderTable ordersList={ordersList} />
-              <OrderList ordersList={ordersList} />
+              {/* <OrderList ordersList={ordersList} onChangeMade={handleChangeMade}/> */}
             </>
           )}
         </Box>

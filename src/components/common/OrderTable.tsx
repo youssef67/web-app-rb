@@ -15,10 +15,6 @@ import Table from "@mui/joy/Table";
 import Sheet from "@mui/joy/Sheet";
 import IconButton, { iconButtonClasses } from "@mui/joy/IconButton";
 import Typography from "@mui/joy/Typography";
-import Menu from "@mui/joy/Menu";
-import MenuButton from "@mui/joy/MenuButton";
-import MenuItem from "@mui/joy/MenuItem";
-import Dropdown from "@mui/joy/Dropdown";
 import Box from "@mui/joy/Box";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
@@ -27,35 +23,30 @@ import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Order, AscOrDesc } from "@interfaces/interfaces";
 import { getComparator, stableSort } from "@utils/orderTableUtils";
+import RowMenu from "@components/common/RowMenu"
 
 interface OrderProps {
   ordersList: Order[];
 }
 
-function RowMenu() {
-  return (
-    <Dropdown>
-      <MenuButton
-        slots={{ root: IconButton }}
-        slotProps={{ root: { variant: "plain", color: "neutral", size: "sm" } }}
-      >
-        <MoreHorizRoundedIcon />
-      </MenuButton>
-      <Menu size="sm" sx={{ minWidth: 140 }}>
-        <MenuItem>Valider</MenuItem>
-        <MenuItem>Annuler</MenuItem>
-      </Menu>
-    </Dropdown>
-  );
-}
-
 const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
+  console.log(ordersList)
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const [dummyState, setDummyState] = useState(0); // État inutile pour forcer le re-render
+  const orderCount = ordersList?.length;
+
+  const handleChangeMade = () => {
+    console.log("Changement détecté")
+    setDummyState(dummyState + 1); 
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
+
   const renderFilters = () => (
     <React.Fragment>
       <FormControl size="sm">
@@ -83,8 +74,14 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
       </FormControl>
     </React.Fragment>
   );
+
+  if (orderCount === 0) {
+    return <div>Il n'y a pas de commande prévue pour aujourd'hui</div>;
+  }
+  
+
   return (
-    <React.Fragment>
+    <>
       <Sheet
         className="SearchAndFilters-mobile"
         sx={{
@@ -210,18 +207,18 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
                       size="sm"
                       startDecorator={
                         {
-                          confirmed: <CheckRoundedIcon />,
-                          pending: <BlockIcon />,
-                        }[row.status]
+                          1: <CheckRoundedIcon />,
+                          2: <BlockIcon />,
+                        }[row.stateId]
                       }
                       color={
                         {
-                          confirmed: "success",
-                          pending: "danger",
-                        }[row.status] as ColorPaletteProp
+                          1: "success",
+                          2: "danger",
+                        }[row.stateId] as ColorPaletteProp
                       }
                     >
-                      {row.status}
+                      {row.stateId === 1 ? "confirmé" : "non confirmé "}
                     </Chip>
                   </td>
                   <td>
@@ -248,7 +245,7 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
                   </td>
                   <td>
                     <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                      <RowMenu />
+                      <RowMenu idOrder={row.id} onChangeMade={handleChangeMade}/>
                     </Box>
                   </td>
                 </tr>
@@ -300,7 +297,7 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
           Suivant
         </Button>
       </Box>
-    </React.Fragment>
+    </>
   );
 };
 

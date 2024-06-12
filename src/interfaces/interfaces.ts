@@ -5,7 +5,7 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   userId: number;
-  status: 'confirmed' | 'pending'
+  stateId: number
   customerId: number;
   customer: Customer;
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { IFormInput, User } from "@interfaces/interfaces";
+import { IFormInput, User, Order } from "@interfaces/interfaces";
 
-export const fetchOrders = async (user: User | null) => {
+export const fetchOrders = async (user: User | null): Promise<Order[] | []> => {
   const orderList = axios
     .get(`http://localhost:3333/api/v1/order/day-orders?userId=${user?.id}`, {
       headers: {
@@ -16,14 +16,36 @@ export const fetchOrders = async (user: User | null) => {
   return orderList;
 };
 
-export const addOrder = async (data: IFormInput, currentUser: { userId: number; emailUser: string; } |  null, headers: object) => {
+export const addOrder = async (
+  data: IFormInput,
+  currentUser: { userId: number; emailUser: string } | null,
+  headers: object
+) => {
   axios
-      .post(
-        "http://localhost:3333/api/v1/order/add",
-        { ...data, ...currentUser },
-        { headers }
-      )
-      .then((res) => {
-        return res.data
-      })
+    .post(
+      "http://localhost:3333/api/v1/order/add",
+      { ...data, ...currentUser },
+      { headers }
+    )
+    .then((res) => {
+      return res.data;
+    });
 };
+
+export const fetchUpdateOrder = async (
+  orderId: number,
+  headers: object,
+  action: string
+): Promise<void> => {
+  axios
+    .post(
+      `http://localhost:3333/api/v1/order/${action}`,
+      { orderId: orderId },
+      { headers }
+    )
+    .then((res) => {
+      return res.data;
+    });
+};
+
+
