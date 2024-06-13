@@ -149,23 +149,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
               </ListItemContent>
             </ListItemButton>
           </ListItem>
-
-          <ListItem>
-            <ListItemButton
-              role="menuitem"
-              component="a"
-              href="/joy-ui/getting-started/templates/messages/"
-            >
-              <QuestionAnswerRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Messages</Typography>
-              </ListItemContent>
-              <Chip size="sm" color="primary" variant="solid">
-                4
-              </Chip>
-            </ListItemButton>
-          </ListItem>
-
+          
           <ListItem>
             <ListItemButton>
               <GroupRoundedIcon />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@hooks/useAuth";
 import { useNotification } from "@contexts/NotificationContext";
 import { useSnackbar } from "notistack";
@@ -18,25 +18,69 @@ import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
 import OrderTable from "@components/common/OrderTable";
+import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
+import { currentDate, splitFullName } from "@utils/commonUtils";
+import { Order } from "@interfaces/interfaces";
 
 import { fetchOrders } from "@utils/apiUtils";
 
 const DaysOrderDashboard: React.FC = () => {
   const [open, setOpen] = React.useState<boolean>(false);
+  const [statusFilter, setStatusFilter] = useState<number | null>(null);
+  const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
   const [dummyState, setDummyState] = useState(0); // État inutile pour forcer le re-render
 
-  const handleChangeMade = () => {
-    setDummyState(dummyState + 1); 
-    queryClient.invalidateQueries({ queryKey: ["orders"] });
-    console.log("handleChangeMade du composant daysDashBoard")
-    console.log(ordersList)
+  const handleChangeMade = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["orders"] });
+    setDummyState(dummyState + 1);
   };
+
+  const handleFilters = useCallback(
+    (orders: Order[]) => {
+      let filteredOrders = orders;
+      if (
+        (!statusFilter || statusFilter === 0) &&
+        (!customerFilter || customerFilter === "all")
+      ) {
+        return orders;
+      } else {
+        if (statusFilter !== null && statusFilter !== 0) {
+          console.log("else status");
+          filteredOrders = orders.filter(
+            (order) => order.stateId === statusFilter
+          );
+        }
+
+        if (customerFilter !== null && customerFilter !== "all") {
+          const { lastname, firstname } = splitFullName(customerFilter);
+
+          filteredOrders = filteredOrders.filter((order) =>
+            order.customer.name
+              .toLowerCase()
+              .includes(lastname.toLowerCase() || firstname.toLowerCase())
+          );
+        }
+      }
+
+      if (filteredOrders.length === 0) {
+        setNotification({
+          message: "Aucun résultat pour ces filtres.",
+          variant: "error",
+        });
+
+        return orders;
+      } else {
+        return filteredOrders;
+      }
+    },
+    [statusFilter, customerFilter]
+  );
 
   const {
     data: ordersList,
@@ -45,6 +89,7 @@ const DaysOrderDashboard: React.FC = () => {
   } = useQuery({
     queryKey: ["orders"],
     queryFn: () => fetchOrders(user),
+    select: handleFilters,
   });
 
   useEffect(() => {
@@ -59,7 +104,7 @@ const DaysOrderDashboard: React.FC = () => {
       <CssBaseline />
       <Box sx={{ display: "flex", minHeight: "100dvh" }}>
         <Header />
-        <Sidebar currentDashboard="dayOrders" />
+        {/* <Sidebar currentDashboard="dayOrders" /> */}
         <Box
           component="main"
           className="MainContent"
@@ -120,7 +165,7 @@ const DaysOrderDashboard: React.FC = () => {
             }}
           >
             <Typography level="h2" component="h1">
-              Commandes du jour
+              Commandes du {currentDate()}
             </Typography>
             <Button
               variant="outlined"
@@ -140,8 +185,12 @@ const DaysOrderDashboard: React.FC = () => {
           {error && <div>Error: {error.message}</div>}
           {!isLoading && !error && ordersList && (
             <>
-              <OrderTable ordersList={ordersList} />
-              {/* <OrderList ordersList={ordersList} onChangeMade={handleChangeMade}/> */}
+              <OrderTable
+                ordersList={ordersList}
+                statusFilter={setStatusFilter}
+                customerFilter={setCustomerFilter}
+              />
+              <OrderList ordersList={ordersList} />
             </>
           )}
         </Box>

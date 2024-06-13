@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import { ColorPaletteProp } from "@mui/joy/styles";
 import Avatar from "@mui/joy/Avatar";
 import Chip from "@mui/joy/Chip";
@@ -8,45 +10,36 @@ import ListItem from "@mui/joy/ListItem";
 import ListItemContent from "@mui/joy/ListItemContent";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListDivider from "@mui/joy/ListDivider";
-import Menu from "@mui/joy/Menu";
-import MenuButton from "@mui/joy/MenuButton";
-import MenuItem from "@mui/joy/MenuItem";
-import Dropdown from "@mui/joy/Dropdown";
 import Box from "@mui/joy/Box";
-
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { Order } from "@interfaces/interfaces";
+import { useQueryClient } from "@tanstack/react-query";
+import RowMenu from "@components/common/RowMenu";
+import { formatPhoneNumber } from '@utils/commonUtils'
+
 
 interface OrderProps {
   ordersList: Order[];
 }
 
-function RowMenu() {
-  return (
-    <Dropdown>
-      <MenuButton
-        slots={{ root: IconButton }}
-        slotProps={{ root: { variant: "plain", color: "neutral", size: "sm" } }}
-      >
-        <MoreHorizRoundedIcon />
-      </MenuButton>
-      <Menu size="sm" sx={{ minWidth: 140 }}>
-        <MenuItem>Valider</MenuItem>
-        <MenuItem>Annuler</MenuItem>
-      </Menu>
-    </Dropdown>
-  );
-}
-
 const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
+  const queryClient = useQueryClient();
+  const [dummyState, setDummyState] = useState(0);
+  const orderCount = ordersList?.length;
+
+  const handleChangeMade = async () => {
+    console.log("change made")
+    await queryClient.invalidateQueries({ queryKey: ["orders"] });
+    setDummyState(dummyState + 1);
+  };
+
   return (
     <Box sx={{ display: { xs: "block", sm: "none" } }}>
-      {ordersList.map((order) => (
+      {ordersList.map((order: Order) => (
         <List
           key={order.id}
           size="sm"
@@ -65,14 +58,17 @@ const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
               sx={{ display: "flex", gap: 2, alignItems: "start" }}
             >
               <ListItemDecorator>
-                <Avatar size="sm">T</Avatar>
+                <Avatar size="sm">{order.customer.name.charAt(0).toUpperCase()}</Avatar>
               </ListItemDecorator>
               <div>
                 <Typography fontWeight={600} gutterBottom>
-                  {order.customer.name}
+                  {order.customer.name} {order.customer.lastname}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
-                  {order.customer.email}
+                  Heure de retrait : 10H00 
+                </Typography>
+                <Typography level="body-xs" gutterBottom>
+                  Montant de la commande : {order.orderPrice} €
                 </Typography>
                 <Box
                   sx={{
@@ -83,14 +79,14 @@ const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
                     mb: 1,
                   }}
                 >
-                  <Typography level="body-xs">{order.pickupDate}</Typography>
+                  <Typography level="body-xs"> {order.customer.email}</Typography>
                   <Typography level="body-xs">&bull;</Typography>
-                  <Typography level="body-xs">{order.id}</Typography>
+                  <Typography level="body-xs">{formatPhoneNumber(order.customer.phone)}</Typography>
                 </Box>
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                 >
-                  <RowMenu />
+                  <RowMenu idOrder={order.id} onChangeMade={handleChangeMade} />
                 </Box>
               </div>
             </ListItemContent>
@@ -99,51 +95,53 @@ const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
               size="sm"
               startDecorator={
                 {
-                  confirmed: <CheckRoundedIcon />,
-                  pending: <BlockIcon />,
-                }[order.status]
+                  1: <CheckRoundedIcon />,
+                  2: <BlockIcon />,
+                }[order.stateId]
               }
               color={
                 {
-                  confirmed: "success",
-                  pending: "danger",
-                }[order.status] as ColorPaletteProp
+                  1: "success",
+                  2: "danger",
+                }[order.stateId] as ColorPaletteProp
               }
             >
-              {order.status}
+              {order.stateId === 1 ? "confirmé" : "non confirmé "}
             </Chip>
           </ListItem>
           <ListDivider />
         </List>
       ))}
-      <Box
-        className="Pagination-mobile"
-        sx={{
-          display: { xs: "flex", md: "none" },
-          alignItems: "center",
-          py: 2,
-        }}
-      >
-        <IconButton
-          aria-label="page précédente"
-          variant="outlined"
-          color="neutral"
-          size="sm"
+      {orderCount > 0 && (
+        <Box
+          className="Pagination-mobile"
+          sx={{
+            display: { xs: "flex", md: "none" },
+            alignItems: "center",
+            py: 2,
+          }}
         >
-          <KeyboardArrowLeftIcon />
-        </IconButton>
-        <Typography level="body-sm" mx="auto">
-          Page 1 of 10
-        </Typography>
-        <IconButton
-          aria-label="page suivante"
-          variant="outlined"
-          color="neutral"
-          size="sm"
-        >
-          <KeyboardArrowRightIcon />
-        </IconButton>
-      </Box>
+          <IconButton
+            aria-label="page précédente"
+            variant="outlined"
+            color="neutral"
+            size="sm"
+          >
+            <KeyboardArrowLeftIcon />
+          </IconButton>
+          <Typography level="body-sm" mx="auto">
+            Page 1 of 10
+          </Typography>
+          <IconButton
+            aria-label="page suivante"
+            variant="outlined"
+            color="neutral"
+            size="sm"
+          >
+            <KeyboardArrowRightIcon />
+          </IconButton>
+        </Box>
+      )}
     </Box>
   );
 };

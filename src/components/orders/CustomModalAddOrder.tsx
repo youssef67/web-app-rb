@@ -66,7 +66,7 @@ const CustomModalAddOrder = ({ open, setOpen, onChangeMade }: CustomModalAddOrde
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     mutation.mutate(data);
-    onChangeMade()
+    // onChangeMade()
   };
 
   return (

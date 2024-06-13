@@ -9,11 +9,12 @@ import Input from "@mui/joy/Input";
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
 import ModalClose from "@mui/joy/ModalClose";
-import Select from "@mui/joy/Select";
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from "@mui/joy/Option";
 import Table from "@mui/joy/Table";
 import Sheet from "@mui/joy/Sheet";
 import IconButton, { iconButtonClasses } from "@mui/joy/IconButton";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import Typography from "@mui/joy/Typography";
 import Box from "@mui/joy/Box";
 
@@ -27,24 +28,44 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { useQueryClient } from "@tanstack/react-query";
 import { Order, AscOrDesc } from "@interfaces/interfaces";
 import { getComparator, stableSort } from "@utils/orderTableUtils";
-import RowMenu from "@components/common/RowMenu"
+import {
+  formatPhoneNumber,
+  getFullName,
+  getUniqueCustomers,
+} from "@utils/commonUtils";
+import RowMenu from "@components/common/RowMenu";
 
 interface OrderProps {
   ordersList: Order[];
+  statusFilter: (value: any) => void;
+  customerFilter: (value: any) => void;
 }
 
-const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
-  console.log(ordersList)
+const OrderTable: React.FC<OrderProps> = ({
+  ordersList,
+  statusFilter,
+  customerFilter,
+}) => {
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
+  const [customer, setCustomer] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [dummyState, setDummyState] = useState(0); // État inutile pour forcer le re-render
+  const [dummyState, setDummyState] = useState(0);
   const orderCount = ordersList?.length;
 
-  const handleChangeMade = () => {
-    console.log("Changement détecté")
-    setDummyState(dummyState + 1); 
-    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  const handleChangeMade = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["orders"] });
+    setDummyState(dummyState + 1);
+  };
+
+  const handleFilterStatusChange = (e: any, value: number | null) => {
+    // console.log(value)
+    statusFilter(value);
+  };
+
+  const handleFilterCustomerChange = (e: any, value: string | null) => {
+    setCustomer(value);
+    customerFilter(value);
   };
 
   const renderFilters = () => (
@@ -55,21 +76,52 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
           size="sm"
           placeholder="Filtrer par statut"
           slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
+          onChange={handleFilterStatusChange}
+          indicator={<KeyboardArrowDown />}
+          sx={{
+            width: 240,
+            [`& .${selectClasses.indicator}`]: {
+              transition: "0.2s",
+              [`&.${selectClasses.expanded}`]: {
+                transform: "rotate(-180deg)",
+              },
+            },
+          }}
         >
-          <Option value="paid">Commande validé</Option>
-          <Option value="pending">Commande non validé</Option>
+          <Option value={0}>Tous</Option>
+          <Option value={1}>Commande confirmée</Option>
+          <Option value={2}>Commande non confirmée</Option>
         </Select>
       </FormControl>
       <FormControl size="sm">
         <FormLabel>Client</FormLabel>
-        <Select size="sm" placeholder="All">
-          <Option value="Tous">All</Option>
-          <Option value="olivia">Olivia Rhye</Option>
-          <Option value="steve">Steve Hampton</Option>
-          <Option value="ciaran">Ciaran Murray</Option>
-          <Option value="marina">Marina Macdonald</Option>
-          <Option value="charles">Charles Fulton</Option>
-          <Option value="jay">Jay Hoper</Option>
+        <Select
+          size="sm"
+          placeholder="Filter par client"
+          indicator={<KeyboardArrowDown />}
+          sx={{
+            width: 240,
+            [`& .${selectClasses.indicator}`]: {
+              transition: "0.2s",
+              [`&.${selectClasses.expanded}`]: {
+                transform: "rotate(-180deg)",
+              },
+            },
+          }}
+          onChange={handleFilterCustomerChange}
+          endDecorator={
+            <Chip size="sm" color="success" variant="soft">
+              {getUniqueCustomers(ordersList).length}
+            </Chip>
+          }
+          value={customer && customer}
+        >
+          <Option value="all">Tous</Option>
+          {getUniqueCustomers(ordersList).map((order) => (
+            <Option key={order.id} value={getFullName(order.customer)}>
+              {getFullName(order.customer)}
+            </Option>
+          ))}
         </Select>
       </FormControl>
     </React.Fragment>
@@ -78,7 +130,6 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
   if (orderCount === 0) {
     return <div>Il n'y a pas de commande prévue pour aujourd'hui</div>;
   }
-  
 
   return (
     <>
@@ -133,6 +184,10 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
           },
         }}
       >
+        <FormControl sx={{ flex: 1 }} size="sm">
+          <FormLabel>Recherche sur l'ensemble des champs</FormLabel>
+          <Input size="sm" placeholder="Rechercher" startDecorator={<SearchIcon />} />
+        </FormControl>
         {renderFilters()}
       </Box>
       <Sheet
@@ -166,7 +221,7 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
               <th
                 style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
               >
-                Date
+                Heure de retrait
               </th>
               <th
                 style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
@@ -196,10 +251,10 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
               (row: Order) => (
                 <tr key={row.id}>
                   <td style={{ textAlign: "center", width: 140 }}>
-                    <Typography level="body-xs">{row.pickupDate}</Typography>
+                    <Typography level="body-xs">10H00</Typography>
                   </td>
                   <td style={{ textAlign: "center", width: 140 }}>
-                    <Typography level="body-xs">{row.orderPrice}</Typography>
+                    <Typography level="body-xs">{row.orderPrice} €</Typography>
                   </td>
                   <td style={{ textAlign: "center", width: 130 }}>
                     <Chip
@@ -225,7 +280,7 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
                     <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                       <div style={{ textAlign: "center", width: 240 }}>
                         <Typography level="body-xs">
-                          {row.customer.name}
+                          {row.customer.name} {row.customer.lastname}
                         </Typography>
                         <Typography level="body-xs">
                           {row.customer.email}
@@ -239,13 +294,16 @@ const OrderTable: React.FC<OrderProps> = ({ ordersList }) => {
                         level="body-xs"
                         style={{ textAlign: "center", width: 240 }}
                       >
-                        {row.customer.phone}
+                        {formatPhoneNumber(row.customer.phone)}
                       </Typography>
                     </Box>
                   </td>
                   <td>
                     <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                      <RowMenu idOrder={row.id} onChangeMade={handleChangeMade}/>
+                      <RowMenu
+                        idOrder={row.id}
+                        onChangeMade={handleChangeMade}
+                      />
                     </Box>
                   </td>
                 </tr>
