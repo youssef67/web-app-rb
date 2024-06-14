@@ -8,14 +8,16 @@ import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
+import ClearIcon from "@mui/icons-material/Clear";
 import ModalClose from "@mui/joy/ModalClose";
-import Select, { selectClasses } from '@mui/joy/Select';
+import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import Table from "@mui/joy/Table";
 import Sheet from "@mui/joy/Sheet";
 import IconButton, { iconButtonClasses } from "@mui/joy/IconButton";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import Typography from "@mui/joy/Typography";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/joy/Box";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
@@ -34,21 +36,30 @@ import {
   getUniqueCustomers,
 } from "@utils/commonUtils";
 import RowMenu from "@components/common/RowMenu";
+import { set } from "date-fns";
 
 interface OrderProps {
   ordersList: Order[];
   statusFilter: (value: any) => void;
   customerFilter: (value: any) => void;
+  freeFieldFilter: (value: any) => void;
 }
 
 const OrderTable: React.FC<OrderProps> = ({
   ordersList,
   statusFilter,
   customerFilter,
+  freeFieldFilter,
 }) => {
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
-  const [customer, setCustomer] = useState<string | null>(null);
+  const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
+    null
+  );
+  const [statusFilterValue, setStatusFilterValue] = useState<number | null>(
+    null
+  );
+  const [freeFieldFilterValue, setFreeFieldFilterValue] = useState<string>("");
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
   const orderCount = ordersList?.length;
@@ -59,13 +70,33 @@ const OrderTable: React.FC<OrderProps> = ({
   };
 
   const handleFilterStatusChange = (e: any, value: number | null) => {
-    // console.log(value)
+    setStatusFilterValue(value);
     statusFilter(value);
   };
 
   const handleFilterCustomerChange = (e: any, value: string | null) => {
-    setCustomer(value);
+    setCustomerFilterValue(value);
     customerFilter(value);
+  };
+
+  const handleFreeFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFreeFieldFilterValue(e.target.value);
+    freeFieldFilter(e.target.value);
+  };
+
+  const handleClearInput = () => {
+    setFreeFieldFilterValue("");
+    freeFieldFilter("");
+  };
+
+  const handleClearAllfilters = () => {
+    statusFilter(0);
+    customerFilter(null);
+    freeFieldFilter(null);
+
+    setStatusFilterValue(null);
+    setCustomerFilterValue(null);
+    setFreeFieldFilterValue("");
   };
 
   const renderFilters = () => (
@@ -77,6 +108,7 @@ const OrderTable: React.FC<OrderProps> = ({
           placeholder="Filtrer par statut"
           slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
           onChange={handleFilterStatusChange}
+          value={statusFilterValue}
           indicator={<KeyboardArrowDown />}
           sx={{
             width: 240,
@@ -114,7 +146,7 @@ const OrderTable: React.FC<OrderProps> = ({
               {getUniqueCustomers(ordersList).length}
             </Chip>
           }
-          value={customer && customer}
+          value={customerFilterValue && customerFilterValue}
         >
           <Option value="all">Tous</Option>
           {getUniqueCustomers(ordersList).map((order) => (
@@ -143,9 +175,18 @@ const OrderTable: React.FC<OrderProps> = ({
       >
         <Input
           size="sm"
-          placeholder="Search"
+          placeholder="Rechercher"
+          value={freeFieldFilterValue}
+          onChange={handleFreeFilterChange}
           startDecorator={<SearchIcon />}
           sx={{ flexGrow: 1 }}
+          endDecorator={
+            freeFieldFilterValue && (
+              <IconButton size="sm" variant="plain" onClick={handleClearInput}>
+                <ClearIcon />
+              </IconButton>
+            )
+          }
         />
         <IconButton
           size="sm"
@@ -154,6 +195,14 @@ const OrderTable: React.FC<OrderProps> = ({
           onClick={() => setOpen(true)}
         >
           <FilterAltIcon />
+        </IconButton>
+        <IconButton
+          size="sm"
+          variant="outlined"
+          color="neutral"
+          onClick={handleClearAllfilters}
+        >
+          <RefreshIcon />
         </IconButton>
         <Modal open={open} onClose={() => setOpen(false)}>
           <ModalDialog aria-labelledby="filter-modal" layout="center">
@@ -186,9 +235,35 @@ const OrderTable: React.FC<OrderProps> = ({
       >
         <FormControl sx={{ flex: 1 }} size="sm">
           <FormLabel>Recherche sur l'ensemble des champs</FormLabel>
-          <Input size="sm" placeholder="Rechercher" startDecorator={<SearchIcon />} />
+          <Input
+            size="sm"
+            placeholder="Rechercher"
+            value={freeFieldFilterValue}
+            startDecorator={<SearchIcon />}
+            onChange={handleFreeFilterChange}
+            endDecorator={
+              freeFieldFilterValue && (
+                <IconButton
+                  size="sm"
+                  variant="plain"
+                  onClick={handleClearInput}
+                >
+                  <ClearIcon />
+                </IconButton>
+              )
+            }
+          />
         </FormControl>
         {renderFilters()}
+        <IconButton
+          size="sm"
+          variant="outlined"
+          color="neutral"
+          onClick={handleClearAllfilters}
+          sx={{ ml: 1, alignSelf: "flex-end" }}
+        >
+          <RefreshIcon />
+        </IconButton>
       </Box>
       <Sheet
         className="OrderTableContainer"

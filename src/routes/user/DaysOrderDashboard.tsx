@@ -21,7 +21,10 @@ import OrderTable from "@components/common/OrderTable";
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
-import { currentDate, splitFullName } from "@utils/commonUtils";
+import {
+  currentDate,
+  manageFiltersValues,
+} from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
 
 import { fetchOrders } from "@utils/apiUtils";
@@ -30,6 +33,7 @@ const DaysOrderDashboard: React.FC = () => {
   const [open, setOpen] = React.useState<boolean>(false);
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
+  const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
@@ -43,43 +47,25 @@ const DaysOrderDashboard: React.FC = () => {
 
   const handleFilters = useCallback(
     (orders: Order[]) => {
-      let filteredOrders = orders;
-      if (
-        (!statusFilter || statusFilter === 0) &&
-        (!customerFilter || customerFilter === "all")
-      ) {
-        return orders;
-      } else {
-        if (statusFilter !== null && statusFilter !== 0) {
-          console.log("else status");
-          filteredOrders = orders.filter(
-            (order) => order.stateId === statusFilter
-          );
-        }
-
-        if (customerFilter !== null && customerFilter !== "all") {
-          const { lastname, firstname } = splitFullName(customerFilter);
-
-          filteredOrders = filteredOrders.filter((order) =>
-            order.customer.name
-              .toLowerCase()
-              .includes(lastname.toLowerCase() || firstname.toLowerCase())
-          );
-        }
-      }
+      const filteredOrders = manageFiltersValues(
+        orders,
+        statusFilter,
+        customerFilter,
+        freeFieldFilter
+      );
 
       if (filteredOrders.length === 0) {
-        setNotification({
-          message: "Aucun résultat pour ces filtres.",
-          variant: "error",
-        });
+        // setNotification({
+        //   message: "Aucun résultat pour ces filtres.",
+        //   variant: "error",
+        // });
 
         return orders;
       } else {
         return filteredOrders;
       }
     },
-    [statusFilter, customerFilter]
+    [statusFilter, customerFilter, freeFieldFilter],
   );
 
   const {
@@ -189,6 +175,7 @@ const DaysOrderDashboard: React.FC = () => {
                 ordersList={ordersList}
                 statusFilter={setStatusFilter}
                 customerFilter={setCustomerFilter}
+                freeFieldFilter={setFreeFieldFilter}
               />
               <OrderList ordersList={ordersList} />
             </>
