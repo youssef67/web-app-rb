@@ -4,8 +4,10 @@ export interface Order {
   pickupDate: string;
   createdAt: string;
   updatedAt: string;
+  detailsForCustomer: string;
+  detailsForUser: string;
   userId: number;
-  stateId: number
+  stateId: number;
   customerId: number;
   customer: Customer;
 }
@@ -27,6 +29,8 @@ export interface IFormInput {
   phone: string;
   amount: number;
   pickupDate: string;
+  detailsForCustomer: string;
+  detailsForUser: string;
 }
 
 export interface ModalAddOrderProps {
@@ -41,4 +45,3 @@ export interface User {
 }
 
 export type AscOrDesc = "asc" | "desc";
-

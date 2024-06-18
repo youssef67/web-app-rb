@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 import { ColorPaletteProp } from "@mui/joy/styles";
-import Avatar from "@mui/joy/Avatar";
+import Tooltip from "@mui/joy/Tooltip";
+import InfoIcon from "@mui/icons-material/Info";
 import Chip from "@mui/joy/Chip";
 import Typography from "@mui/joy/Typography";
 import List from "@mui/joy/List";
@@ -17,22 +18,25 @@ import { Order } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
 import RowMenu from "@components/common/RowMenu";
-import { formatPhoneNumber } from '@utils/commonUtils'
-
+import { formatPhoneNumber } from "@utils/commonUtils";
 
 interface OrderProps {
   ordersList: Order[];
-  numberOfPages: number
-  currentPage: number
+  numberOfPages: number;
+  currentPage: number;
 }
 
-const OrderList: React.FC<OrderProps> = ({ ordersList, numberOfPages, currentPage }) => {
-  console.log(ordersList)
+const OrderList: React.FC<OrderProps> = ({
+  ordersList,
+  numberOfPages,
+  currentPage,
+}) => {
+  console.log(ordersList);
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
   const orderCount = ordersList?.length;
 
-  console.log(orderCount)
+  console.log(orderCount);
 
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -60,14 +64,24 @@ const OrderList: React.FC<OrderProps> = ({ ordersList, numberOfPages, currentPag
               sx={{ display: "flex", gap: 2, alignItems: "start" }}
             >
               <ListItemDecorator>
-                <Avatar size="sm">{order.customer.name.charAt(0).toUpperCase()}</Avatar>
+                <Tooltip
+                  title={
+                    order.detailsForUser
+                      ? order.detailsForUser
+                      : "Aucune information"
+                  }
+                  variant="solid"
+                  placement="right"
+                >
+                  <InfoIcon sx={{ fontSize: "2rem" }} />
+                </Tooltip>
               </ListItemDecorator>
               <div>
                 <Typography fontWeight={600} gutterBottom>
                   {order.customer.name} {order.customer.lastname}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
-                  Heure de retrait : 10H00 
+                  Heure de retrait : 10H00
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
                   Montant de la commande : {order.orderPrice} €
@@ -81,9 +95,14 @@ const OrderList: React.FC<OrderProps> = ({ ordersList, numberOfPages, currentPag
                     mb: 1,
                   }}
                 >
-                  <Typography level="body-xs"> {order.customer.email}</Typography>
+                  <Typography level="body-xs">
+                    {" "}
+                    {order.customer.email}
+                  </Typography>
                   <Typography level="body-xs">&bull;</Typography>
-                  <Typography level="body-xs">{formatPhoneNumber(order.customer.phone)}</Typography>
+                  <Typography level="body-xs">
+                    {formatPhoneNumber(order.customer.phone)}
+                  </Typography>
                 </Box>
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
@@ -114,7 +133,10 @@ const OrderList: React.FC<OrderProps> = ({ ordersList, numberOfPages, currentPag
           <ListDivider />
         </List>
       ))}
-      <MobilePagination numberOfPages={numberOfPages} currentPage={currentPage}/>
+      <MobilePagination
+        numberOfPages={numberOfPages}
+        currentPage={currentPage}
+      />
     </Box>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { ColorPaletteProp } from "@mui/joy/styles";
 import Button from "@mui/joy/Button";
+import Tooltip from "@mui/joy/Tooltip";
+import InfoIcon from "@mui/icons-material/Info";
 import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import FormControl from "@mui/joy/FormControl";
@@ -41,7 +43,7 @@ interface OrderProps {
   statusFilter: (value: any) => void;
   customerFilter: (value: any) => void;
   freeFieldFilter: (value: any) => void;
-  numberOfPages: number
+  numberOfPages: number;
 }
 
 const OrderTable: React.FC<OrderProps> = ({
@@ -49,12 +51,16 @@ const OrderTable: React.FC<OrderProps> = ({
   statusFilter,
   customerFilter,
   freeFieldFilter,
-  numberOfPages
+  numberOfPages,
 }) => {
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
-  const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(null);
-  const [statusFilterValue, setStatusFilterValue] = useState<number | null>(null);
+  const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
+    null
+  );
+  const [statusFilterValue, setStatusFilterValue] = useState<number | null>(
+    null
+  );
   const [freeFieldFilterValue, setFreeFieldFilterValue] = useState<string>("");
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
@@ -327,7 +333,31 @@ const OrderTable: React.FC<OrderProps> = ({
                     <Typography level="body-xs">10H00</Typography>
                   </td>
                   <td style={{ textAlign: "center", width: 140 }}>
-                    <Typography level="body-xs">{row.orderPrice} €</Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Typography
+                        level="body-xs"
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <Tooltip
+                          title={
+                            row.detailsForUser
+                              ? row.detailsForUser
+                              : "Aucune information"
+                          }
+                          variant="solid"
+                          placement="right"
+                        >
+                          <InfoIcon sx={{ fontSize: "1.2rem", marginRight: 1 }} />
+                        </Tooltip>
+                        {row.orderPrice} €
+                      </Typography>
+                    </Box>
                   </td>
                   <td style={{ textAlign: "center", width: 130 }}>
                     <Chip
@@ -385,7 +415,7 @@ const OrderTable: React.FC<OrderProps> = ({
           </tbody>
         </Table>
       </Sheet>
-      <DesktopPagination numberOfPages={numberOfPages}/>
+      <DesktopPagination numberOfPages={numberOfPages} />
     </>
   );
 };
