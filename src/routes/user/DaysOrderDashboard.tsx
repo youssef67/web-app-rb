@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@hooks/useAuth";
 import { useNotification } from "@contexts/NotificationContext";
+import { usePagination } from "@contexts/PaginationContext";
+
 import { useSnackbar } from "notistack";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -30,15 +32,23 @@ import { Order } from "@interfaces/interfaces";
 import { fetchOrders } from "@utils/apiUtils";
 
 const DaysOrderDashboard: React.FC = () => {
-  const [open, setOpen] = React.useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  // filters State
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
+  //Pagination state
+  const [numberOfPages, setNumberOfPages] = useState<number>(1)
+  const ordersPerPage = 5
+  const [ordersForCurrentPage, setOrdersForCurrentPage] = useState<Order[]>([])
+  //Hook state
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
-  const [dummyState, setDummyState] = useState(0); // État inutile pour forcer le re-render
+  const { currentPage } = usePagination();
+  //State to force re render
+  const [dummyState, setDummyState] = useState(0);
 
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -68,6 +78,7 @@ const DaysOrderDashboard: React.FC = () => {
     [statusFilter, customerFilter, freeFieldFilter],
   );
 
+  
   const {
     data: ordersList,
     isLoading,
@@ -84,6 +95,31 @@ const DaysOrderDashboard: React.FC = () => {
       setNotification(null);
     }
   }, [notification, enqueueSnackbar, setNotification]);
+
+  useEffect(() => {
+    console.log("orderList ", ordersList)
+    if (ordersList) {
+      setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage))
+    }
+
+    const start = (currentPage - 1) * ordersPerPage
+    const end = start + ordersPerPage
+
+    const orders =  ordersList?.slice(start, end)
+
+    if(orders) setOrdersForCurrentPage(orders)
+
+    // if (ordersList) {
+    //   const orders =  ordersList.slice(start, end)
+    //   setOrdersForCurrentPage(orders)
+    // } else {
+    //   setOrdersForCurrentPage([])
+    // }
+
+    console.log(orders)
+    console.log(numberOfPages)
+    // console.log(currentPage)
+  }, [currentPage, ordersList])
 
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -172,12 +208,13 @@ const DaysOrderDashboard: React.FC = () => {
           {!isLoading && !error && ordersList && (
             <>
               <OrderTable
-                ordersList={ordersList}
+                ordersList={ordersForCurrentPage}
                 statusFilter={setStatusFilter}
                 customerFilter={setCustomerFilter}
                 freeFieldFilter={setFreeFieldFilter}
+                numberOfPages={numberOfPages}
               />
-              <OrderList ordersList={ordersList} />
+              <OrderList ordersList={ordersForCurrentPage} />
             </>
           )}
         </Box>

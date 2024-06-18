@@ -32,7 +32,6 @@ const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
   const orderCount = ordersList?.length;
 
   const handleChangeMade = async () => {
-    console.log("change made")
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
     setDummyState(dummyState + 1);
   };

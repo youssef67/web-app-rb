@@ -14,7 +14,7 @@ import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import Table from "@mui/joy/Table";
 import Sheet from "@mui/joy/Sheet";
-import IconButton, { iconButtonClasses } from "@mui/joy/IconButton";
+import IconButton from "@mui/joy/IconButton";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import Typography from "@mui/joy/Typography";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -24,10 +24,9 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { useQueryClient } from "@tanstack/react-query";
+import Pagination from "@components/common/Pagination";
 import { Order, AscOrDesc } from "@interfaces/interfaces";
 import { getComparator, stableSort } from "@utils/orderTableUtils";
 import {
@@ -36,13 +35,13 @@ import {
   getUniqueCustomers,
 } from "@utils/commonUtils";
 import RowMenu from "@components/common/RowMenu";
-import { set } from "date-fns";
 
 interface OrderProps {
   ordersList: Order[];
   statusFilter: (value: any) => void;
   customerFilter: (value: any) => void;
   freeFieldFilter: (value: any) => void;
+  numberOfPages: number
 }
 
 const OrderTable: React.FC<OrderProps> = ({
@@ -50,15 +49,12 @@ const OrderTable: React.FC<OrderProps> = ({
   statusFilter,
   customerFilter,
   freeFieldFilter,
+  numberOfPages
 }) => {
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
-  const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
-    null
-  );
-  const [statusFilterValue, setStatusFilterValue] = useState<number | null>(
-    null
-  );
+  const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(null);
+  const [statusFilterValue, setStatusFilterValue] = useState<number | null>(null);
   const [freeFieldFilterValue, setFreeFieldFilterValue] = useState<string>("");
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
@@ -69,6 +65,7 @@ const OrderTable: React.FC<OrderProps> = ({
     setDummyState(dummyState + 1);
   };
 
+  // Filtering functions
   const handleFilterStatusChange = (e: any, value: number | null) => {
     setStatusFilterValue(value);
     statusFilter(value);
@@ -84,6 +81,7 @@ const OrderTable: React.FC<OrderProps> = ({
     freeFieldFilter(e.target.value);
   };
 
+  // Clear filter functions
   const handleClearInput = () => {
     setFreeFieldFilterValue("");
     freeFieldFilter("");
@@ -387,49 +385,7 @@ const OrderTable: React.FC<OrderProps> = ({
           </tbody>
         </Table>
       </Sheet>
-      <Box
-        className="Pagination-laptopUp"
-        sx={{
-          pt: 2,
-          gap: 1,
-          [`& .${iconButtonClasses.root}`]: { borderRadius: "50%" },
-          display: {
-            xs: "none",
-            md: "flex",
-          },
-        }}
-      >
-        <Button
-          size="sm"
-          variant="outlined"
-          color="neutral"
-          startDecorator={<KeyboardArrowLeftIcon />}
-        >
-          Précédent
-        </Button>
-
-        <Box sx={{ flex: 1 }} />
-        {["1", "2", "3", "…", "8", "9", "10"].map((page) => (
-          <IconButton
-            key={page}
-            size="sm"
-            variant={Number(page) ? "outlined" : "plain"}
-            color="neutral"
-          >
-            {page}
-          </IconButton>
-        ))}
-        <Box sx={{ flex: 1 }} />
-
-        <Button
-          size="sm"
-          variant="outlined"
-          color="neutral"
-          endDecorator={<KeyboardArrowRightIcon />}
-        >
-          Suivant
-        </Button>
-      </Box>
+      <Pagination numberOfPages={numberOfPages}/>
     </>
   );
 };

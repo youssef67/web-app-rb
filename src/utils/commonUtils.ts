@@ -95,8 +95,6 @@ export const manageFiltersValues = (
             value.toLowerCase().includes(freeFieldFilter.toLowerCase())
         )
       );
-
-      console.log(freeFieldFilterResult)
       
       if (freeFieldFilterResult.length > 0) filteredOrders = freeFieldFilterResult
       else  filteredOrders = []

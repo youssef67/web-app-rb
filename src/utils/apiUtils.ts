@@ -1,7 +1,8 @@
 import axios from "axios";
 import { IFormInput, User, Order } from "@interfaces/interfaces";
 
-export const fetchOrders = async (user: User | null): Promise<Order[] | []> => {
+export const fetchOrders = async (user: User): Promise<Order[] | []> => {
+  console.log("userId", user?.id)
   const orderList = axios
     .get(`http://localhost:3333/api/v1/order/day-orders?userId=${user?.id}`, {
       headers: {
