@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { usePagination } from "@contexts/PaginationContext";
 import IconButton, { iconButtonClasses } from "@mui/joy/IconButton";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -6,11 +6,11 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 
-interface PaginationProps {
+interface DesktopPaginationProps {
   numberOfPages: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
+const DesktopPagination: React.FC<DesktopPaginationProps> = ({
   numberOfPages,
 }) => {
   const { currentPage, setCurrentPage } = usePagination();
@@ -74,4 +74,4 @@ const Pagination: React.FC<PaginationProps> = ({
   );
 };
 
-export default Pagination;
+export default DesktopPagination;

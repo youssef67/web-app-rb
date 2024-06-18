@@ -26,7 +26,7 @@ import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
 
 import { useQueryClient } from "@tanstack/react-query";
-import Pagination from "@components/common/Pagination";
+import DesktopPagination from "@components/common/DesktopPagination";
 import { Order, AscOrDesc } from "@interfaces/interfaces";
 import { getComparator, stableSort } from "@utils/orderTableUtils";
 import {
@@ -385,7 +385,7 @@ const OrderTable: React.FC<OrderProps> = ({
           </tbody>
         </Table>
       </Sheet>
-      <Pagination numberOfPages={numberOfPages}/>
+      <DesktopPagination numberOfPages={numberOfPages}/>
     </>
   );
 };

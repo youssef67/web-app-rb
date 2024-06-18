@@ -23,10 +23,7 @@ import OrderTable from "@components/common/OrderTable";
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
-import {
-  currentDate,
-  manageFiltersValues,
-} from "@utils/commonUtils";
+import { currentDate, manageFiltersValues } from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
 
 import { fetchOrders } from "@utils/apiUtils";
@@ -38,9 +35,9 @@ const DaysOrderDashboard: React.FC = () => {
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
   //Pagination state
-  const [numberOfPages, setNumberOfPages] = useState<number>(1)
-  const ordersPerPage = 5
-  const [ordersForCurrentPage, setOrdersForCurrentPage] = useState<Order[]>([])
+  const [numberOfPages, setNumberOfPages] = useState<number>(1);
+  const ordersPerPage = 10;
+  const [ordersForCurrentPage, setOrdersForCurrentPage] = useState<Order[]>([]);
   //Hook state
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -75,10 +72,9 @@ const DaysOrderDashboard: React.FC = () => {
         return filteredOrders;
       }
     },
-    [statusFilter, customerFilter, freeFieldFilter],
+    [statusFilter, customerFilter, freeFieldFilter]
   );
 
-  
   const {
     data: ordersList,
     isLoading,
@@ -97,36 +93,25 @@ const DaysOrderDashboard: React.FC = () => {
   }, [notification, enqueueSnackbar, setNotification]);
 
   useEffect(() => {
-    console.log("orderList ", ordersList)
+    console.log("orderList ", ordersList);
     if (ordersList) {
-      setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage))
+      setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage));
     }
 
-    const start = (currentPage - 1) * ordersPerPage
-    const end = start + ordersPerPage
+    const start = (currentPage - 1) * ordersPerPage;
+    const end = start + ordersPerPage;
 
-    const orders =  ordersList?.slice(start, end)
+    const orders = ordersList?.slice(start, end);
 
-    if(orders) setOrdersForCurrentPage(orders)
-
-    // if (ordersList) {
-    //   const orders =  ordersList.slice(start, end)
-    //   setOrdersForCurrentPage(orders)
-    // } else {
-    //   setOrdersForCurrentPage([])
-    // }
-
-    console.log(orders)
-    console.log(numberOfPages)
-    // console.log(currentPage)
-  }, [currentPage, ordersList])
+    if (orders) setOrdersForCurrentPage(orders);
+  }, [currentPage, ordersList]);
 
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
       <Box sx={{ display: "flex", minHeight: "100dvh" }}>
         <Header />
-        {/* <Sidebar currentDashboard="dayOrders" /> */}
+        <Sidebar currentDashboard="dayOrders" />
         <Box
           component="main"
           className="MainContent"
@@ -214,7 +199,7 @@ const DaysOrderDashboard: React.FC = () => {
                 freeFieldFilter={setFreeFieldFilter}
                 numberOfPages={numberOfPages}
               />
-              <OrderList ordersList={ordersForCurrentPage} />
+              <OrderList ordersList={ordersForCurrentPage} currentPage={currentPage} numberOfPages={numberOfPages}/>
             </>
           )}
         </Box>

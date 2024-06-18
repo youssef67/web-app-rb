@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { ColorPaletteProp } from "@mui/joy/styles";
 import Avatar from "@mui/joy/Avatar";
 import Chip from "@mui/joy/Chip";
-import IconButton from "@mui/joy/IconButton";
 import Typography from "@mui/joy/Typography";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
@@ -13,10 +12,9 @@ import ListDivider from "@mui/joy/ListDivider";
 import Box from "@mui/joy/Box";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { Order } from "@interfaces/interfaces";
+import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
 import RowMenu from "@components/common/RowMenu";
 import { formatPhoneNumber } from '@utils/commonUtils'
@@ -24,12 +22,17 @@ import { formatPhoneNumber } from '@utils/commonUtils'
 
 interface OrderProps {
   ordersList: Order[];
+  numberOfPages: number
+  currentPage: number
 }
 
-const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
+const OrderList: React.FC<OrderProps> = ({ ordersList, numberOfPages, currentPage }) => {
+  console.log(ordersList)
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
   const orderCount = ordersList?.length;
+
+  console.log(orderCount)
 
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -111,36 +114,7 @@ const OrderList: React.FC<OrderProps> = ({ ordersList }) => {
           <ListDivider />
         </List>
       ))}
-      {orderCount > 0 && (
-        <Box
-          className="Pagination-mobile"
-          sx={{
-            display: { xs: "flex", md: "none" },
-            alignItems: "center",
-            py: 2,
-          }}
-        >
-          <IconButton
-            aria-label="page précédente"
-            variant="outlined"
-            color="neutral"
-            size="sm"
-          >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          <Typography level="body-sm" mx="auto">
-            Page 1 of 10
-          </Typography>
-          <IconButton
-            aria-label="page suivante"
-            variant="outlined"
-            color="neutral"
-            size="sm"
-          >
-            <KeyboardArrowRightIcon />
-          </IconButton>
-        </Box>
-      )}
+      <MobilePagination numberOfPages={numberOfPages} currentPage={currentPage}/>
     </Box>
   );
 };

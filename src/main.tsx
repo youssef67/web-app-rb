@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <QueryClientProvider client={queryClient}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <App />
-                <ReactQueryDevtools initialIsOpen={false} />
+                {/* <ReactQueryDevtools initialIsOpen={false} /> */}
               </LocalizationProvider>
             </QueryClientProvider>
           </ThemeProvider>
