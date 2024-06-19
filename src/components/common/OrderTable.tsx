@@ -44,6 +44,7 @@ interface OrderProps {
   customerFilter: (value: any) => void;
   freeFieldFilter: (value: any) => void;
   numberOfPages: number;
+  openUpdateModal: (orderId: number) => void
 }
 
 const OrderTable: React.FC<OrderProps> = ({
@@ -52,9 +53,11 @@ const OrderTable: React.FC<OrderProps> = ({
   customerFilter,
   freeFieldFilter,
   numberOfPages,
+  openUpdateModal
 }) => {
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
+
   const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
     null
   );
@@ -104,7 +107,7 @@ const OrderTable: React.FC<OrderProps> = ({
   };
 
   const renderFilters = () => (
-    <React.Fragment>
+    <>
       <FormControl size="sm">
         <FormLabel>Statut</FormLabel>
         <Select
@@ -160,11 +163,11 @@ const OrderTable: React.FC<OrderProps> = ({
           ))}
         </Select>
       </FormControl>
-    </React.Fragment>
+    </>
   );
 
   if (orderCount === 0) {
-    return <div>Il n'y a pas de commande prévue pour aujourd'hui</div>;
+    return <div>Il n'y a pas de commandes prévues pour aujourd'hui</div>;
   }
 
   return (
@@ -353,7 +356,9 @@ const OrderTable: React.FC<OrderProps> = ({
                           variant="solid"
                           placement="right"
                         >
-                          <InfoIcon sx={{ fontSize: "1.2rem", marginRight: 1 }} />
+                          <InfoIcon
+                            sx={{ fontSize: "1.2rem", marginRight: 1 }}
+                          />
                         </Tooltip>
                         {row.orderPrice} €
                       </Typography>
@@ -406,6 +411,7 @@ const OrderTable: React.FC<OrderProps> = ({
                       <RowMenu
                         idOrder={row.id}
                         onChangeMade={handleChangeMade}
+                        openUpdateModal={openUpdateModal}
                       />
                     </Box>
                   </td>

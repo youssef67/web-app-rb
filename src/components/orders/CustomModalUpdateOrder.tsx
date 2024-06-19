@@ -1,3 +1,5 @@
+import React, { useEffect } from "react";
+
 import Button from "@mui/joy/Button";
 import ModalOverflow from "@mui/joy/ModalOverflow";
 
@@ -14,36 +16,37 @@ import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import { useNotification } from "@contexts/NotificationContext";
 import { useHeader } from "@hooks/useHeader";
-import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 
 import { NumericFormatAdapter } from "@utils/modalUtils";
-import { addOrder } from "@utils/apiUtils";
+import { updateOrder } from "@utils/apiUtils";
 import { IFormInput } from "@interfaces/interfaces";
+import { Order } from "@interfaces/interfaces";
 
-interface CustomModalAddOrderProps {
+interface CustomModalUpdateOrderProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   onChangeMade: () => void;
+  orderToUpdate: Order | undefined
 }
 
-const CustomModalAddOrder = ({
+const CustomModalUpdateOrder = ({
   open,
   setOpen,
+  orderToUpdate,
   onChangeMade,
-}: CustomModalAddOrderProps) => {
+}: CustomModalUpdateOrderProps) => {
   const { setNotification } = useNotification();
-  const currentUser = useCurrentUser();
   const headers = useHeader();
 
   const mutation = useMutation({
     mutationFn: (data: IFormInput) =>
-      addOrder(data, currentUser, headers),
+      updateOrder(data, headers, orderToUpdate),
     onSuccess: () => {
-      onChangeMade();
+      onChangeMade()
       setNotification({
-        message: "Commande enregistrée avec succès",
+        message: "Commande modifié avec succès",
         variant: "success",
       });
       setOpen(false);
@@ -59,13 +62,10 @@ const CustomModalAddOrder = ({
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
-      name: "youssef",
-      lastname: "moudni",
-      email: "you.moudni@gmail.com",
-      phone: "0668735937",
       amount: 20,
       pickupDate: new Date().toISOString().split("T")[0],
       detailsForCustomer: "Livraison à domicile",
@@ -73,18 +73,14 @@ const CustomModalAddOrder = ({
     },
   });
 
-  // useEffect(() => {
-  //   if (order) {
-  //     setValue("name", order.customer.name);
-  //     setValue("lastname", order.customer.lastname);
-  //     setValue("email", order.customer.email);
-  //     setValue("phone", order.customer.phone);
-  //     setValue("amount", Number(order.orderPrice));
-  //     setValue("pickupDate", new Date().toISOString().split("T")[0]);
-  //     setValue("detailsForCustomer", order.detailsForCustomer ?? "");
-  //     setValue("detailsForUser", order.detailsForUser ?? "");
-  //   }
-  // }, [order, setValue]);
+  useEffect(() => {
+    if (orderToUpdate) {
+      setValue("amount", Number(orderToUpdate.orderPrice));
+      setValue("pickupDate", new Date().toISOString().split("T")[0]);
+      setValue("detailsForCustomer", orderToUpdate.detailsForCustomer ?? "");
+      setValue("detailsForUser", orderToUpdate.detailsForUser ?? "");
+    }
+  }, [orderToUpdate, setValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     mutation.mutate(data);
@@ -100,125 +96,6 @@ const CustomModalAddOrder = ({
             </Box>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={2}>
-                <FormControl>
-                  <Controller
-                    name="name"
-                    control={control}
-                    rules={{
-                      required: "Le nom est obligatoire",
-                      minLength: {
-                        value: 2,
-                        message: "Le nom doit contenir au moins 2 caractères",
-                      },
-                    }}
-                    render={({ field }) => (
-                      <>
-                        <Input
-                          placeholder="Nom du client"
-                          size="lg"
-                          {...field}
-                          required
-                        />
-                        {errors.name && (
-                          <FormHelperText style={{ color: "red" }}>
-                            <InfoOutlined style={{ color: "red" }} />
-                            {errors.name.message}
-                          </FormHelperText>
-                        )}
-                      </>
-                    )}
-                  />
-                </FormControl>
-                <FormControl>
-                  <Controller
-                    name="lastname"
-                    control={control}
-                    rules={{
-                      required: "Le prénom est obligatoire",
-                      minLength: {
-                        value: 2,
-                        message:
-                          "Le prénom doit contenir au moins 2 caractères",
-                      },
-                    }}
-                    render={({ field }) => (
-                      <>
-                        <Input
-                          placeholder="Prénom du client"
-                          size="lg"
-                          {...field}
-                          required
-                        />
-                        {errors.lastname && (
-                          <FormHelperText style={{ color: "red" }}>
-                            <InfoOutlined style={{ color: "red" }} />
-                            {errors.lastname.message}
-                          </FormHelperText>
-                        )}
-                      </>
-                    )}
-                  />
-                </FormControl>
-                <FormControl>
-                  <Controller
-                    name="email"
-                    control={control}
-                    rules={{
-                      required: "L'email est obligatoire",
-                      pattern: {
-                        value:
-                          /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
-                        message: "L'email est invalide",
-                      },
-                    }}
-                    render={({ field }) => (
-                      <>
-                        <Input
-                          type="email"
-                          size="lg"
-                          placeholder="Email"
-                          {...field}
-                          required
-                        />
-                        {errors.email && (
-                          <FormHelperText style={{ color: "red" }}>
-                            <InfoOutlined style={{ color: "red" }} />
-                            {errors.email.message}
-                          </FormHelperText>
-                        )}
-                      </>
-                    )}
-                  />
-                </FormControl>
-                <FormControl>
-                  <Controller
-                    name="phone"
-                    control={control}
-                    rules={{
-                      required: "Le téléphone est obligatoire",
-                      pattern: {
-                        value: /^0[0-9]{9}$/,
-                        message: "Le téléphone est invalide",
-                      },
-                    }}
-                    render={({ field }) => (
-                      <>
-                        <Input
-                          placeholder="Téléphone"
-                          size="lg"
-                          {...field}
-                          required
-                        />
-                        {errors.phone && (
-                          <FormHelperText style={{ color: "red" }}>
-                            <InfoOutlined style={{ color: "red" }} />
-                            {errors.phone.message}
-                          </FormHelperText>
-                        )}
-                      </>
-                    )}
-                  />
-                </FormControl>
                 <FormControl>
                   <Controller
                     name="amount"
@@ -324,4 +201,4 @@ const CustomModalAddOrder = ({
   );
 };
 
-export default CustomModalAddOrder;
+export default CustomModalUpdateOrder;

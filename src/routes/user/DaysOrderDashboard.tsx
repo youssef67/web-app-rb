@@ -23,6 +23,7 @@ import OrderTable from "@components/common/OrderTable";
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
+import CustomModalUpdateOrder from "@components/orders/CustomModalUpdateOrder";
 import { currentDate, manageFiltersValues } from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
 
@@ -30,6 +31,8 @@ import { fetchOrders } from "@utils/apiUtils";
 
 const DaysOrderDashboard: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [openUpdateOrderModal, setOpenUpdateOrderModal] = useState<boolean>(false);
+  const [order, setOrder] = useState<Order | undefined>(undefined)
   // filters State
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
@@ -50,6 +53,13 @@ const DaysOrderDashboard: React.FC = () => {
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
     setDummyState(dummyState + 1);
+  };
+
+  const handleUpdateOrder = (orderId: number) => {
+    const order = ordersList?.find((order) => order.id === orderId);
+    setOrder(order);
+
+    setOpenUpdateOrderModal(true);
   };
 
   const handleFilters = useCallback(
@@ -93,7 +103,6 @@ const DaysOrderDashboard: React.FC = () => {
   }, [notification, enqueueSnackbar, setNotification]);
 
   useEffect(() => {
-    console.log("orderList ", ordersList);
     if (ordersList) {
       setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage));
     }
@@ -187,6 +196,12 @@ const DaysOrderDashboard: React.FC = () => {
               setOpen={setOpen}
               onChangeMade={handleChangeMade}
             />
+            <CustomModalUpdateOrder
+             open={openUpdateOrderModal}
+             setOpen={setOpenUpdateOrderModal}
+             onChangeMade={handleChangeMade}
+             orderToUpdate={order}
+            />
           </Box>
           {isLoading && <div>Loading...</div>}
           {error && <div>Error: {error.message}</div>}
@@ -198,8 +213,14 @@ const DaysOrderDashboard: React.FC = () => {
                 customerFilter={setCustomerFilter}
                 freeFieldFilter={setFreeFieldFilter}
                 numberOfPages={numberOfPages}
+                openUpdateModal={handleUpdateOrder}
               />
-              <OrderList ordersList={ordersForCurrentPage} currentPage={currentPage} numberOfPages={numberOfPages}/>
+              <OrderList
+                ordersList={ordersForCurrentPage}
+                openUpdateModal={handleUpdateOrder}
+                currentPage={currentPage}
+                numberOfPages={numberOfPages}
+              />
             </>
           )}
         </Box>

@@ -16,13 +16,7 @@ const MobilePagination: React.FC<MobilePaginationProps> = ({
   numberOfPages,
   currentPage
 }) => {
-    console.log(numberOfPages)
-    console.log(currentPage)
   const { setCurrentPage } = usePagination();
-//   const numberOfPagesArray = Array.from(
-//     { length: numberOfPages },
-//     (_, index) => index + 1
-//   );
 
   const handleNumberPage = (direction: string) => {
     if (direction === "next" && currentPage < numberOfPages) {

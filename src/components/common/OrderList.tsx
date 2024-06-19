@@ -24,19 +24,17 @@ interface OrderProps {
   ordersList: Order[];
   numberOfPages: number;
   currentPage: number;
+  openUpdateModal: (orderId: number) => void;
 }
 
 const OrderList: React.FC<OrderProps> = ({
   ordersList,
   numberOfPages,
   currentPage,
+  openUpdateModal,
 }) => {
-  console.log(ordersList);
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
-  const orderCount = ordersList?.length;
-
-  console.log(orderCount);
 
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -107,7 +105,11 @@ const OrderList: React.FC<OrderProps> = ({
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                 >
-                  <RowMenu idOrder={order.id} onChangeMade={handleChangeMade} />
+                  <RowMenu
+                    idOrder={order.id}
+                    onChangeMade={handleChangeMade}
+                    openUpdateModal={openUpdateModal}
+                  />
                 </Box>
               </div>
             </ListItemContent>
