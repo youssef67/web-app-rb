@@ -79,7 +79,7 @@ const OrderList: React.FC<OrderProps> = ({
                   {order.customer.name} {order.customer.lastname}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
-                  Heure de retrait : 10H00
+                  Heure de retrait : {order.pickupTime.replace(":", "H").slice(0, -3)}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
                   Montant de la commande : {order.orderPrice} €

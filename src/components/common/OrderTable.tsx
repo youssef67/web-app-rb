@@ -44,7 +44,7 @@ interface OrderProps {
   customerFilter: (value: any) => void;
   freeFieldFilter: (value: any) => void;
   numberOfPages: number;
-  openUpdateModal: (orderId: number) => void
+  openUpdateModal: (orderId: number) => void;
 }
 
 const OrderTable: React.FC<OrderProps> = ({
@@ -53,7 +53,7 @@ const OrderTable: React.FC<OrderProps> = ({
   customerFilter,
   freeFieldFilter,
   numberOfPages,
-  openUpdateModal
+  openUpdateModal,
 }) => {
   const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
@@ -333,7 +333,9 @@ const OrderTable: React.FC<OrderProps> = ({
               (row: Order) => (
                 <tr key={row.id}>
                   <td style={{ textAlign: "center", width: 140 }}>
-                    <Typography level="body-xs">10H00</Typography>
+                    <Typography level="body-xs">
+                      {row.pickupTime.replace(":", "H").slice(0, -3)}
+                    </Typography>
                   </td>
                   <td style={{ textAlign: "center", width: 140 }}>
                     <Box

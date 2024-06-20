@@ -19,7 +19,7 @@ export const fetchOrders = async (user: User): Promise<Order[] | []> => {
 export const addOrder = async (
   data: IFormInput,
   currentUser: { userId: number; emailUser: string } | null,
-  headers: object,
+  headers: object
 ) => {
   axios
     .post(
@@ -63,5 +63,3 @@ export const fetchUpdateOrder = async (
       return res.data;
     });
 };
-
-

@@ -1,0 +1,158 @@
+/* CustomDatePicker.css */
+
+.react-datepicker-wrapper {
+  width: 100%;
+
+}
+
+.MuiInput-root {
+  height: 100%;
+  padding: 0px 10px 0px 10px !important;
+}
+
+
+
+/* Style pour l'input personnalisé */
+.custom-datepicker__input {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
+  color: #495057;
+}
+
+/* Style pour le calendrier */
+.custom-datepicker__calendar {
+  border: 1px solid #007bff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour les jours */
+.custom-datepicker__day {
+  font-weight: bold;
+}
+
+/* Style pour les jours sélectionnés */
+.custom-datepicker__day--selected {
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* Style pour les jours désactivés */
+.custom-datepicker__day--disabled {
+  color: #6c757d;
+}
+
+/* Style pour le conteneur de temps */
+.custom-datepicker__time-container {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Style pour la liste de temps */
+.custom-datepicker__time-list {
+  padding: 0;
+}
+
+/* Style pour chaque élément de temps */
+.custom-datepicker__time-list-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #495057;
+}
+
+/* Style pour les éléments de temps sélectionnés */
+.custom-datepicker__time-list-item--selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Style pour les éléments de temps survolés */
+.custom-datepicker__time-list-item:hover {
+  background-color: #e2e6ea;
+}
+
+.react-datepicker__input-time-container .react-datepicker-time__caption {
+  font-weight: bold;
+  font-size: large;
+}
+
+.react-datepicker-time__input {
+  font-size: large;
+}
+
+.custom-datepicker__popper {
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (max-width: 400px) {
+  .react-datepicker__month-container {
+    width: 280px;
+  }
+
+  .react-datepicker__time-container {
+    width: 80px;
+  }
+
+  .react-datepicker__input-time-container .react-datepicker-time__caption {
+    font-weight: bold;
+    font-size: large;
+  }
+
+  .react-datepicker-time__input {
+    font-size: large;
+  }
+}
+
+@media (max-width: 399px) {
+  .react-datepicker {
+    width: 90%;
+  }
+
+  .react-datepicker__month-container {
+    width: 100%;
+  }
+
+  .react-datepicker__time-container {
+    width: 80px;
+  }
+
+  .react-datepicker__input-time-container .react-datepicker-time__caption {
+    font-weight: bold;
+    font-size: 1.5em;
+  }
+
+  .react-datepicker-time__input {
+    font-size: large;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 430px) {
+  .react-datepicker {
+    width: 90%;
+  }
+
+  .react-datepicker__month-container {
+    width: 100% !important;
+  }
+
+  .react-datepicker__time-container {
+    max-width: 100px;
+  }
+
+  .react-datepicker__input-time-container .react-datepicker-time__caption {
+    font-weight: bold;
+    font-size: 1.7em;
+  }
+
+  .react-datepicker-time__input {
+    font-size: large;
+  }
+
+  #date-time-edit {
+    font-weight: bold;
+    font-size: 1.7em;
+  }
+}

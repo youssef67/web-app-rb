@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import { ProtectedRoute } from "@routes/ProtectedRoute";
 import { AuthProvider } from "@hooks/useAuth";
-
 // Auth pages
 import Login from "@routes/auth/Login";
 import Register from "@routes/auth/Register";
@@ -12,7 +11,6 @@ import ResetPassword from "@routes/auth/ResetPassword";
 import SendEmailConfirmation from "@routes/auth/SendEmailConfirmation.tsx";
 // Interface
 import DaysOrderDashboard from "routes/user/DaysOrderDashboard";
-import CreateOrder from "@routes/user/CreateOrder";
 import AllOrders from "@routes/user/AllOrders";
 
 function App() {

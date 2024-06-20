@@ -2,6 +2,7 @@ export interface Order {
   id: number;
   orderPrice: string;
   pickupDate: string;
+  pickupTime: string;
   createdAt: string;
   updatedAt: string;
   detailsForCustomer: string;
@@ -28,7 +29,8 @@ export interface IFormInput {
   email: string;
   phone: string;
   amount: number;
-  pickupDate: string;
+  pickupDate: Date | null;
+  pickupTime: Date | null
   detailsForCustomer: string;
   detailsForUser: string;
 }

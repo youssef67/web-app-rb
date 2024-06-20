@@ -104,3 +104,17 @@ export const manageFiltersValues = (
 
   return filteredOrders;
 };
+
+export const validatePickupDate = (value: Date | null) => {
+  if (!value) {
+    return "La date de récupération est obligatoire";
+  }
+  return true; 
+};
+
+export const validatePickupTime = (value: Date | null) => {
+  if (!value) {
+    return "L'heure de récupération est obligatoire";
+  }
+  return true; 
+};

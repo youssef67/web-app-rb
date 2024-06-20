@@ -1,6 +1,10 @@
+import { useState } from "react";
 import Button from "@mui/joy/Button";
 import ModalOverflow from "@mui/joy/ModalOverflow";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "@styles/customDatePicker.css";
+import { fr } from "date-fns/locale";
 import Textarea from "@mui/joy/Textarea";
 import FormControl from "@mui/joy/FormControl";
 import Input from "@mui/joy/Input";
@@ -10,16 +14,16 @@ import ModalDialog from "@mui/joy/ModalDialog";
 import FormHelperText from "@mui/joy/FormHelperText";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import Box from "@mui/joy/Box";
-
+import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import { useNotification } from "@contexts/NotificationContext";
 import { useHeader } from "@hooks/useHeader";
 import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-
-import { NumericFormatAdapter } from "@utils/modalUtils";
 import { addOrder } from "@utils/apiUtils";
+import { validatePickupDate, validatePickupTime } from "@utils/commonUtils";
+import { NumericFormatAdapter } from "@utils/modalUtils";
 import { IFormInput } from "@interfaces/interfaces";
 
 interface CustomModalAddOrderProps {
@@ -36,10 +40,11 @@ const CustomModalAddOrder = ({
   const { setNotification } = useNotification();
   const currentUser = useCurrentUser();
   const headers = useHeader();
+  const [pickupDate, setPickupDate] = useState<Date | null>(null);
+  const [pickupTime, setPickupTime] = useState<Date | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (data: IFormInput) =>
-      addOrder(data, currentUser, headers),
+    mutationFn: (data: IFormInput) => addOrder(data, currentUser, headers),
     onSuccess: () => {
       onChangeMade();
       setNotification({
@@ -63,28 +68,14 @@ const CustomModalAddOrder = ({
   } = useForm<IFormInput>({
     defaultValues: {
       name: "youssef",
-      lastname: "moudni",
-      email: "you.moudni@gmail.com",
+      lastname: "Moudni",
       phone: "0668735937",
+      email: "you.moudni@gmail.com",
       amount: 20,
-      pickupDate: new Date().toISOString().split("T")[0],
-      detailsForCustomer: "Livraison à domicile",
-      detailsForUser: "Client régulier",
+      detailsForCustomer: "test detailsForCustomer",
+      detailsForUser: "test detailsForUser",
     },
   });
-
-  // useEffect(() => {
-  //   if (order) {
-  //     setValue("name", order.customer.name);
-  //     setValue("lastname", order.customer.lastname);
-  //     setValue("email", order.customer.email);
-  //     setValue("phone", order.customer.phone);
-  //     setValue("amount", Number(order.orderPrice));
-  //     setValue("pickupDate", new Date().toISOString().split("T")[0]);
-  //     setValue("detailsForCustomer", order.detailsForCustomer ?? "");
-  //     setValue("detailsForUser", order.detailsForUser ?? "");
-  //   }
-  // }, [order, setValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     mutation.mutate(data);
@@ -114,9 +105,10 @@ const CustomModalAddOrder = ({
                     render={({ field }) => (
                       <>
                         <Input
+                          {...field}
                           placeholder="Nom du client"
                           size="lg"
-                          {...field}
+                          value={field.value || ""}
                           required
                         />
                         {errors.name && (
@@ -144,9 +136,10 @@ const CustomModalAddOrder = ({
                     render={({ field }) => (
                       <>
                         <Input
+                          {...field}
+                          value={field.value || ""}
                           placeholder="Prénom du client"
                           size="lg"
-                          {...field}
                           required
                         />
                         {errors.lastname && (
@@ -174,10 +167,11 @@ const CustomModalAddOrder = ({
                     render={({ field }) => (
                       <>
                         <Input
+                          {...field}
                           type="email"
+                          value={field.value || ""}
                           size="lg"
                           placeholder="Email"
-                          {...field}
                           required
                         />
                         {errors.email && (
@@ -204,9 +198,10 @@ const CustomModalAddOrder = ({
                     render={({ field }) => (
                       <>
                         <Input
+                          {...field}
+                          value={field.value || ""}
                           placeholder="Téléphone"
                           size="lg"
-                          {...field}
                           required
                         />
                         {errors.phone && (
@@ -262,20 +257,107 @@ const CustomModalAddOrder = ({
                     )}
                   />
                 </FormControl>
+                <Grid container spacing={2}>
+                  <Grid xs={12} sm={6}>
+                    <FormControl>
+                      <Controller
+                        name="pickupDate"
+                        control={control}
+                        rules={{
+                          validate: (date) => validatePickupDate(date),
+                        }}
+                        render={({ field: { onChange } }) => (
+                          <>
+                            <DatePicker
+                              selected={pickupDate}
+                              onChange={(date) => {
+                                setPickupDate(date);
+                                onChange(date);
+                              }}
+                              locale={fr}
+                              isClearable
+                              placeholderText="Date de récupération"
+                              dateFormat="dd/MM/yyyy"
+                              withPortal
+                              customInput={
+                                <Input
+                                  size="lg"
+                                  className="custom-datepicker__input"
+                                />
+                              }
+                              className="custom-datepicker"
+                              calendarClassName="custom-datepicker__calendar"
+                              dayClassName={() => "custom-datepicker__day"}
+                            />
+                            {errors.pickupDate && (
+                              <FormHelperText style={{ color: "red" }}>
+                                <InfoOutlined style={{ color: "red" }} />
+                                {errors.pickupDate.message}
+                              </FormHelperText>
+                            )}
+                          </>
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid xs={12} sm={6}>
+                    <Controller
+                      name="pickupTime"
+                      control={control}
+                      rules={{
+                        validate: (date) => validatePickupTime(date),
+                      }}
+                      render={({ field: { onChange } }) => (
+                        <>
+                          <DatePicker
+                            selected={pickupTime}
+                            onChange={(date) => {
+                              setPickupTime(date);
+                              onChange(date);
+                            }}
+                            locale={fr}
+                            placeholderText="Heure de récupération"
+                            isClearable
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={30}
+                            timeCaption="Heure"
+                            dateFormat="HH:mm"
+                            customInput={<Input size="lg" />}
+                          />
+                          {errors.pickupDate && (
+                            <FormHelperText style={{ color: "red" }}>
+                              <InfoOutlined style={{ color: "red" }} />
+                              {errors.pickupDate.message}
+                            </FormHelperText>
+                          )}
+                        </>
+                      )}
+                    />
+                  </Grid>
+                </Grid>
                 <FormControl>
                   <Controller
-                    name="pickupDate"
+                    name="detailsForCustomer"
                     control={control}
                     rules={{
-                      required: "La date de retrait est obligatoire",
+                      maxLength: {
+                        value: 600,
+                        message: "Le texte ne doit pas dépasser 600 caractères",
+                      },
                     }}
                     render={({ field }) => (
                       <>
-                        <Input type="date" {...field} size="lg" required />
-                        {errors.pickupDate && (
+                        <Textarea
+                          {...field}
+                          value={field.value || ""}
+                          size="lg"
+                          placeholder="Détails pour le client"
+                        />
+                        {errors.detailsForCustomer && (
                           <FormHelperText style={{ color: "red" }}>
                             <InfoOutlined style={{ color: "red" }} />
-                            {errors.pickupDate.message}
+                            {errors.detailsForCustomer.message}
                           </FormHelperText>
                         )}
                       </>
@@ -284,30 +366,28 @@ const CustomModalAddOrder = ({
                 </FormControl>
                 <FormControl>
                   <Controller
-                    name="detailsForCustomer"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <Textarea
-                          {...field}
-                          size="lg"
-                          placeholder="Détails pour le client"
-                        />
-                      </>
-                    )}
-                  />
-                </FormControl>
-                <FormControl>
-                  <Controller
                     name="detailsForUser"
                     control={control}
+                    rules={{
+                      maxLength: {
+                        value: 600,
+                        message: "Le texte ne doit pas dépasser 600 caractères",
+                      },
+                    }}
                     render={({ field }) => (
                       <>
                         <Textarea
                           {...field}
+                          value={field.value || ""}
                           size="lg"
                           placeholder="Détails pour vous"
                         />
+                        {errors.detailsForUser && (
+                          <FormHelperText style={{ color: "red" }}>
+                            <InfoOutlined style={{ color: "red" }} />
+                            {errors.detailsForUser.message}
+                          </FormHelperText>
+                        )}
                       </>
                     )}
                   />

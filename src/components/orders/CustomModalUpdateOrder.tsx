@@ -1,7 +1,12 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@mui/joy/Button";
 import ModalOverflow from "@mui/joy/ModalOverflow";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "@styles/customDatePicker.css";
+import { fr } from "date-fns/locale";
 
 import Textarea from "@mui/joy/Textarea";
 import FormControl from "@mui/joy/FormControl";
@@ -10,6 +15,7 @@ import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import ModalDialog from "@mui/joy/ModalDialog";
 import FormHelperText from "@mui/joy/FormHelperText";
+import Grid from "@mui/joy/Grid";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import Box from "@mui/joy/Box";
 
@@ -23,12 +29,15 @@ import { NumericFormatAdapter } from "@utils/modalUtils";
 import { updateOrder } from "@utils/apiUtils";
 import { IFormInput } from "@interfaces/interfaces";
 import { Order } from "@interfaces/interfaces";
+import { validatePickupDate, validatePickupTime } from "@utils/commonUtils";
+
+import { DateTime } from "luxon";
 
 interface CustomModalUpdateOrderProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   onChangeMade: () => void;
-  orderToUpdate: Order | undefined
+  orderToUpdate: Order | undefined;
 }
 
 const CustomModalUpdateOrder = ({
@@ -39,12 +48,13 @@ const CustomModalUpdateOrder = ({
 }: CustomModalUpdateOrderProps) => {
   const { setNotification } = useNotification();
   const headers = useHeader();
+  const [pickupDate, setPickupDate] = useState<Date | null>(null);
+  const [pickupTime, setPickupTime] = useState<Date | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (data: IFormInput) =>
-      updateOrder(data, headers, orderToUpdate),
+    mutationFn: (data: IFormInput) => updateOrder(data, headers, orderToUpdate),
     onSuccess: () => {
-      onChangeMade()
+      onChangeMade();
       setNotification({
         message: "Commande modifié avec succès",
         variant: "success",
@@ -64,25 +74,22 @@ const CustomModalUpdateOrder = ({
     control,
     setValue,
     formState: { errors },
-  } = useForm<IFormInput>({
-    defaultValues: {
-      amount: 20,
-      pickupDate: new Date().toISOString().split("T")[0],
-      detailsForCustomer: "Livraison à domicile",
-      detailsForUser: "Client régulier",
-    },
-  });
+  } = useForm<IFormInput>();
 
   useEffect(() => {
     if (orderToUpdate) {
+      setPickupDate(DateTime.fromISO(orderToUpdate.pickupDate).toJSDate());
+      setPickupTime(DateTime.fromISO(orderToUpdate.pickupTime).toJSDate());
       setValue("amount", Number(orderToUpdate.orderPrice));
-      setValue("pickupDate", new Date().toISOString().split("T")[0]);
       setValue("detailsForCustomer", orderToUpdate.detailsForCustomer ?? "");
       setValue("detailsForUser", orderToUpdate.detailsForUser ?? "");
     }
   }, [orderToUpdate, setValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    data.pickupDate = pickupDate ?? pickupDate;
+    data.pickupTime = pickupTime ?? pickupTime;
+
     mutation.mutate(data);
   };
 
@@ -139,26 +146,85 @@ const CustomModalUpdateOrder = ({
                     )}
                   />
                 </FormControl>
-                <FormControl>
-                  <Controller
-                    name="pickupDate"
-                    control={control}
-                    rules={{
-                      required: "La date de retrait est obligatoire",
-                    }}
-                    render={({ field }) => (
-                      <>
-                        <Input type="date" {...field} size="lg" required />
-                        {errors.pickupDate && (
-                          <FormHelperText style={{ color: "red" }}>
-                            <InfoOutlined style={{ color: "red" }} />
-                            {errors.pickupDate.message}
-                          </FormHelperText>
+                <Grid container spacing={2}>
+                  <Grid xs={12} sm={6}>
+                    <FormControl>
+                      <Controller
+                        name="pickupDate"
+                        control={control}
+                        rules={{
+                          validate: () => validatePickupDate(pickupDate),
+                        }}
+                        render={({ field: { onChange } }) => (
+                          <>
+                            <DatePicker
+                              selected={pickupDate}
+                              onChange={(date) => {
+                                setPickupDate(date);
+                                onChange(date);
+                              }}
+                              locale={fr}
+                              isClearable
+                              placeholderText="Date de récupération"
+                              dateFormat="dd/MM/yyyy"
+                              withPortal
+                              customInput={
+                                <Input
+                                  size="lg"
+                                  className="custom-datepicker__input"
+                                />
+                              }
+                              className="custom-datepicker"
+                              calendarClassName="custom-datepicker__calendar"
+                              dayClassName={() => "custom-datepicker__day"}
+                            />
+                            {errors.pickupDate && (
+                              <FormHelperText style={{ color: "red" }}>
+                                <InfoOutlined style={{ color: "red" }} />
+                                {errors.pickupDate.message}
+                              </FormHelperText>
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
-                  />
-                </FormControl>
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid xs={12} sm={6}>
+                    <Controller
+                      name="pickupTime"
+                      control={control}
+                      rules={{
+                        validate: () => validatePickupTime(pickupTime),
+                      }}
+                      render={({ field: { onChange } }) => (
+                        <>
+                          <DatePicker
+                            selected={pickupTime}
+                            onChange={(date) => {
+                              setPickupTime(date);
+                              onChange(date);
+                            }}
+                            locale={fr}
+                            placeholderText="Heure de récupération"
+                            isClearable
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={30}
+                            timeCaption="Heure"
+                            dateFormat="HH:mm"
+                            customInput={<Input size="lg" />}
+                          />
+                          {errors.pickupDate && (
+                            <FormHelperText style={{ color: "red" }}>
+                              <InfoOutlined style={{ color: "red" }} />
+                              {errors.pickupDate.message}
+                            </FormHelperText>
+                          )}
+                        </>
+                      )}
+                    />
+                  </Grid>
+                </Grid>
                 <FormControl>
                   <Controller
                     name="detailsForCustomer"
@@ -190,7 +256,7 @@ const CustomModalUpdateOrder = ({
                   />
                 </FormControl>
                 <Button size="lg" type="submit">
-                  Ajouter
+                  Valider les modifications
                 </Button>
               </Stack>
             </form>
