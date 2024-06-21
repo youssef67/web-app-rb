@@ -49,7 +49,7 @@ export const manageFiltersValues = (
   orders: Order[],
   statusFilter: number | null,
   customerFilter: string | null,
-  freeFieldFilter: string | null
+  freeFieldFilter: string | null,
 ): Order[] => {
   let filteredOrders = orders;
   let statusFilterResult;
@@ -104,6 +104,26 @@ export const manageFiltersValues = (
 
   return filteredOrders;
 };
+
+export const sortOrders = (orders: Order[], typeSorting: string | null): Order[] => {
+    const sortedOrders = [...orders];
+
+    // sort by selected typeSorting
+    if (typeSorting === "latest") {
+      sortedOrders.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    } else if (typeSorting === "asc-price") {
+      sortedOrders.sort((a, b) => parseFloat(a.orderPrice) - parseFloat(b.orderPrice));
+    } else if (typeSorting === "desc-price") {
+      sortedOrders.sort((a, b) => parseFloat(b.orderPrice) - parseFloat(a.orderPrice));
+    } else if (typeSorting === "asc-time") {
+      sortedOrders.sort((a, b) => Number(a.pickupTime.replace(":", ".").slice(0, -3)) - Number(b.pickupTime.replace(":", ".").slice(0, -3)));
+    } else if (typeSorting === "desc-time") {
+      sortedOrders.sort((a, b) => Number(b.pickupTime.replace(":", ".").slice(0, -3)) - Number(a.pickupTime.replace(":", ".").slice(0, -3)));
+    }
+
+    return sortedOrders;
+  }
+
 
 export const validatePickupDate = (value: Date | null) => {
   if (!value) {

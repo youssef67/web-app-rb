@@ -37,30 +37,29 @@ const DaysOrderDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
-  //Pagination state
+  // Pagination state
   const [numberOfPages, setNumberOfPages] = useState<number>(1);
   const ordersPerPage = 10;
   const [ordersForCurrentPage, setOrdersForCurrentPage] = useState<Order[]>([]);
-  //Hook state
+  // Hook state
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
   const { currentPage } = usePagination();
-  //State to force re render
-  const [dummyState, setDummyState] = useState(0);
 
+  // to update orders list after adding or updating a new order
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
-    setDummyState(dummyState + 1);
   };
 
+  // to open modal for update order
   const handleUpdateOrder = (orderId: number) => {
     const order = ordersList?.find((order) => order.id === orderId);
     setOrder(order);
-
     setOpenUpdateOrderModal(true);
   };
+
 
   const handleFilters = useCallback(
     (orders: Order[]) => {
@@ -68,15 +67,11 @@ const DaysOrderDashboard: React.FC = () => {
         orders,
         statusFilter,
         customerFilter,
-        freeFieldFilter
+        freeFieldFilter,
       );
 
+      // If no results for the filters, display a original orders list
       if (filteredOrders.length === 0) {
-        // setNotification({
-        //   message: "Aucun résultat pour ces filtres.",
-        //   variant: "error",
-        // });
-
         return orders;
       } else {
         return filteredOrders;
@@ -92,15 +87,17 @@ const DaysOrderDashboard: React.FC = () => {
   } = useQuery({
     queryKey: ["orders"],
     queryFn: () => fetchOrders(user),
-    select: handleFilters,
+    select: (data) => handleFilters(data),
   });
 
+  // Necessary to manage notifications
   useEffect(() => {
     if (notification) {
       enqueueSnackbar(notification.message, { variant: notification.variant });
       setNotification(null);
     }
   }, [notification, enqueueSnackbar, setNotification]);
+
 
   useEffect(() => {
     if (ordersList) {
@@ -118,7 +115,7 @@ const DaysOrderDashboard: React.FC = () => {
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
-      <Box sx={{ display: "flex", minHeight: "100dvh" }}>
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <Header />
         <Sidebar currentDashboard="dayOrders" />
         <Box
@@ -136,7 +133,7 @@ const DaysOrderDashboard: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             minWidth: 0,
-            height: "100dvh",
+            height: "100vh",
             gap: 1,
           }}
         >
@@ -214,6 +211,7 @@ const DaysOrderDashboard: React.FC = () => {
                 freeFieldFilter={setFreeFieldFilter}
                 numberOfPages={numberOfPages}
                 openUpdateModal={handleUpdateOrder}
+                // handleSort={setSelectedSortValue}
               />
               <OrderList
                 ordersList={ordersForCurrentPage}

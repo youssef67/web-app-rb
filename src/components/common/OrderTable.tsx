@@ -29,12 +29,12 @@ import BlockIcon from "@mui/icons-material/Block";
 
 import { useQueryClient } from "@tanstack/react-query";
 import DesktopPagination from "@components/common/DesktopPagination";
-import { Order, AscOrDesc } from "@interfaces/interfaces";
-import { getComparator, stableSort } from "@utils/orderTableUtils";
+import { Order } from "@interfaces/interfaces";
 import {
   formatPhoneNumber,
   getFullName,
   getUniqueCustomers,
+  sortOrders
 } from "@utils/commonUtils";
 import RowMenu from "@components/common/RowMenu";
 
@@ -55,7 +55,6 @@ const OrderTable: React.FC<OrderProps> = ({
   numberOfPages,
   openUpdateModal,
 }) => {
-  const [order] = useState<AscOrDesc>("desc");
   const [open, setOpen] = useState(false);
 
   const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
@@ -67,6 +66,7 @@ const OrderTable: React.FC<OrderProps> = ({
   const [freeFieldFilterValue, setFreeFieldFilterValue] = useState<string>("");
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
+  const [selectedSortValue, setSelectedSortValue] = useState("latest");
   const orderCount = ordersList?.length;
 
   const handleChangeMade = async () => {
@@ -104,6 +104,11 @@ const OrderTable: React.FC<OrderProps> = ({
     setStatusFilterValue(null);
     setCustomerFilterValue(null);
     setFreeFieldFilterValue("");
+  };
+
+  const getValueSort = (event, sortValue: string) => {
+    console.log(sortValue)
+    setSelectedSortValue(sortValue)
   };
 
   const renderFilters = () => (
@@ -272,6 +277,31 @@ const OrderTable: React.FC<OrderProps> = ({
           <RefreshIcon />
         </IconButton>
       </Box>
+      <>
+        <Select
+          placeholder=""
+          onChange={getValueSort}
+          value={selectedSortValue}
+          size="sm"
+          indicator={<KeyboardArrowDown />}
+          sx={{
+            width: 240,
+            [`& .${selectClasses.indicator}`]: {
+              transition: "0.2s",
+              [`&.${selectClasses.expanded}`]: {
+                transform: "rotate(-180deg)",
+              },
+            },
+          }}
+        >
+          <Option value="latest">Derniers arrivées</Option>
+          <Option value="asc-price">Prix : ordre croissant</Option>
+          <Option value="desc-price">Prix : ordre decroissant</Option>
+          <Option value="asc-time">Heure : plus tot</Option>
+          <Option value="desc-time">Heure : plus tard</Option>
+        </Select>
+      </>
+
       <Sheet
         className="OrderTableContainer"
         variant="outlined"
@@ -329,7 +359,7 @@ const OrderTable: React.FC<OrderProps> = ({
             </tr>
           </thead>
           <tbody>
-            {stableSort(ordersList, getComparator(order, "id")).map(
+            {sortOrders(ordersList, selectedSortValue).map(
               (row: Order) => (
                 <tr key={row.id}>
                   <td style={{ textAlign: "center", width: 140 }}>
