@@ -18,12 +18,13 @@ import { Order } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
 import RowMenu from "@components/common/RowMenu";
-import { formatPhoneNumber } from "@utils/commonUtils";
+import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
 
 interface OrderProps {
   ordersList: Order[];
   numberOfPages: number;
   currentPage: number;
+  sortingValue: string;
   openUpdateModal: (orderId: number) => void;
 }
 
@@ -31,6 +32,7 @@ const OrderList: React.FC<OrderProps> = ({
   ordersList,
   numberOfPages,
   currentPage,
+  sortingValue,
   openUpdateModal,
 }) => {
   const queryClient = useQueryClient();
@@ -43,7 +45,7 @@ const OrderList: React.FC<OrderProps> = ({
 
   return (
     <Box sx={{ display: { xs: "block", sm: "none" } }}>
-      {ordersList.map((order: Order) => (
+      {sortOrders(ordersList, sortingValue).map((order: Order) => (
         <List
           key={order.id}
           size="sm"

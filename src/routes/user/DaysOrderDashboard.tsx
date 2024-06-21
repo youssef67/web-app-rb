@@ -37,6 +37,7 @@ const DaysOrderDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
+  const [selectedSortValue, setSelectedSortValue] = useState("latest");
   // Pagination state
   const [numberOfPages, setNumberOfPages] = useState<number>(1);
   const ordersPerPage = 10;
@@ -211,13 +212,14 @@ const DaysOrderDashboard: React.FC = () => {
                 freeFieldFilter={setFreeFieldFilter}
                 numberOfPages={numberOfPages}
                 openUpdateModal={handleUpdateOrder}
-                // handleSort={setSelectedSortValue}
+                getSortingValue={setSelectedSortValue}
               />
               <OrderList
                 ordersList={ordersForCurrentPage}
                 openUpdateModal={handleUpdateOrder}
                 currentPage={currentPage}
                 numberOfPages={numberOfPages}
+                sortingValue={selectedSortValue}
               />
             </>
           )}

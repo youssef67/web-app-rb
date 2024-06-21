@@ -43,6 +43,7 @@ interface OrderProps {
   statusFilter: (value: any) => void;
   customerFilter: (value: any) => void;
   freeFieldFilter: (value: any) => void;
+  getSortingValue: (value: any) => void
   numberOfPages: number;
   openUpdateModal: (orderId: number) => void;
 }
@@ -54,6 +55,7 @@ const OrderTable: React.FC<OrderProps> = ({
   freeFieldFilter,
   numberOfPages,
   openUpdateModal,
+  getSortingValue
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -108,6 +110,7 @@ const OrderTable: React.FC<OrderProps> = ({
 
   const getValueSort = (event, sortValue: string) => {
     console.log(sortValue)
+    getSortingValue(sortValue)
     setSelectedSortValue(sortValue)
   };
 
