@@ -138,3 +138,11 @@ export const validatePickupTime = (value: Date | null) => {
   }
   return true; 
 };
+
+export const validatePasswords = (password: string, confirmationPassword: string) => {
+  if (password !== confirmationPassword) {
+    return false
+  }
+
+  return true;
+}

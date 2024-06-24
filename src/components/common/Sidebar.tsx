@@ -7,7 +7,6 @@ import { useHeader } from "@hooks/useHeader";
 
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import Avatar from "@mui/joy/Avatar";
-import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import IconButton from "@mui/joy/IconButton";
 import List from "@mui/joy/List";
@@ -22,12 +21,11 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
 import Box from "@mui/joy/Box";
 
-
-import QuestionAnswerRoundedIcon from "@mui/icons-material/QuestionAnswerRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded";
 
+import ColorSchemeToggle from "./ColorSchemeToggle";
 import { closeSidebar } from "@utils/sideBarUtils";
 
 interface SidebarProps {
@@ -105,6 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
           <BrightnessAutoRoundedIcon />
         </IconButton>
         <Typography level="title-lg">Rabbit butcher</Typography>
+        <ColorSchemeToggle sx={{ ml: 'auto' }} />
       </Box>
       <Box
         sx={{

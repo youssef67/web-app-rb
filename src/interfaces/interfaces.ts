@@ -1,3 +1,21 @@
+export interface LoginFormInputs {
+  email: string;
+  password: string;
+}
+
+export interface RegisterFormInputs {
+  email: string;
+  compagny_name: string;
+  siret_number: string;
+  password: string;
+  confirm_password: string;
+}
+
+export interface ResetPasswordFormInputs {
+  newPassword: string
+  confirmPassword: string
+}
+
 export interface Order {
   id: number;
   orderPrice: string;

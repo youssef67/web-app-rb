@@ -1,5 +1,77 @@
-import axios from "axios";
-import { IFormInput, User, Order } from "@interfaces/interfaces";
+import axios, { AxiosResponse } from "axios";
+// const { login } = useAuth();
+import {
+  IFormInput,
+  User,
+  Order,
+  LoginFormInputs,
+  RegisterFormInputs,
+  ResetPasswordFormInputs,
+} from "@interfaces/interfaces";
+
+export const loginApiCallResult = async (
+  data: LoginFormInputs
+): Promise<AxiosResponse<any, any>> => {
+  const loginResponse = axios
+    .post("http://localhost:3333/api/v1/auth/login", data)
+    .then((res) => {
+      return res;
+    });
+
+  return loginResponse;
+};
+
+export const registerApiCallResult = async (
+  data: RegisterFormInputs
+): Promise<AxiosResponse<any, any>> => {
+  const registerResponse = axios
+    .post("http://localhost:3333/api/v1/auth/register", data)
+    .then((res) => {
+      return res;
+    });
+
+  return registerResponse;
+};
+
+export const passwordForgottenApiCallResult = async (data: {
+  email: string;
+}): Promise<AxiosResponse<any, any>> => {
+  const passwordForgottenApiCallResult = axios
+    .post("http://localhost:3333/api/v1/user/forgot-password", data)
+    .then((res) => {
+      if (res) {
+        return res;
+      } else {
+        throw new Error("absence de token");
+      }
+    });
+
+  return passwordForgottenApiCallResult;
+};
+
+export const resetPasswordApiCallResult = async (
+  data: ResetPasswordFormInputs,
+  token: string | null
+): Promise<AxiosResponse<any, any>> => {
+  const resetPasswordApiCallResult = axios.post(
+    `http://localhost:3333/api/v1/user/reset-password?token=${token}`,
+    {
+      newPassword: data.newPassword,
+    }
+  );
+
+  return resetPasswordApiCallResult;
+};
+
+export const activateUserApiCallResult = async (email: string | null, token: string | null): Promise<AxiosResponse<any, any>> => {
+  const activateUserApiCallResult = axios
+  .post("http://localhost:3333/api/v1/user/activate", {
+    token: token,
+    email: email,
+  })
+  
+  return activateUserApiCallResult;
+}
 
 export const fetchOrders = async (user: User): Promise<Order[] | []> => {
   const orderList = axios

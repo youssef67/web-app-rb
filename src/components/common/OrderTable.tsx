@@ -20,6 +20,7 @@ import IconButton from "@mui/joy/IconButton";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import Typography from "@mui/joy/Typography";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import Checkbox from '@mui/joy/Checkbox';
 import Box from "@mui/joy/Box";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
@@ -58,7 +59,7 @@ const OrderTable: React.FC<OrderProps> = ({
   getSortingValue
 }) => {
   const [open, setOpen] = useState(false);
-
+  const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
     null
   );
@@ -109,7 +110,6 @@ const OrderTable: React.FC<OrderProps> = ({
   };
 
   const getValueSort = (event, sortValue: string) => {
-    console.log(sortValue)
     getSortingValue(sortValue)
     setSelectedSortValue(sortValue)
   };
@@ -333,6 +333,26 @@ const OrderTable: React.FC<OrderProps> = ({
         >
           <thead>
             <tr>
+            <th style={{ width: 48, textAlign: 'center', padding: '12px 6px' }}>
+                <Checkbox
+                  size="sm"
+                  indeterminate={
+                    selected.length > 0 && selected.length !== ordersList.length
+                  }
+                  checked={selected.length === ordersList.length}
+                  onChange={(event) => {
+                    setSelected(
+                      event.target.checked ? ordersList.map((row) => row.id) : [],
+                    );
+                  }}
+                  color={
+                    selected.length > 0 || selected.length === ordersList.length
+                      ? 'primary'
+                      : undefined
+                  }
+                  sx={{ verticalAlign: 'text-bottom' }}
+                />
+              </th>
               <th
                 style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
               >
@@ -365,6 +385,22 @@ const OrderTable: React.FC<OrderProps> = ({
             {sortOrders(ordersList, selectedSortValue).map(
               (row: Order) => (
                 <tr key={row.id}>
+                  <td style={{ textAlign: 'center', width: 120 }}>
+                  <Checkbox
+                    size="sm"
+                    checked={selected.includes(row.id)}
+                    color={selected.includes(row.id) ? 'primary' : undefined}
+                    onChange={(event) => {
+                      setSelected((ids) =>
+                        event.target.checked
+                          ? ids.concat(row.id)
+                          : ids.filter((itemId) => itemId !== row.id),
+                      );
+                    }}
+                    slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
+                    sx={{ verticalAlign: 'text-bottom' }}
+                  />
+                </td>
                   <td style={{ textAlign: "center", width: 140 }}>
                     <Typography level="body-xs">
                       {row.pickupTime.replace(":", "H").slice(0, -3)}
