@@ -30,6 +30,7 @@ import BlockIcon from "@mui/icons-material/Block";
 
 import { useQueryClient } from "@tanstack/react-query";
 import DesktopPagination from "@components/common/DesktopPagination";
+import CustomCircularProgress from "@components/common/CustomCircularProgress"
 import { Order } from "@interfaces/interfaces";
 import {
   formatPhoneNumber,
@@ -175,7 +176,7 @@ const OrderTable: React.FC<OrderProps> = ({
   );
 
   if (orderCount === 0) {
-    return <div>Il n'y a pas de commandes prévues pour aujourd'hui</div>;
+    <CustomCircularProgress/>;
   }
 
   return (

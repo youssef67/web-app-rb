@@ -13,6 +13,7 @@ import Breadcrumbs from "@mui/joy/Breadcrumbs";
 import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
 
+
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import Add from "@mui/icons-material/Add";
@@ -20,6 +21,8 @@ import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
 import OrderTable from "@components/common/OrderTable";
+import CustomCircularProgress from "@components/common/CustomCircularProgress"
+import CustomMessage from "@components/common/CustomMessage"
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
@@ -203,9 +206,13 @@ const DaysOrderDashboard: React.FC = () => {
              orderToUpdate={order}
             />
           </Box>
-          {isLoading && <div>Loading...</div>}
-          {error && <div>Error: {error.message}</div>}
-          {!isLoading && !error && ordersList && (
+          
+          {isLoading && <CustomCircularProgress/>}
+          {error && <CustomMessage message={error.message}/>}
+
+          {ordersList && ordersList.length === 0 && <CustomMessage message={"Pas de commandes prévues pour aujourd'hui"}/>}
+          
+          {!isLoading && !error && ordersList && ordersList.length > 0 && (
             <>
               <OrderTable
                 ordersList={ordersForCurrentPage}
