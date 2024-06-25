@@ -123,8 +123,6 @@ export default function Register() {
   };
 
   const handleCheckPassword = (passwordConfirmation: string) => {
-    console.log(password);
-    console.log(passwordConfirmation);
     if (password !== passwordConfirmation) {
       setErrors((prevErrors) => ({
         ...prevErrors,

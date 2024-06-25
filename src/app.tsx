@@ -9,8 +9,8 @@ import PasswordForgotten from "@routes/auth/PasswordForgotten";
 import ActivateUser from "@routes/auth/ActivateUser";
 import ResetPassword from "@routes/auth/ResetPassword";
 // Interface
-import DaysOrderDashboard from "routes/user/DaysOrderDashboard";
-import AllOrders from "@routes/user/AllOrders";
+import DaysOrdersDashboard from "routes/user/DaysOrdersDashboard";
+import AllOrdersDashboard from "@routes/user/AllOrdersDashboard";
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
           path="/orders-of-day"
           element={
             <ProtectedRoute>
-              <DaysOrderDashboard />
+              <DaysOrdersDashboard />
             </ProtectedRoute>
           }
         />
@@ -34,7 +34,7 @@ function App() {
           path="/all-orders"
           element={
             <ProtectedRoute>
-              <AllOrders />
+              <AllOrdersDashboard />
             </ProtectedRoute>
           }
         />

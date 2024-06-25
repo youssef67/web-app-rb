@@ -193,7 +193,6 @@ export default function PasswordForgotten() {
                       }
                     })
 
-                    console.log(passwordForgottenApiCall);
                   } else {
                     setNotification({
                       message: "Une erreur est survenue, merci de réessayer.",

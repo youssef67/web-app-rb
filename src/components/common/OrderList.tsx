@@ -21,6 +21,7 @@ import RowMenu from "@components/common/RowMenu";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
 
 interface OrderProps {
+  componentCallBy: string;
   ordersList: Order[];
   numberOfPages: number;
   currentPage: number;
@@ -29,6 +30,7 @@ interface OrderProps {
 }
 
 const OrderList: React.FC<OrderProps> = ({
+  componentCallBy,
   ordersList,
   numberOfPages,
   currentPage,
@@ -80,9 +82,24 @@ const OrderList: React.FC<OrderProps> = ({
                 <Typography fontWeight={600} gutterBottom>
                   {order.customer.name} {order.customer.lastname}
                 </Typography>
-                <Typography level="body-xs" gutterBottom>
-                  Heure de retrait : {order.pickupTime.replace(":", "H").slice(0, -3)}
-                </Typography>
+
+                {componentCallBy === "daysOrders" ? (
+                  <Typography level="body-xs" gutterBottom>
+                    Heure de retrait :{" "}
+                    {order.pickupTime.replace(":", "H").slice(0, -3)}
+                  </Typography>
+                ) : (
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    <div style={{ width: 240 }}>
+                      <Typography level="body-xs">26/06/2024</Typography>
+                      <Typography level="body-xs" gutterBottom>
+                        Heure de retrait :{" "}
+                        {order.pickupTime.replace(":", "H").slice(0, -3)}
+                      </Typography>
+                    </div>
+                  </Box>
+                )}
+
                 <Typography level="body-xs" gutterBottom>
                   Montant de la commande : {order.orderPrice} €
                 </Typography>

@@ -27,6 +27,7 @@ import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded
 
 import ColorSchemeToggle from "./ColorSchemeToggle";
 import { closeSidebar } from "@utils/sideBarUtils";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SidebarProps {
   currentDashboard: string;
@@ -34,6 +35,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { logout, user } = useAuth();
   const headers = useHeader();
 
@@ -45,6 +47,22 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
       })
       .catch((error) => console.log(error));
   };
+
+  const handleNavigateToDaysOrders = async () => {
+    await new Promise<void>(resolve => {
+      queryClient.removeQueries({queryKey: ['orders'], exact: true });
+      resolve()
+    })
+    navigate("/orders-of-day")
+  }
+
+  const handleNavigateToAllOrders = async () => {
+    await new Promise<void>(resolve => {
+      queryClient.removeQueries({queryKey: ['orders'], exact: true });
+      resolve()
+    })
+    navigate("/all-orders")
+  }
 
   return (
     <Sheet
@@ -128,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
           <ListItem>
             <ListItemButton
               selected={currentDashboard === "dayOrders"}
-              onClick={() => navigate("/orders-of-day")}
+              onClick={handleNavigateToDaysOrders}
             >
               <HomeRoundedIcon />
               <ListItemContent>
@@ -140,7 +158,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
           <ListItem>
             <ListItemButton
               selected={currentDashboard === "allOrders"}
-              onClick={() => navigate("/all-orders")}
+              onClick={handleNavigateToAllOrders}
             >
               <ShoppingCartRoundedIcon />
               <ListItemContent>

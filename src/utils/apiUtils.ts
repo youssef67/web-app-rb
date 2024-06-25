@@ -73,9 +73,26 @@ export const activateUserApiCallResult = async (email: string | null, token: str
   return activateUserApiCallResult;
 }
 
-export const fetchOrders = async (user: User): Promise<Order[] | []> => {
+// Function to fetch orders for a daysOrdersDashboard
+export const fetchDaysOrders = async (user: User): Promise<Order[] | []> => {
   const orderList = axios
     .get(`http://localhost:3333/api/v1/order/day-orders?userId=${user?.id}`, {
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      return res.data;
+    });
+
+  return orderList;
+};
+
+// Function to fetch all orders 
+export const fetchAllOrders = async (user: User): Promise<Order[] | []> => {
+  const orderList = axios
+    .get(`http://localhost:3333/api/v1/order/all-orders?userId=${user?.id}`, {
       headers: {
         Authorization: `Bearer ${user?.token}`,
         "Content-Type": "application/json",

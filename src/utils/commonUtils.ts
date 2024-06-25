@@ -28,16 +28,20 @@ export const getFullName = (customer: Customer): string =>
 
 export const getUniqueCustomers = (ordersList: Order[]) => {
   const seen: Record<string, boolean> = {};
+  const customersList: string[] = [];
 
-  return ordersList.filter((order: Order) => {
-    const key = `${order.customer.name}-${order.customer.lastname}`;
+  ordersList.filter((order: Order) => {
+    const key = `${order.customer.name} ${order.customer.lastname}`;
     if (!seen[key]) {
       seen[key] = true;
+      customersList.push(key)
       return true;
     } else {
       return false;
     }
   });
+
+  return customersList.sort((a, b) => a.localeCompare(b))
 };
 
 export const splitFullName = (fullName: string) => {
@@ -48,11 +52,13 @@ export const splitFullName = (fullName: string) => {
 export const manageFiltersValues = (
   orders: Order[],
   statusFilter: number | null,
+  dateFilter: number | null,
   customerFilter: string | null,
-  freeFieldFilter: string | null,
+  freeFieldFilter: string | null
 ): Order[] => {
   let filteredOrders = orders;
   let statusFilterResult;
+  let dateFilterResult;
   let customerFilterResult;
   let freeFieldFilterResult;
 
@@ -60,6 +66,7 @@ export const manageFiltersValues = (
   if (
     (!statusFilter || statusFilter === 0) &&
     (!customerFilter || customerFilter === "all") &&
+    (!dateFilter || dateFilter === 0) &&
     !freeFieldFilter
   ) {
     return orders;
@@ -67,9 +74,48 @@ export const manageFiltersValues = (
   } else {
     // Filter by status
     if (statusFilter !== null && statusFilter !== 0) {
-      statusFilterResult = filteredOrders.filter((order) => order.stateId === statusFilter);
+      statusFilterResult = filteredOrders.filter(
+        (order) => order.stateId === statusFilter
+      );
 
-      if (statusFilterResult.length > 0) filteredOrders = statusFilterResult
+      if (statusFilterResult.length > 0) filteredOrders = statusFilterResult;
+    }
+
+    // Filter by date
+    if (dateFilter !== null && dateFilter !== 0) {
+      const currentDate = new Date();
+      const futureDate = new Date();
+      // If dateFilter is 1, filter for next 7 days
+      if (dateFilter === 1) {
+        futureDate.setDate(currentDate.getDate() + 7);
+        dateFilterResult = filteredOrders.filter((order) => {
+          const orderDate = new Date(order.pickupDate);
+          return orderDate >= currentDate && orderDate <= futureDate;
+        });
+        if (dateFilterResult.length > 0) filteredOrders = dateFilterResult;
+      }
+      // If dateFilter is 1, filter for next 15 days
+      else if (dateFilter === 2) {
+        futureDate.setDate(currentDate.getDate() + 15);
+        dateFilterResult = filteredOrders.filter(
+          (order) =>{
+            const orderDate = new Date(order.pickupDate);
+            return orderDate >= currentDate && orderDate <= futureDate;
+          } 
+        );
+        if (dateFilterResult.length > 0) filteredOrders = dateFilterResult;
+      }
+      // If dateFilter is 1, filter for next 7 days
+      else if (dateFilter === 3) {
+        futureDate.setDate(currentDate.getDate() + 30);
+        dateFilterResult = filteredOrders.filter(
+          (order) => {
+            const orderDate = new Date(order.pickupDate);
+            return orderDate >= currentDate && orderDate <= futureDate;
+          } 
+        );
+        if (dateFilterResult.length > 0) filteredOrders = dateFilterResult;
+      }
     }
 
     // Filter by customer
@@ -82,12 +128,12 @@ export const manageFiltersValues = (
           .includes(lastname.toLowerCase() || firstname.toLowerCase())
       );
 
-      if (customerFilterResult.length > 0) filteredOrders = customerFilterResult
+      if (customerFilterResult.length > 0)
+        filteredOrders = customerFilterResult;
     }
 
     // Filter by free field
     if (freeFieldFilter !== null) {
-
       freeFieldFilterResult = filteredOrders.filter((order) =>
         Object.values(order.customer).some(
           (value) =>
@@ -95,54 +141,71 @@ export const manageFiltersValues = (
             value.toLowerCase().includes(freeFieldFilter.toLowerCase())
         )
       );
-      
-      if (freeFieldFilterResult.length > 0) filteredOrders = freeFieldFilterResult
-      else  filteredOrders = []
 
+      if (freeFieldFilterResult.length > 0)
+        filteredOrders = freeFieldFilterResult;
+      else filteredOrders = [];
     }
   }
 
   return filteredOrders;
 };
 
-export const sortOrders = (orders: Order[], typeSorting: string | null): Order[] => {
-    const sortedOrders = [...orders];
+export const sortOrders = (
+  orders: Order[],
+  typeSorting: string | null
+): Order[] => {
+  const sortedOrders = [...orders];
 
-    // sort by selected typeSorting
-    if (typeSorting === "latest") {
-      sortedOrders.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-    } else if (typeSorting === "asc-price") {
-      sortedOrders.sort((a, b) => parseFloat(a.orderPrice) - parseFloat(b.orderPrice));
-    } else if (typeSorting === "desc-price") {
-      sortedOrders.sort((a, b) => parseFloat(b.orderPrice) - parseFloat(a.orderPrice));
-    } else if (typeSorting === "asc-time") {
-      sortedOrders.sort((a, b) => Number(a.pickupTime.replace(":", ".").slice(0, -3)) - Number(b.pickupTime.replace(":", ".").slice(0, -3)));
-    } else if (typeSorting === "desc-time") {
-      sortedOrders.sort((a, b) => Number(b.pickupTime.replace(":", ".").slice(0, -3)) - Number(a.pickupTime.replace(":", ".").slice(0, -3)));
-    }
-
-    return sortedOrders;
+  // sort by selected typeSorting
+  if (typeSorting === "latest") {
+    sortedOrders.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  } else if (typeSorting === "asc-price") {
+    sortedOrders.sort(
+      (a, b) => parseFloat(a.orderPrice) - parseFloat(b.orderPrice)
+    );
+  } else if (typeSorting === "desc-price") {
+    sortedOrders.sort(
+      (a, b) => parseFloat(b.orderPrice) - parseFloat(a.orderPrice)
+    );
+  } else if (typeSorting === "asc-time") {
+    sortedOrders.sort(
+      (a, b) =>
+        Number(a.pickupTime.replace(":", ".").slice(0, -3)) -
+        Number(b.pickupTime.replace(":", ".").slice(0, -3))
+    );
+  } else if (typeSorting === "desc-time") {
+    sortedOrders.sort(
+      (a, b) =>
+        Number(b.pickupTime.replace(":", ".").slice(0, -3)) -
+        Number(a.pickupTime.replace(":", ".").slice(0, -3))
+    );
   }
 
+  return sortedOrders;
+};
 
 export const validatePickupDate = (value: Date | null) => {
   if (!value) {
     return "La date de récupération est obligatoire";
   }
-  return true; 
+  return true;
 };
 
 export const validatePickupTime = (value: Date | null) => {
   if (!value) {
     return "L'heure de récupération est obligatoire";
   }
-  return true; 
+  return true;
 };
 
-export const validatePasswords = (password: string, confirmationPassword: string) => {
+export const validatePasswords = (
+  password: string,
+  confirmationPassword: string
+) => {
   if (password !== confirmationPassword) {
-    return false
+    return false;
   }
 
   return true;
-}
+};

@@ -13,7 +13,6 @@ import Breadcrumbs from "@mui/joy/Breadcrumbs";
 import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
 
-
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import Add from "@mui/icons-material/Add";
@@ -21,28 +20,28 @@ import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
 import OrderTable from "@components/common/OrderTable";
-import CustomCircularProgress from "@components/common/CustomCircularProgress"
-import CustomMessage from "@components/common/CustomMessage"
+import CustomCircularProgress from "@components/common/CustomCircularProgress";
+import CustomMessage from "@components/common/CustomMessage";
 import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
 import CustomModalUpdateOrder from "@components/orders/CustomModalUpdateOrder";
-import { currentDate, manageFiltersValues } from "@utils/commonUtils";
+import { currentDate, manageFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
 
-import { fetchOrders } from "@utils/apiUtils";
+import { fetchDaysOrders } from "@utils/apiUtils";
 
-
-
-const DaysOrderDashboard: React.FC = () => {
+const DaysOrdersDashboard: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [openUpdateOrderModal, setOpenUpdateOrderModal] = useState<boolean>(false);
-  const [order, setOrder] = useState<Order | undefined>(undefined)
+  const [openUpdateOrderModal, setOpenUpdateOrderModal] =
+    useState<boolean>(false);
+  const [order, setOrder] = useState<Order | undefined>(undefined);
   // filters State
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
   const [selectedSortValue, setSelectedSortValue] = useState("latest");
+  const [uniqueCustomers, setUniqueCustomers] = useState<string[]>([])
   // Pagination state
   const [numberOfPages, setNumberOfPages] = useState<number>(1);
   const ordersPerPage = 10;
@@ -52,7 +51,7 @@ const DaysOrderDashboard: React.FC = () => {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
-  const { currentPage } = usePagination();
+  const { currentPage, setCurrentPage } = usePagination();
 
   // to update orders list after adding or updating a new order
   const handleChangeMade = async () => {
@@ -66,14 +65,14 @@ const DaysOrderDashboard: React.FC = () => {
     setOpenUpdateOrderModal(true);
   };
 
-
   const handleFilters = useCallback(
     (orders: Order[]) => {
       const filteredOrders = manageFiltersValues(
         orders,
         statusFilter,
+        null, // dateFilter is not used in this context
         customerFilter,
-        freeFieldFilter,
+        freeFieldFilter
       );
 
       // If no results for the filters, display a original orders list
@@ -92,7 +91,7 @@ const DaysOrderDashboard: React.FC = () => {
     error,
   } = useQuery({
     queryKey: ["orders"],
-    queryFn: () => fetchOrders(user),
+    queryFn: () => fetchDaysOrders(user),
     select: (data) => handleFilters(data),
   });
 
@@ -104,19 +103,33 @@ const DaysOrderDashboard: React.FC = () => {
     }
   }, [notification, enqueueSnackbar, setNotification]);
 
-
   useEffect(() => {
     if (ordersList) {
       setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage));
+      setUniqueCustomers(getUniqueCustomers(ordersList))
+
     }
 
-    const start = (currentPage - 1) * ordersPerPage;
+    let start = (currentPage - 1) * ordersPerPage;
+
+    // this code is to manage the pagination when filter gave us less than the previous list orders
+    if (ordersList) {
+      if (start >= ordersList.length) {
+        setCurrentPage(1)
+        start = 0
+      }
+    }
+
     const end = start + ordersPerPage;
 
     const orders = ordersList?.slice(start, end);
 
     if (orders) setOrdersForCurrentPage(orders);
+
   }, [currentPage, ordersList]);
+
+
+
 
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -200,30 +213,38 @@ const DaysOrderDashboard: React.FC = () => {
               onChangeMade={handleChangeMade}
             />
             <CustomModalUpdateOrder
-             open={openUpdateOrderModal}
-             setOpen={setOpenUpdateOrderModal}
-             onChangeMade={handleChangeMade}
-             orderToUpdate={order}
+              open={openUpdateOrderModal}
+              setOpen={setOpenUpdateOrderModal}
+              onChangeMade={handleChangeMade}
+              orderToUpdate={order}
             />
           </Box>
-          
-          {isLoading && <CustomCircularProgress/>}
-          {error && <CustomMessage message={error.message}/>}
 
-          {ordersList && ordersList.length === 0 && <CustomMessage message={"Pas de commandes prévues pour aujourd'hui"}/>}
-          
+          {isLoading && <CustomCircularProgress />}
+          {error && <CustomMessage message={error.message} />}
+
+          {ordersList && ordersList.length === 0 && (
+            <CustomMessage
+              message={"Pas de commandes prévues pour aujourd'hui"}
+            />
+          )}
+
           {!isLoading && !error && ordersList && ordersList.length > 0 && (
             <>
               <OrderTable
+                componentCallBy="daysOrders"
                 ordersList={ordersForCurrentPage}
                 statusFilter={setStatusFilter}
+                dateFilter={() => {}}
                 customerFilter={setCustomerFilter}
                 freeFieldFilter={setFreeFieldFilter}
                 numberOfPages={numberOfPages}
                 openUpdateModal={handleUpdateOrder}
                 getSortingValue={setSelectedSortValue}
+                uniqueCustomers={uniqueCustomers}
               />
               <OrderList
+                componentCallBy="daysOrders"
                 ordersList={ordersForCurrentPage}
                 openUpdateModal={handleUpdateOrder}
                 currentPage={currentPage}
@@ -238,4 +259,4 @@ const DaysOrderDashboard: React.FC = () => {
   );
 };
 
-export default DaysOrderDashboard;
+export default DaysOrdersDashboard;

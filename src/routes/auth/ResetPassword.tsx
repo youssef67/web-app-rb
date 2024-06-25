@@ -91,8 +91,6 @@ export default function ResetPassword() {
   };
 
   const handleCheckPassword = (passwordConfirmation: string) => {
-    console.log(newPassword);
-    console.log(passwordConfirmation);
     if (newPassword !== passwordConfirmation) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -216,13 +214,10 @@ export default function ResetPassword() {
                   };
 
                   if (areAllErrorsEmpty(errors)) {
-                    console.log(data);
                     const resetPasswordApiCall = resetPasswordApiCallResult(
                       data,
                       token
                     );
-
-                    console.log(resetPasswordApiCall);
 
                     resetPasswordApiCall.then((res) => {
                       if (res.status === 200) {
