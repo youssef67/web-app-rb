@@ -27,7 +27,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { NumericFormatAdapter } from "@utils/modalUtils";
 import { updateOrder } from "@utils/apiUtils";
-import { IFormInput } from "@interfaces/interfaces";
+import { IFormInputOrder } from "@interfaces/interfaces";
 import { Order } from "@interfaces/interfaces";
 import { validatePickupDate, validatePickupTime } from "@utils/commonUtils";
 
@@ -52,7 +52,7 @@ const CustomModalUpdateOrder = ({
   const [pickupTime, setPickupTime] = useState<Date | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (data: IFormInput) => updateOrder(data, headers, orderToUpdate),
+    mutationFn: (data: IFormInputOrder) => updateOrder(data, headers, orderToUpdate),
     onSuccess: () => {
       onChangeMade();
       setNotification({
@@ -74,7 +74,7 @@ const CustomModalUpdateOrder = ({
     control,
     setValue,
     formState: { errors },
-  } = useForm<IFormInput>();
+  } = useForm<IFormInputOrder>();
 
   useEffect(() => {
     if (orderToUpdate) {
@@ -86,7 +86,7 @@ const CustomModalUpdateOrder = ({
     }
   }, [orderToUpdate, setValue]);
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInputOrder> = (data) => {
     data.pickupDate = pickupDate ?? pickupDate;
     data.pickupTime = pickupTime ?? pickupTime;
 

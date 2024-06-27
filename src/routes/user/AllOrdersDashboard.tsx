@@ -26,7 +26,7 @@ import OrderList from "@components/common/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
 import CustomModalUpdateOrder from "@components/orders/CustomModalUpdateOrder";
-import { manageFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
+import { manageOrdersFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
 
 import { fetchAllOrders } from "@utils/apiUtils";
@@ -68,7 +68,7 @@ const AllOrdersDashboard: React.FC = () => {
 
   const handleFilters = useCallback(
     (orders: Order[]) => {
-      const filteredOrders = manageFiltersValues(
+      const filteredOrders = manageOrdersFiltersValues(
         orders,
         statusFilter,
         dateFilter,
@@ -124,7 +124,7 @@ const AllOrdersDashboard: React.FC = () => {
 
     if (orders) setOrdersForCurrentPage(orders);
 
-  }, [currentPage, ordersList]);
+  }, [currentPage, ordersList, setCurrentPage]);
 
   return (
     <CssVarsProvider disableTransitionOnChange>

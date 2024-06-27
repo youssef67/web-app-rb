@@ -1,9 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 // const { login } = useAuth();
 import {
-  IFormInput,
+  IFormInputOrder,
+  IFormInputCustomer,
   User,
   Order,
+  CustomerFullData,
   LoginFormInputs,
   RegisterFormInputs,
   ResetPasswordFormInputs,
@@ -105,24 +107,28 @@ export const fetchAllOrders = async (user: User): Promise<Order[] | []> => {
   return orderList;
 };
 
+
+
 export const addOrder = async (
-  data: IFormInput,
+  data: IFormInputOrder,
   currentUser: { userId: number; emailUser: string } | null,
   headers: object
 ) => {
-  axios
-    .post(
+  try {
+    const response = await axios.post(
       `http://localhost:3333/api/v1/order/add`,
-      { ...data, ...currentUser },
-      { headers }
+      { ...data, ...currentUser},
+      { headers}
     )
-    .then((res) => {
-      return res.data;
-    });
+    return response.data
+  } catch (error) {
+    console.log("Une erreur s'est produite lors de l'ajout de la commande")
+    throw new Error("Une erreur s'est produite lors de l'ajout de la commande")
+  }
 };
 
 export const updateOrder = async (
-  data: IFormInput,
+  data: IFormInputOrder,
   headers: object,
   order: Order | undefined
 ) => {
@@ -146,6 +152,37 @@ export const fetchUpdateOrder = async (
     .post(
       `http://localhost:3333/api/v1/order/${action}`,
       { orderId: orderId },
+      { headers }
+    )
+    .then((res) => {
+      return res.data;
+    });
+};
+
+export const fetchAllCustomers = async (user: User): Promise<CustomerFullData[] | []> => {
+  const customersList = axios
+    .get(`http://localhost:3333/api/v1/customer/all-customers?userId=${user?.id}`, {
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      return res.data;
+    });
+
+  return customersList;
+};
+
+export const updateCustomer = async (
+  data: IFormInputCustomer,
+  headers: object,
+  customer: CustomerFullData | undefined
+) => {
+  axios
+    .post(
+      `http://localhost:3333/api/v1/order/update`,
+      { customerId: customer?.customer.id, ...data },
       { headers }
     )
     .then((res) => {

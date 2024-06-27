@@ -1,4 +1,4 @@
-import { Customer, Order } from "@interfaces/interfaces";
+import { Customer, CustomerFullData, Order } from "@interfaces/interfaces";
 
 export const currentDate = () => {
   const today = new Date();
@@ -9,13 +9,11 @@ export const currentDate = () => {
   return `${day}/${month}/${year}`;
 };
 
-export const formatPhoneNumber = (phoneNumber: string): string => {
+export const formatPhoneNumber = (phoneNumber: string): string | null => {
   const cleaned = phoneNumber.replace(/\D/g, "");
 
   if (cleaned.length !== 10) {
-    throw new Error(
-      "Le numéro de téléphone doit contenir exactement 10 chiffres."
-    );
+    return null
   }
 
   const formattedNumber = cleaned.match(/.{1,2}/g)?.join(".") ?? "";
@@ -26,12 +24,12 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 export const getFullName = (customer: Customer): string =>
   `${customer.name} ${customer.lastname}`;
 
-export const getUniqueCustomers = (ordersList: Order[]) => {
+export const getUniqueCustomers = (data: Order[] | CustomerFullData[]) => {
   const seen: Record<string, boolean> = {};
   const customersList: string[] = [];
 
-  ordersList.filter((order: Order) => {
-    const key = `${order.customer.name} ${order.customer.lastname}`;
+  data.filter((data: Order | CustomerFullData) => {
+    const key = `${data.customer.name} ${data.customer.lastname}`;
     if (!seen[key]) {
       seen[key] = true;
       customersList.push(key)
@@ -49,7 +47,7 @@ export const splitFullName = (fullName: string) => {
   return { lastname, firstname };
 };
 
-export const manageFiltersValues = (
+export const manageOrdersFiltersValues = (
   orders: Order[],
   statusFilter: number | null,
   dateFilter: number | null,
@@ -149,6 +147,57 @@ export const manageFiltersValues = (
   }
 
   return filteredOrders;
+};
+
+export const manageCustomersFiltersValues = (
+  customers: CustomerFullData[],
+  customerFilter: string | null,
+  freeFieldFilter: string | null
+): CustomerFullData[] => {
+  let filteredCustomers = customers;
+  let customerFilterResult;
+  let freeFieldFilterResult;
+
+  // If no filter is applied, return all orders
+  if (
+    (!customerFilter || customerFilter === "all") &&
+    !freeFieldFilter
+  ) {
+    return filteredCustomers;
+    // If a filter is applied, filter the orders accordingly
+  } else {
+   
+    // Filter by customer
+    if (customerFilter !== null && customerFilter !== "all") {
+      const { lastname, firstname } = splitFullName(customerFilter);
+
+      customerFilterResult = filteredCustomers.filter((customer) =>
+        customer.name
+          .toLowerCase()
+          .includes(lastname.toLowerCase() || firstname.toLowerCase())
+      );
+
+      if (customerFilterResult.length > 0)
+        filteredCustomers = customerFilterResult;
+    }
+
+    // Filter by free field
+    if (freeFieldFilter !== null) {
+      freeFieldFilterResult = filteredCustomers.filter((customer) =>
+        Object.values(customer).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(freeFieldFilter.toLowerCase())
+        )
+      );
+
+      if (freeFieldFilterResult.length > 0)
+        filteredCustomers = freeFieldFilterResult;
+      else filteredCustomers = [];
+    }
+  }
+
+  return filteredCustomers;
 };
 
 export const sortOrders = (

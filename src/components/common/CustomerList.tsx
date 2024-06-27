@@ -14,28 +14,24 @@ import Box from "@mui/joy/Box";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
 
-import { Order } from "@interfaces/interfaces";
+import { CustomerWithPivotData } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
-import RowMenuOrders from "@components/common/RowMenuOrders";
+import RowMenuCustomers from "@components/common/RowMenuCustomers";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
 
 interface OrderProps {
-  componentCallBy: string;
-  ordersList: Order[];
+  customersList: CustomerWithPivotData[];
   numberOfPages: number;
   currentPage: number;
   sortingValue: string;
-  openUpdateModal: (orderId: number) => void;
 }
 
 const OrderList: React.FC<OrderProps> = ({
-  componentCallBy,
-  ordersList,
+  customersList,
   numberOfPages,
   currentPage,
   sortingValue,
-  openUpdateModal,
 }) => {
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
@@ -47,9 +43,10 @@ const OrderList: React.FC<OrderProps> = ({
 
   return (
     <Box sx={{ display: { xs: "block", sm: "none" } }}>
-      {sortOrders(ordersList, sortingValue).map((order: Order) => (
+      {/* {sortOrders(ordersList, sortingValue).map((order: Order) => ( */}
+      {customersList.map((customer: Customer) => (
         <List
-          key={order.id}
+          key={customer.id}
           size="sm"
           sx={{
             "--ListItem-paddingX": 0,
@@ -65,43 +62,23 @@ const OrderList: React.FC<OrderProps> = ({
             <ListItemContent
               sx={{ display: "flex", gap: 2, alignItems: "start" }}
             >
-              <ListItemDecorator>
-                <Tooltip
-                  title={
-                    order.detailsForUser
-                      ? order.detailsForUser
-                      : "Aucune information"
-                  }
-                  variant="solid"
-                  placement="right"
-                >
-                  <InfoIcon sx={{ fontSize: "2rem" }} />
-                </Tooltip>
-              </ListItemDecorator>
               <div>
                 <Typography fontWeight={600} gutterBottom>
-                  {order.customer.name} {order.customer.lastname}
+                  {customer.name} {customer.lastname}
                 </Typography>
-
-                {componentCallBy === "daysOrders" ? (
-                  <Typography level="body-xs" gutterBottom>
-                    Heure de retrait :{" "}
-                    {order.pickupTime.replace(":", "H").slice(0, -3)}
-                  </Typography>
-                ) : (
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <div style={{ width: 240 }}>
-                      <Typography level="body-xs">26/06/2024</Typography>
-                      <Typography level="body-xs" gutterBottom>
-                        Heure de retrait :{" "}
-                        {order.pickupTime.replace(":", "H").slice(0, -3)}
-                      </Typography>
-                    </div>
-                  </Box>
-                )}
-
+                <Typography level="body-xs"> {customer.email}</Typography>
+                <Typography level="body-xs">&bull;</Typography>
+                <Typography level="body-xs">
+                  {formatPhoneNumber(customer.phone)}
+                </Typography>
                 <Typography level="body-xs" gutterBottom>
-                  Montant de la commande : {order.orderPrice} €
+                  Dernière commande effectué le 26/06/2024
+                </Typography>
+                <Typography level="body-xs" gutterBottom>
+                  Montant total 120 € (5 commandes)
+                </Typography>
+                <Typography level="body-xs" gutterBottom>
+                  1 commande non respectée
                 </Typography>
                 <Box
                   sx={{
@@ -111,28 +88,19 @@ const OrderList: React.FC<OrderProps> = ({
                     gap: 0.5,
                     mb: 1,
                   }}
-                >
-                  <Typography level="body-xs">
-                    {" "}
-                    {order.customer.email}
-                  </Typography>
-                  <Typography level="body-xs">&bull;</Typography>
-                  <Typography level="body-xs">
-                    {formatPhoneNumber(order.customer.phone)}
-                  </Typography>
-                </Box>
+                ></Box>
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                 >
-                  <RowMenuOrders
-                    idOrder={order.id}
+                  <RowMenuCustomers
+                    idOrder={customer.id}
                     onChangeMade={handleChangeMade}
-                    openUpdateModal={openUpdateModal}
+                    openUpdateModal={() => {}}
                   />
                 </Box>
               </div>
             </ListItemContent>
-            <Chip
+            {/* <Chip
               variant="soft"
               size="sm"
               startDecorator={
@@ -149,7 +117,7 @@ const OrderList: React.FC<OrderProps> = ({
               }
             >
               {order.stateId === 1 ? "confirmé" : "non confirmé "}
-            </Chip>
+            </Chip> */}
           </ListItem>
           <ListDivider />
         </List>

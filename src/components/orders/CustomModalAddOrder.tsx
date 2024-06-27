@@ -24,7 +24,7 @@ import { useMutation } from "@tanstack/react-query";
 import { addOrder } from "@utils/apiUtils";
 import { validatePickupDate, validatePickupTime } from "@utils/commonUtils";
 import { NumericFormatAdapter } from "@utils/modalUtils";
-import { IFormInput } from "@interfaces/interfaces";
+import { IFormInputOrder } from "@interfaces/interfaces";
 
 interface CustomModalAddOrderProps {
   open: boolean;
@@ -44,7 +44,7 @@ const CustomModalAddOrder = ({
   const [pickupTime, setPickupTime] = useState<Date | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (data: IFormInput) => addOrder(data, currentUser, headers),
+    mutationFn: (data: IFormInputOrder) => addOrder(data, currentUser, headers),
     onSuccess: () => {
       onChangeMade();
       setNotification({
@@ -55,7 +55,7 @@ const CustomModalAddOrder = ({
     },
     onError: () => {
       setNotification({
-        message: "Une erreur est survenue",
+        message: "Une erreur est survenue dans l'enregistrement de la commande",
         variant: "error",
       });
     },
@@ -65,7 +65,7 @@ const CustomModalAddOrder = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IFormInput>({
+  } = useForm<IFormInputOrder>({
     defaultValues: {
       name: "youssef",
       lastname: "Moudni",
@@ -77,7 +77,7 @@ const CustomModalAddOrder = ({
     },
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInputOrder> = (data) => {
     mutation.mutate(data);
   };
 

@@ -41,7 +41,29 @@ export interface Customer {
   updatedAt: string;
 }
 
-export interface IFormInput {
+export interface CustomerWithPivotData {
+  id: number;
+  name: string;
+  lastname: string;
+  phone: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  meta: {
+     orders_count: number,
+     pivot_user_id: number,
+     pivot_customer_id: number
+  }
+}
+
+export interface CustomerFullData {
+  customer: CustomerWithPivotData
+  ordersCount: number
+  lastOrderDate: string
+  totalOrderAmount: string
+}
+
+export interface IFormInputOrder {
   name: string;
   lastname: string;
   email: string;
@@ -51,6 +73,13 @@ export interface IFormInput {
   pickupTime: Date | null
   detailsForCustomer: string;
   detailsForUser: string;
+}
+
+export interface IFormInputCustomer {
+  name: string;
+  lastname: string;
+  email: string;
+  phone: string;
 }
 
 export interface ModalAddOrderProps {

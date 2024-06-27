@@ -11,6 +11,7 @@ import ResetPassword from "@routes/auth/ResetPassword";
 // Interface
 import DaysOrdersDashboard from "routes/user/DaysOrdersDashboard";
 import AllOrdersDashboard from "@routes/user/AllOrdersDashboard";
+import CustomersDashboard from "@routes/user/CustomersDashboard";
 
 function App() {
   return (
@@ -35,6 +36,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AllOrdersDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customers"
+          element={
+            <ProtectedRoute>
+              <CustomersDashboard />
             </ProtectedRoute>
           }
         />

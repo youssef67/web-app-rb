@@ -199,7 +199,7 @@ export default function Login() {
                   <Input
                     type="email"
                     name="email"
-                    defaultValue={"you.moudni+user-1@gmail.com"}
+                    defaultValue={"you.moudni@gmail.com"}
                   />
                 </FormControl>
                 <FormControl required>
@@ -207,7 +207,7 @@ export default function Login() {
                   <Input
                     type="password"
                     name="password"
-                    defaultValue={"12345678"}
+                    defaultValue={"kurosaki"}
                   />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>

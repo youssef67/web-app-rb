@@ -19,79 +19,79 @@ import Add from "@mui/icons-material/Add";
 import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
-import OrderTable from "@components/common/OrderTable";
+import CustomerTable from "@components/common/CustomerTable";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
 import CustomMessage from "@components/common/CustomMessage";
-import OrderList from "@components/common/OrderList";
-import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
-import CustomModalUpdateOrder from "@components/orders/CustomModalUpdateOrder";
-import { currentDate, manageOrdersFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
-import { Order } from "@interfaces/interfaces";
+import CustomerList from "@components/common/CustomerList";
+import Header from "@components/common/Header";
+import CustomModalUpdateCustomer from "@components/customers/CustomModalUpdateCustomer";
+import { manageCustomersFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
+import { CustomerFullData } from "@interfaces/interfaces";
 
-import { fetchDaysOrders } from "@utils/apiUtils";
+import { fetchAllCustomers } from "@utils/apiUtils";
 
-const DaysOrdersDashboard: React.FC = () => {
+const CustomerDashboard: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [openUpdateOrderModal, setOpenUpdateOrderModal] =
+  const [openUpdateCustomerModal, setOpenUpdateCustomerModal] =
     useState<boolean>(false);
-  const [order, setOrder] = useState<Order | undefined>(undefined);
+    useState<boolean>(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerFullData | undefined>(undefined);
+
   // filters State
-  const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
   const [selectedSortValue, setSelectedSortValue] = useState("latest");
   const [uniqueCustomers, setUniqueCustomers] = useState<string[]>([])
   // Pagination state
   const [numberOfPages, setNumberOfPages] = useState<number>(1);
-  const ordersPerPage = 10;
-  const [ordersForCurrentPage, setOrdersForCurrentPage] = useState<Order[]>([]);
+  const customersPerPage = 10;
+  const [customersForCurrentPage, setCustomersForCurrentPage] = useState<CustomerFullData[]>([]);
   // Hook state
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
-  const { currentPage, setCurrentPage } = usePagination();
+  const { currentPage } = usePagination();
 
-  // to update orders list after adding or updating a new order
-  const handleChangeMade = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["orders"] });
+   // to update orders list after adding or updating a new order
+   const handleChangeMade = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["customers"] });
   };
 
+
   // to open modal for update order
-  const handleUpdateOrder = (orderId: number) => {
-    const order = ordersList?.find((order) => order.id === orderId);
-    setOrder(order);
-    setOpenUpdateOrderModal(true);
+  const handleUpdateCustomer = (customerId: number) => {
+    const customer = customersList?.find((data) => data.customer.id === customerId);
+    setSelectedCustomer(customer);
+    setOpenUpdateCustomerModal(true);
   };
 
   const handleFilters = useCallback(
-    (orders: Order[]) => {
-      const filteredOrders = manageOrdersFiltersValues(
-        orders,
-        statusFilter,
-        null, // dateFilter is not used in this context
+    (customers: CustomerFullData[]) => {
+      const filteredCustomers = manageCustomersFiltersValues(
+        customers,
         customerFilter,
         freeFieldFilter
       );
 
       // If no results for the filters, display a original orders list
-      if (filteredOrders.length === 0) {
-        return orders;
+      if (filteredCustomers.length === 0) {
+        return customers;
       } else {
-        return filteredOrders;
+        return filteredCustomers;
       }
     },
-    [statusFilter, customerFilter, freeFieldFilter]
+    [customerFilter, freeFieldFilter]
   );
 
   const {
-    data: ordersList,
+    data: customersList,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["orders"],
-    queryFn: () => fetchDaysOrders(user),
+    queryKey: ["customers"],
+    queryFn: () => fetchAllCustomers(user),
     select: (data) => handleFilters(data),
   });
 
@@ -104,39 +104,28 @@ const DaysOrdersDashboard: React.FC = () => {
   }, [notification, enqueueSnackbar, setNotification]);
 
   useEffect(() => {
-    if (ordersList) {
-      setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage));
-      setUniqueCustomers(getUniqueCustomers(ordersList))
-
+    if (customersList) {
+      setNumberOfPages(Math.ceil(customersList.length / customersPerPage));
+      setUniqueCustomers(getUniqueCustomers(customersList))
     }
 
-    let start = (currentPage - 1) * ordersPerPage;
+    const start = (currentPage - 1) * customersPerPage;
 
-    // this code is to manage the pagination when filter gave us less than the previous list orders
-    if (ordersList) {
-      if (start >= ordersList.length) {
-        setCurrentPage(1)
-        start = 0
-      }
-    }
+    const end = start + customersPerPage;
+    const customers = customersList?.slice(start, end);
 
-    const end = start + ordersPerPage;
+    if (customers) setCustomersForCurrentPage(customers);
 
-    const orders = ordersList?.slice(start, end);
+  }, [currentPage, customersList]);
 
-    if (orders) setOrdersForCurrentPage(orders);
-
-  }, [currentPage, ordersList, setCurrentPage]);
-
-
-
+  console.log(customersList)
 
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
       <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <Header />
-        <Sidebar currentDashboard="dayOrders" />
+        <Sidebar currentDashboard="customers" />
         <Box
           component="main"
           className="MainContent"
@@ -181,7 +170,7 @@ const DaysOrdersDashboard: React.FC = () => {
                 Accueil
               </Link>
               <Typography color="primary" fontWeight={500} fontSize={12}>
-                Mes commandes
+                Mes clients
               </Typography>
             </Breadcrumbs>
           </Box>
@@ -197,7 +186,7 @@ const DaysOrdersDashboard: React.FC = () => {
             }}
           >
             <Typography level="h2" component="h1">
-              Commandes du {currentDate()}
+              Listes des clients
             </Typography>
             <Button
               variant="outlined"
@@ -210,47 +199,42 @@ const DaysOrdersDashboard: React.FC = () => {
             <CustomModalAddOrder
               open={open}
               setOpen={setOpen}
-              onChangeMade={handleChangeMade}
+              onChangeMade={() => {}}
             />
-            <CustomModalUpdateOrder
-              open={openUpdateOrderModal}
-              setOpen={setOpenUpdateOrderModal}
+            <CustomModalUpdateCustomer
+              open={openUpdateCustomerModal}
+              setOpen={setOpenUpdateCustomerModal}
               onChangeMade={handleChangeMade}
-              orderToUpdate={order}
+              customerToUpdate={selectedCustomer}
             />
           </Box>
 
           {isLoading && <CustomCircularProgress />}
           {error && <CustomMessage message={error.message} />}
 
-          {ordersList && ordersList.length === 0 && (
+          {customersList && customersList.length === 0 && (
             <CustomMessage
-              message={"Pas de commandes prévues pour aujourd'hui"}
+              message={"Pas encore de clients enregistrés"}
             />
           )}
 
-          {!isLoading && !error && ordersList && ordersList.length > 0 && (
+          {!isLoading && !error && customersList && customersList.length > 0 && (
             <>
-              <OrderTable
-                componentCallBy="daysOrders"
-                ordersList={ordersForCurrentPage}
-                statusFilter={setStatusFilter}
-                dateFilter={() => {}}
+              <CustomerTable
+                customersList={customersForCurrentPage}
                 customerFilter={setCustomerFilter}
                 freeFieldFilter={setFreeFieldFilter}
                 numberOfPages={numberOfPages}
-                openUpdateModal={handleUpdateOrder}
+                openUpdateModal={handleUpdateCustomer}
                 getSortingValue={setSelectedSortValue}
                 uniqueCustomers={uniqueCustomers}
               />
-              <OrderList
-                componentCallBy="daysOrders"
-                ordersList={ordersForCurrentPage}
-                openUpdateModal={handleUpdateOrder}
+              {/* <CustomerList
+                customersList={customersForCurrentPage}
                 currentPage={currentPage}
                 numberOfPages={numberOfPages}
                 sortingValue={selectedSortValue}
-              />
+              /> */}
             </>
           )}
         </Box>
@@ -259,4 +243,4 @@ const DaysOrdersDashboard: React.FC = () => {
   );
 };
 
-export default DaysOrdersDashboard;
+export default CustomerDashboard;

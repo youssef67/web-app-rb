@@ -28,6 +28,9 @@ import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded
 import ColorSchemeToggle from "./ColorSchemeToggle";
 import { closeSidebar } from "@utils/sideBarUtils";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePagination } from "@contexts/PaginationContext";
+
+
 
 interface SidebarProps {
   currentDashboard: string;
@@ -38,6 +41,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
   const queryClient = useQueryClient();
   const { logout, user } = useAuth();
   const headers = useHeader();
+  const { setCurrentPage } = usePagination();
+
 
   const handleLogout = () => {
     axios
@@ -49,20 +54,31 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
   };
 
   const handleNavigateToDaysOrders = async () => {
-    await new Promise<void>(resolve => {
-      queryClient.removeQueries({queryKey: ['orders'], exact: true });
-      resolve()
-    })
-    navigate("/orders-of-day")
-  }
+    await new Promise<void>((resolve) => {
+      queryClient.removeQueries({ queryKey: ["orders"], exact: true });
+      resolve();
+    });
+    setCurrentPage(1)
+    navigate("/orders-of-day");
+  };
 
   const handleNavigateToAllOrders = async () => {
-    await new Promise<void>(resolve => {
-      queryClient.removeQueries({queryKey: ['orders'], exact: true });
-      resolve()
-    })
-    navigate("/all-orders")
-  }
+    await new Promise<void>((resolve) => {
+      queryClient.removeQueries({ queryKey: ["orders"], exact: true });
+      resolve();
+    });
+    setCurrentPage(1)
+    navigate("/all-orders");
+  };
+
+  const handleNavigateToCustomers = async () => {
+    // await new Promise<void>((resolve) => {
+    //   queryClient.removeQueries({ queryKey: ["orders"], exact: true });
+    //   resolve();
+    // });
+    setCurrentPage(1)
+    navigate("/customers");
+  };
 
   return (
     <Sheet
@@ -121,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
           <BrightnessAutoRoundedIcon />
         </IconButton>
         <Typography level="title-lg">Rabbit butcher</Typography>
-        <ColorSchemeToggle sx={{ ml: 'auto' }} />
+        <ColorSchemeToggle sx={{ ml: "auto" }} />
       </Box>
       <Box
         sx={{
@@ -166,9 +182,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
               </ListItemContent>
             </ListItemButton>
           </ListItem>
-          
+
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              selected={currentDashboard === "customers"}
+              onClick={handleNavigateToCustomers}
+            >
               <GroupRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Clients</Typography>
@@ -205,6 +224,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
       </Box>
     </Sheet>
   );
-}
+};
 
 export default Sidebar;

@@ -277,7 +277,7 @@ export default function Register() {
                   <Input
                     type="email"
                     name="email"
-                    defaultValue={"you.moudni+refonte@gmail.com"}
+                    defaultValue={"you.moudni@gmail.com"}
                     onChange={(event) =>
                       handleEmailValidator(event.target.value)
                     }
@@ -319,7 +319,7 @@ export default function Register() {
                   <Input
                     type="password"
                     name="password"
-                    defaultValue={"123456782"}
+                    defaultValue={"kurosaki"}
                     onChange={(event) =>
                       handlePasswordLength(event.target.value)
                     }
@@ -336,7 +336,7 @@ export default function Register() {
                   <Input
                     type="password"
                     name="confirm_password"
-                    defaultValue={"12345678"}
+                    defaultValue={"kurosaki"}
                     onChange={(event) =>
                       handleCheckPassword(event.target.value)
                     }
