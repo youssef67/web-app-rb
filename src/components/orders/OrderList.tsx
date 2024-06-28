@@ -17,7 +17,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import { Order } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
-import RowMenuOrders from "@components/common/RowMenuOrders";
+import RowMenuOrders from "@components/orders/RowMenuOrders";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
 
 interface OrderProps {
@@ -106,17 +106,16 @@ const OrderList: React.FC<OrderProps> = ({
                 <Box
                   sx={{
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: "start",
                     justifyContent: "space-between",
+                    flexDirection: "column",
                     gap: 0.5,
                     mb: 1,
                   }}
                 >
                   <Typography level="body-xs">
-                    {" "}
                     {order.customer.email}
                   </Typography>
-                  <Typography level="body-xs">&bull;</Typography>
                   <Typography level="body-xs">
                     {formatPhoneNumber(order.customer.phone)}
                   </Typography>

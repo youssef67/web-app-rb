@@ -11,25 +11,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchUpdateOrder } from "@utils/apiUtils";
 import { useHeader } from "@hooks/useHeader";
 import { useNotification } from "@contexts/NotificationContext";
-import { Button } from "@mui/joy";
 
 interface RowMenuProps {
-  customerId: number;
+  idOrder: number;
   onChangeMade: () => void;
-  openUpdateModal: (customerId: number) => void | null;
+  openUpdateModal: (orderId: number) => void | null
 }
 
-const RowMenu: React.FC<RowMenuProps> = ({
-  customerId,
-  onChangeMade,
-  openUpdateModal,
-}) => {
+const RowMenuOrders: React.FC<RowMenuProps> = ({ idOrder, onChangeMade, openUpdateModal }) => {
   const headers = useHeader();
   const { setNotification } = useNotification();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (action: string) => fetchUpdateOrder(customerId, headers, action),
+    mutationFn: (action: string) => fetchUpdateOrder(idOrder, headers, action),
     onSuccess: () => {
       onChangeMade();
       setNotification({
@@ -45,28 +40,19 @@ const RowMenu: React.FC<RowMenuProps> = ({
     },
   });
 
-  // const validateOrderPickup = () => {
-  //   mutation.mutate("recovered");
-  //   queryClient.invalidateQueries({ queryKey: ["orders"] });
-  // };
+  const validateOrderPickup = () => {
+    mutation.mutate("recovered");
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
 
-  // const cancelOrder = () => {
-  //   mutation.mutate("canceled");
-  //   queryClient.invalidateQueries({ queryKey: ["orders"] });
-  // };
+  const cancelOrder = () => {
+    mutation.mutate("canceled");
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
 
   return (
     <>
-     <Button 
-              variant="outlined"
-              color="neutral"
-              size="sm" sx={{ minWidth: 100 }}
-              // startDecorator={<Add />}
-              onClick={() => openUpdateModal(customerId)}
-            >
-              Modifier
-            </Button>
-      {/* <Dropdown>
+      <Dropdown>
         <MenuButton
           slots={{ root: IconButton }}
           slotProps={{
@@ -76,11 +62,13 @@ const RowMenu: React.FC<RowMenuProps> = ({
           <MoreHorizRoundedIcon />
         </MenuButton>
         <Menu size="sm" sx={{ minWidth: 140 }}>
-          <MenuItem onClick={() => openUpdateModal(customerId)}>Modifier</MenuItem>
+          <MenuItem onClick={validateOrderPickup}>Valider</MenuItem>
+          <MenuItem onClick={() => openUpdateModal(idOrder)}>Modifier</MenuItem>
+          <MenuItem onClick={cancelOrder}>Annuler</MenuItem>
         </Menu>
-      </Dropdown> */}
+      </Dropdown>
     </>
   );
 };
 
-export default RowMenu;
+export default RowMenuOrders;

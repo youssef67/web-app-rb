@@ -19,11 +19,11 @@ import Add from "@mui/icons-material/Add";
 import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
-import CustomerTable from "@components/common/CustomerTable";
+import CustomerTable from "@components/customers/CustomerTable";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
 import CustomMessage from "@components/common/CustomMessage";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
-import CustomerList from "@components/common/CustomerList";
+import CustomerList from "@components/customers/CustomerList";
 import Header from "@components/common/Header";
 import CustomModalUpdateCustomer from "@components/customers/CustomModalUpdateCustomer";
 import { manageCustomersFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
@@ -58,7 +58,6 @@ const CustomerDashboard: React.FC = () => {
    const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["customers"] });
   };
-
 
   // to open modal for update order
   const handleUpdateCustomer = (customerId: number) => {
@@ -229,12 +228,13 @@ const CustomerDashboard: React.FC = () => {
                 getSortingValue={setSelectedSortValue}
                 uniqueCustomers={uniqueCustomers}
               />
-              {/* <CustomerList
+              <CustomerList
                 customersList={customersForCurrentPage}
                 currentPage={currentPage}
                 numberOfPages={numberOfPages}
+                openUpdateModal={handleUpdateCustomer}
                 sortingValue={selectedSortValue}
-              /> */}
+              />
             </>
           )}
         </Box>

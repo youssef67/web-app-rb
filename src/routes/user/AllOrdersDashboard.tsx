@@ -19,10 +19,10 @@ import Add from "@mui/icons-material/Add";
 import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
-import OrderTable from "@components/common/OrderTable";
+import OrderTable from "@components/orders/OrderTable";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
 import CustomMessage from "@components/common/CustomMessage";
-import OrderList from "@components/common/OrderList";
+import OrderList from "@components/orders/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
 import CustomModalUpdateOrder from "@components/orders/CustomModalUpdateOrder";

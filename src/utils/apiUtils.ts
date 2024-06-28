@@ -181,7 +181,7 @@ export const updateCustomer = async (
 ) => {
   axios
     .post(
-      `http://localhost:3333/api/v1/order/update`,
+      `http://localhost:3333/api/v1/customer/update`,
       { customerId: customer?.customer.id, ...data },
       { headers }
     )

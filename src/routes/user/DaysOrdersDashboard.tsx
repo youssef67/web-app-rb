@@ -19,14 +19,18 @@ import Add from "@mui/icons-material/Add";
 import Box from "@mui/joy/Box";
 
 import Sidebar from "@components/common/Sidebar";
-import OrderTable from "@components/common/OrderTable";
+import OrderTable from "@components/orders/OrderTable";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
 import CustomMessage from "@components/common/CustomMessage";
-import OrderList from "@components/common/OrderList";
+import OrderList from "@components/orders/OrderList";
 import Header from "@components/common/Header";
 import CustomModalAddOrder from "@components/orders/CustomModalAddOrder";
 import CustomModalUpdateOrder from "@components/orders/CustomModalUpdateOrder";
-import { currentDate, manageOrdersFiltersValues, getUniqueCustomers } from "@utils/commonUtils";
+import {
+  currentDate,
+  manageOrdersFiltersValues,
+  getUniqueCustomers,
+} from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
 
 import { fetchDaysOrders } from "@utils/apiUtils";
@@ -41,7 +45,7 @@ const DaysOrdersDashboard: React.FC = () => {
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
   const [freeFieldFilter, setFreeFieldFilter] = useState<string | null>(null);
   const [selectedSortValue, setSelectedSortValue] = useState("latest");
-  const [uniqueCustomers, setUniqueCustomers] = useState<string[]>([])
+  const [uniqueCustomers, setUniqueCustomers] = useState<string[]>([]);
   // Pagination state
   const [numberOfPages, setNumberOfPages] = useState<number>(1);
   const ordersPerPage = 10;
@@ -106,8 +110,7 @@ const DaysOrdersDashboard: React.FC = () => {
   useEffect(() => {
     if (ordersList) {
       setNumberOfPages(Math.ceil(ordersList.length / ordersPerPage));
-      setUniqueCustomers(getUniqueCustomers(ordersList))
-
+      setUniqueCustomers(getUniqueCustomers(ordersList));
     }
 
     let start = (currentPage - 1) * ordersPerPage;
@@ -115,8 +118,8 @@ const DaysOrdersDashboard: React.FC = () => {
     // this code is to manage the pagination when filter gave us less than the previous list orders
     if (ordersList) {
       if (start >= ordersList.length) {
-        setCurrentPage(1)
-        start = 0
+        setCurrentPage(1);
+        start = 0;
       }
     }
 
@@ -125,11 +128,7 @@ const DaysOrdersDashboard: React.FC = () => {
     const orders = ordersList?.slice(start, end);
 
     if (orders) setOrdersForCurrentPage(orders);
-
   }, [currentPage, ordersList, setCurrentPage]);
-
-
-
 
   return (
     <CssVarsProvider disableTransitionOnChange>

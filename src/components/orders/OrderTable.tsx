@@ -31,52 +31,74 @@ import BlockIcon from "@mui/icons-material/Block";
 import { useQueryClient } from "@tanstack/react-query";
 import DesktopPagination from "@components/common/DesktopPagination";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
-import { CustomerFullData } from "@interfaces/interfaces";
+import { Order } from "@interfaces/interfaces";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
-import RowMenuCustomers from "@components/common/RowMenuCustomers";
+import RowMenuOrders from "@components/orders/RowMenuOrders";
 
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface OrderProps {
-  customersList: CustomerFullData[];
+  componentCallBy: string;
+  ordersList: Order[];
   uniqueCustomers: string[];
+  statusFilter: (value: any) => void;
   customerFilter: (value: any) => void;
+  dateFilter: (value: any) => void;
   freeFieldFilter: (value: any) => void;
   getSortingValue: (value: any) => void;
   numberOfPages: number;
-  openUpdateModal: (customerId: number) => void;
+  openUpdateModal: (orderId: number) => void;
 }
 
 const OrderTable: React.FC<OrderProps> = ({
-  customersList,
+  componentCallBy,
+  ordersList,
   uniqueCustomers,
+  statusFilter,
   customerFilter,
+  dateFilter,
   freeFieldFilter,
   numberOfPages,
+  openUpdateModal,
   getSortingValue,
-  openUpdateModal
 }) => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<readonly number[]>([]);
+  const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
     null
   );
+  const [statusFilterValue, setStatusFilterValue] = useState<number | null>(
+    null
+  );
+  const [dateFilterValue, setDateFilterValue] = useState<number | null>(null);
   const [freeFieldFilterValue, setFreeFieldFilterValue] = useState<string>("");
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
   const [selectedSortValue, setSelectedSortValue] = useState("latest");
-  const customersCount = customersList?.length;
+  const orderCount = ordersList?.length;
 
   const handleChangeMade = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["customers"] });
+    await queryClient.invalidateQueries({ queryKey: ["orders"] });
     setDummyState(dummyState + 1);
   };
 
+  console.log(uniqueCustomers);
   // Filtering functions
+  const handleFilterStatusChange = (e: any, value: number | null) => {
+    setStatusFilterValue(value);
+    statusFilter(value);
+  };
+
   const handleFilterCustomerChange = (e: any, value: string | null) => {
     setCustomerFilterValue(value);
     customerFilter(value);
+  };
+
+  const handleFilterDateChange = (e: any, value: number | null) => {
+    console.log(value);
+    setDateFilterValue(value);
+    dateFilter(value);
   };
 
   const handleFreeFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,9 +113,13 @@ const OrderTable: React.FC<OrderProps> = ({
   };
 
   const handleClearAllfilters = () => {
+    statusFilter(0);
+    dateFilter(0);
     customerFilter(null);
     freeFieldFilter(null);
 
+    setStatusFilterValue(null);
+    setDateFilterValue(null);
     setCustomerFilterValue(null);
     setFreeFieldFilterValue("");
   };
@@ -106,10 +132,34 @@ const OrderTable: React.FC<OrderProps> = ({
   const renderFilters = () => (
     <>
       <FormControl size="sm">
+        <FormLabel>Statut</FormLabel>
+        <Select
+          size="sm"
+          placeholder="Filtrer par statut"
+          slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
+          onChange={handleFilterStatusChange}
+          value={statusFilterValue}
+          indicator={<KeyboardArrowDown />}
+          sx={{
+            width: 240,
+            [`& .${selectClasses.indicator}`]: {
+              transition: "0.2s",
+              [`&.${selectClasses.expanded}`]: {
+                transform: "rotate(-180deg)",
+              },
+            },
+          }}
+        >
+          <Option value={0}>Tous</Option>
+          <Option value={1}>Commande confirmée</Option>
+          <Option value={2}>Commande non confirmée</Option>
+        </Select>
+      </FormControl>
+      <FormControl size="sm">
         <FormLabel>Client</FormLabel>
         <Select
           size="sm"
-          placeholder="Filter par client"
+          placeholder="Filtrer par client"
           indicator={<KeyboardArrowDown />}
           sx={{
             width: 240,
@@ -136,10 +186,37 @@ const OrderTable: React.FC<OrderProps> = ({
           ))}
         </Select>
       </FormControl>
+      {componentCallBy === "allOrders" ? (
+        <FormControl size="sm">
+          <FormLabel>Date</FormLabel>
+          <Select
+            size="sm"
+            placeholder="Filtrer par date"
+            slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
+            onChange={handleFilterDateChange}
+            value={dateFilterValue}
+            indicator={<KeyboardArrowDown />}
+            sx={{
+              width: 240,
+              [`& .${selectClasses.indicator}`]: {
+                transition: "0.2s",
+                [`&.${selectClasses.expanded}`]: {
+                  transform: "rotate(-180deg)",
+                },
+              },
+            }}
+          >
+            <Option value={0}>Tous</Option>
+            <Option value={1}>7 prochains jours</Option>
+            <Option value={2}>15 prochains jours</Option>
+            <Option value={3}>30 prochains jours</Option>
+          </Select>
+        </FormControl>
+      ) : null}
     </>
   );
 
-  if (customersCount === 0) {
+  if (orderCount === 0) {
     <CustomCircularProgress />;
   }
 
@@ -262,16 +339,16 @@ const OrderTable: React.FC<OrderProps> = ({
             },
           }}
         >
-          <Option value="latest">Derniers clients</Option>
-          <Option value="asc-cart">Commandes : ordre croissant</Option>
-          <Option value="desc-cart">Commande : ordre decroissant</Option>
-          <Option value="asc-alpha">Ordre alphabetique : A à Z</Option>
-          <Option value="desc-alpha">Ordre alphabetique : Z à A</Option>
+          <Option value="latest">Derniers arrivées</Option>
+          <Option value="asc-price">Prix : ordre croissant</Option>
+          <Option value="desc-price">Prix : ordre decroissant</Option>
+          <Option value="asc-time">Heure : plus tot</Option>
+          <Option value="desc-time">Heure : plus tard</Option>
         </Select>
       </>
 
       <Sheet
-        className="CustomerTableContainer"
+        className="OrderTableContainer"
         variant="outlined"
         sx={{
           display: { xs: "none", sm: "initial" },
@@ -299,73 +376,172 @@ const OrderTable: React.FC<OrderProps> = ({
           <thead>
             <tr>
               <th
+                style={{ width: 48, textAlign: "center", padding: "12px 6px" }}
+              >
+                <Checkbox
+                  size="sm"
+                  indeterminate={
+                    selected.length > 0 && selected.length !== ordersList.length
+                  }
+                  checked={selected.length === ordersList.length}
+                  onChange={(event) => {
+                    setSelected(
+                      event.target.checked
+                        ? ordersList.map((row) => row.id)
+                        : []
+                    );
+                  }}
+                  color={
+                    selected.length > 0 || selected.length === ordersList.length
+                      ? "primary"
+                      : undefined
+                  }
+                  sx={{ verticalAlign: "text-bottom" }}
+                />
+              </th>
+              <th
                 style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
               >
-                Client
+                {componentCallBy === "daysOrders"
+                  ? "Heure de retrait"
+                  : "Date/Heure"}
               </th>
               <th
-                style={{ width: 230, textAlign: "center", padding: "12px 6px" }}
+                style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
               >
-                Téléphone/email
+                Montant
               </th>
               <th
-                style={{
-                  width: 170,
-                  textAlign: "center",
-                  padding: "12px 6px",
-                  whiteSpace: "nowrap",
-                }}
+                style={{ width: 130, textAlign: "center", padding: "12px 6px" }}
               >
-                Dernière commande
+                Statut
+              </th>
+              <th
+                style={{ width: 240, textAlign: "center", padding: "12px 6px" }}
+              >
+                client
               </th>
               <th
                 style={{ width: 200, textAlign: "center", padding: "12px 6px" }}
               >
-                Commandes
+                numéro de téléphone
               </th>
-              <th style={{ width: 100, padding: "12px 6px" }}></th>
+              <th style={{ width: 50, padding: "12px 6px" }}></th>
             </tr>
           </thead>
           <tbody>
-            {/* {sortOrders(ordersList, selectedSortValue).map((row: Order) => ( */}
-            {customersList.map((data: CustomerFullData) => (
-              <tr key={data.customer.id}>
-                <td style={{ textAlign: "center", width: 140 }}>
-                  <Typography level="body-xs">
-                    {data.customer.name} {data.customer.lastname}
-                  </Typography>
+            {sortOrders(ordersList, selectedSortValue).map((row: Order) => (
+              <tr key={row.id}>
+                <td style={{ textAlign: "center", width: 120 }}>
+                  <Checkbox
+                    size="sm"
+                    checked={selected.includes(row.id)}
+                    color={selected.includes(row.id) ? "primary" : undefined}
+                    onChange={(event) => {
+                      setSelected((ids) =>
+                        event.target.checked
+                          ? ids.concat(row.id)
+                          : ids.filter((itemId) => itemId !== row.id)
+                      );
+                    }}
+                    slotProps={{ checkbox: { sx: { textAlign: "left" } } }}
+                    sx={{ verticalAlign: "text-bottom" }}
+                  />
                 </td>
-                <td style={{ textAlign: "center", width: 230 }}>
+                <td style={{ textAlign: "center", width: 140 }}>
+                  {componentCallBy === "daysOrders" ? (
+                    <Typography level="body-xs">
+                      {row.pickupTime.replace(":", "H").slice(0, -3)}
+                    </Typography>
+                  ) : (
+                    <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                      <div style={{ textAlign: "center", width: 240 }}>
+                        <Typography level="body-xs">
+                          {format(new Date(row.pickupDate), "dd/MM/yyyy", {
+                            locale: fr,
+                          })}
+                        </Typography>
+                        <Typography level="body-xs">
+                          {row.pickupTime.replace(":", "H").slice(0, -3)}
+                        </Typography>
+                      </div>
+                    </Box>
+                  )}
+                </td>
+                <td style={{ textAlign: "center", width: 140 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography
+                      level="body-xs"
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
+                      <Tooltip
+                        title={
+                          row.detailsForUser
+                            ? row.detailsForUser
+                            : "Aucune information"
+                        }
+                        variant="solid"
+                        placement="right"
+                      >
+                        <InfoIcon sx={{ fontSize: "1.2rem", marginRight: 1 }} />
+                      </Tooltip>
+                      {row.orderPrice} €
+                    </Typography>
+                  </Box>
+                </td>
+                <td style={{ textAlign: "center", width: 130 }}>
+                  <Chip
+                    variant="soft"
+                    size="sm"
+                    startDecorator={
+                      {
+                        1: <CheckRoundedIcon />,
+                        2: <BlockIcon />,
+                      }[row.stateId]
+                    }
+                    color={
+                      {
+                        1: "success",
+                        2: "danger",
+                      }[row.stateId] as ColorPaletteProp
+                    }
+                  >
+                    {row.stateId === 1 ? "confirmé" : "non confirmé "}
+                  </Chip>
+                </td>
+                <td>
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <div style={{ textAlign: "center", width: 230 }}>
+                    <div style={{ textAlign: "center", width: 240 }}>
                       <Typography level="body-xs">
-                        {formatPhoneNumber(data.customer.phone)}
+                        {row.customer.name} {row.customer.lastname}
                       </Typography>
-                      <Typography level="body-xs" sx={{ width: "100%" }}>
-                        {data.customer.email}
+                      <Typography level="body-xs">
+                        {row.customer.email}
                       </Typography>
                     </div>
                   </Box>
                 </td>
-                <td style={{ textAlign: "center", width: 170 }}>
-                  <Typography level="body-xs">{data.lastOrderDate}</Typography>
-                </td>
-                <td style={{ textAlign: "center", width: 200 }}>
+                <td style={{ textAlign: "center", width: 120 }}>
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <div style={{ textAlign: "center", width: 200 }}>
-                      <Typography level="body-xs">
-                        Nombre de commande : {data.ordersCount} fois
-                      </Typography>
-                      <Typography level="body-xs" sx={{ width: "100%" }}>
-                        Montant total : {data.totalOrderAmount} €
-                      </Typography>
-                    </div>
+                    <Typography
+                      level="body-xs"
+                      style={{ textAlign: "center", width: 240 }}
+                    >
+                      {formatPhoneNumber(row.customer.phone) ??
+                        "Pas de numéro disponible"}
+                    </Typography>
                   </Box>
                 </td>
                 <td>
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <RowMenuCustomers
-                      customerId={data.customer.id}
+                    <RowMenuOrders
+                      idOrder={row.id}
                       onChangeMade={handleChangeMade}
                       openUpdateModal={openUpdateModal}
                     />

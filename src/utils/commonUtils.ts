@@ -171,8 +171,8 @@ export const manageCustomersFiltersValues = (
     if (customerFilter !== null && customerFilter !== "all") {
       const { lastname, firstname } = splitFullName(customerFilter);
 
-      customerFilterResult = filteredCustomers.filter((customer) =>
-        customer.name
+      customerFilterResult = filteredCustomers.filter((data) =>
+        data.customer.name
           .toLowerCase()
           .includes(lastname.toLowerCase() || firstname.toLowerCase())
       );
@@ -183,8 +183,8 @@ export const manageCustomersFiltersValues = (
 
     // Filter by free field
     if (freeFieldFilter !== null) {
-      freeFieldFilterResult = filteredCustomers.filter((customer) =>
-        Object.values(customer).some(
+      freeFieldFilterResult = filteredCustomers.filter((data) =>
+        Object.values(data.customer).some(
           (value) =>
             typeof value === "string" &&
             value.toLowerCase().includes(freeFieldFilter.toLowerCase())

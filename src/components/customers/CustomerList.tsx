@@ -14,23 +14,25 @@ import Box from "@mui/joy/Box";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
 
-import { CustomerWithPivotData } from "@interfaces/interfaces";
+import { CustomerFullData } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
-import RowMenuCustomers from "@components/common/RowMenuCustomers";
+import RowMenuCustomers from "@components/customers/RowMenuCustomers";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
 
 interface OrderProps {
-  customersList: CustomerWithPivotData[];
+  customersList: CustomerFullData[];
   numberOfPages: number;
   currentPage: number;
   sortingValue: string;
+  openUpdateModal: (customerId: number) => void;
 }
 
 const OrderList: React.FC<OrderProps> = ({
   customersList,
   numberOfPages,
   currentPage,
+  openUpdateModal,
   sortingValue,
 }) => {
   const queryClient = useQueryClient();
@@ -44,9 +46,9 @@ const OrderList: React.FC<OrderProps> = ({
   return (
     <Box sx={{ display: { xs: "block", sm: "none" } }}>
       {/* {sortOrders(ordersList, sortingValue).map((order: Order) => ( */}
-      {customersList.map((customer: Customer) => (
+      {customersList.map((data: CustomerFullData) => (
         <List
-          key={customer.id}
+          key={data.customer.id}
           size="sm"
           sx={{
             "--ListItem-paddingX": 0,
@@ -64,18 +66,18 @@ const OrderList: React.FC<OrderProps> = ({
             >
               <div>
                 <Typography fontWeight={600} gutterBottom>
-                  {customer.name} {customer.lastname}
+                  {data.customer.name} {data.customer.lastname}
                 </Typography>
-                <Typography level="body-xs"> {customer.email}</Typography>
-                <Typography level="body-xs">&bull;</Typography>
+                <Typography level="body-xs">{data.customer.email}</Typography>
                 <Typography level="body-xs">
-                  {formatPhoneNumber(customer.phone)}
+                  {formatPhoneNumber(data.customer.phone)}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
-                  Dernière commande effectué le 26/06/2024
+                  Dernière commande effectué le {data.lastOrderDate}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
-                  Montant total 120 € (5 commandes)
+                  Montant total {data.totalOrderAmount} € ({data.ordersCount}{" "}
+                  commandes)
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
                   1 commande non respectée
@@ -93,31 +95,13 @@ const OrderList: React.FC<OrderProps> = ({
                   sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                 >
                   <RowMenuCustomers
-                    idOrder={customer.id}
+                    customerId={data.customer.id}
                     onChangeMade={handleChangeMade}
-                    openUpdateModal={() => {}}
+                    openUpdateModal={openUpdateModal}
                   />
                 </Box>
               </div>
             </ListItemContent>
-            {/* <Chip
-              variant="soft"
-              size="sm"
-              startDecorator={
-                {
-                  1: <CheckRoundedIcon />,
-                  2: <BlockIcon />,
-                }[order.stateId]
-              }
-              color={
-                {
-                  1: "success",
-                  2: "danger",
-                }[order.stateId] as ColorPaletteProp
-              }
-            >
-              {order.stateId === 1 ? "confirmé" : "non confirmé "}
-            </Chip> */}
           </ListItem>
           <ListDivider />
         </List>
