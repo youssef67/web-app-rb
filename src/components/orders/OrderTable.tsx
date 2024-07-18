@@ -27,6 +27,9 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { useQueryClient } from "@tanstack/react-query";
 import DesktopPagination from "@components/common/DesktopPagination";
@@ -83,7 +86,6 @@ const OrderTable: React.FC<OrderProps> = ({
     setDummyState(dummyState + 1);
   };
 
-  console.log(uniqueCustomers);
   // Filtering functions
   const handleFilterStatusChange = (e: any, value: number | null) => {
     setStatusFilterValue(value);
@@ -412,7 +414,7 @@ const OrderTable: React.FC<OrderProps> = ({
                 Montant
               </th>
               <th
-                style={{ width: 130, textAlign: "center", padding: "12px 6px" }}
+                style={{ width: 170, textAlign: "center", padding: "12px 6px" }}
               >
                 Statut
               </th>
@@ -432,7 +434,7 @@ const OrderTable: React.FC<OrderProps> = ({
           <tbody>
             {sortOrders(ordersList, selectedSortValue).map((row: Order) => (
               <tr key={row.id}>
-                <td style={{ textAlign: "center", width: 120 }}>
+                <td style={{ textAlign: "center", width: 48 }}>
                   <Checkbox
                     size="sm"
                     checked={selected.includes(row.id)}
@@ -495,7 +497,7 @@ const OrderTable: React.FC<OrderProps> = ({
                     </Typography>
                   </Box>
                 </td>
-                <td style={{ textAlign: "center", width: 130 }}>
+                <td style={{ textAlign: "center", width: 170 }}>
                   <Chip
                     variant="soft"
                     size="sm"
@@ -503,21 +505,33 @@ const OrderTable: React.FC<OrderProps> = ({
                       {
                         1: <CheckRoundedIcon />,
                         2: <BlockIcon />,
+                        3: <ThumbUpIcon />,
+                        4: <ThumbDownIcon />,
+                        5: <CloseIcon />,
                       }[row.stateId]
                     }
                     color={
                       {
                         1: "success",
                         2: "danger",
+                        3: "success",
+                        4: "danger",
+                        5: "warning",
                       }[row.stateId] as ColorPaletteProp
                     }
                   >
-                    {row.stateId === 1 ? "confirmé" : "non confirmé "}
+                    {{
+                      1: "confirmé",
+                      2: "non confirmé",
+                      3: "commande récupérée",
+                      4: "commande non récupérée",
+                      5: "commande annulée"
+                    }[row.stateId] || ""}
                   </Chip>
                 </td>
                 <td>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <div style={{ textAlign: "center", width: 240 }}>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center",  justifyContent: "center"  }}>
+                    <div style={{ textAlign: "center" }}>
                       <Typography level="body-xs">
                         {row.customer.name} {row.customer.lastname}
                       </Typography>

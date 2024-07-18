@@ -40,15 +40,11 @@ const RowMenuOrders: React.FC<RowMenuProps> = ({ idOrder, onChangeMade, openUpda
     },
   });
 
-  const validateOrderPickup = () => {
-    mutation.mutate("recovered");
-    queryClient.invalidateQueries({ queryKey: ["orders"] });
-  };
+  const updateOrder = (action: string) => {
+    mutation.mutate(action)
+    queryClient.invalidateQueries({ queryKey: ["orders"] })
+  }
 
-  const cancelOrder = () => {
-    mutation.mutate("canceled");
-    queryClient.invalidateQueries({ queryKey: ["orders"] });
-  };
 
   return (
     <>
@@ -62,9 +58,10 @@ const RowMenuOrders: React.FC<RowMenuProps> = ({ idOrder, onChangeMade, openUpda
           <MoreHorizRoundedIcon />
         </MenuButton>
         <Menu size="sm" sx={{ minWidth: 140 }}>
-          <MenuItem onClick={validateOrderPickup}>Valider</MenuItem>
+          <MenuItem onClick={() => updateOrder("recovered")}>Valider</MenuItem>
           <MenuItem onClick={() => openUpdateModal(idOrder)}>Modifier</MenuItem>
-          <MenuItem onClick={cancelOrder}>Annuler</MenuItem>
+          <MenuItem onClick={() => updateOrder("canceled")}>Annuler</MenuItem>
+          <MenuItem onClick={() => updateOrder("noShow")}>No show</MenuItem>
         </Menu>
       </Dropdown>
     </>

@@ -26,7 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import DesktopPagination from "@components/common/DesktopPagination";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
 import { CustomerFullData } from "@interfaces/interfaces";
-import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
+import { formatPhoneNumber } from "@utils/commonUtils";
 import RowMenuCustomers from "@components/customers/RowMenuCustomers";
 
 interface OrderProps {
@@ -45,7 +45,6 @@ const OrderTable: React.FC<OrderProps> = ({
   customerFilter,
   freeFieldFilter,
   numberOfPages,
-  getSortingValue,
   openUpdateModal,
 }) => {
   const [open, setOpen] = useState(false);
@@ -55,7 +54,6 @@ const OrderTable: React.FC<OrderProps> = ({
   const [freeFieldFilterValue, setFreeFieldFilterValue] = useState<string>("");
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
-  const [selectedSortValue, setSelectedSortValue] = useState("latest");
   const customersCount = customersList?.length;
 
   const handleChangeMade = async () => {
@@ -86,11 +84,6 @@ const OrderTable: React.FC<OrderProps> = ({
 
     setCustomerFilterValue(null);
     setFreeFieldFilterValue("");
-  };
-
-  const getValueSort = (event, sortValue: string) => {
-    getSortingValue(sortValue);
-    setSelectedSortValue(sortValue);
   };
 
   const renderFilters = () => (
@@ -300,8 +293,8 @@ const OrderTable: React.FC<OrderProps> = ({
                     {data.customer.name} {data.customer.lastname}
                   </Typography>
                 </td>
-                <td style={{ textAlign: "center", width: 230 }}>
-                  <div style={{ textAlign: "center", width: 230 }}>
+                <td style={{ textAlign: "center" }}>
+                  <div>
                     <Typography level="body-xs">
                       {formatPhoneNumber(data.customer.phone)}
                     </Typography>
@@ -313,9 +306,9 @@ const OrderTable: React.FC<OrderProps> = ({
                 <td style={{ textAlign: "center", width: 170 }}>
                   <Typography level="body-xs">{data.lastOrderDate}</Typography>
                 </td>
-                <td style={{ textAlign: "center", width: 200 }}>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <div style={{ textAlign: "center", width: 200 }}>
+                <td>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center",  justifyContent: "center" }}>
+                    <div style={{ textAlign: "center" }}>
                       <Typography level="body-xs">
                         Nombre de commande : {data.ordersCount} fois
                       </Typography>

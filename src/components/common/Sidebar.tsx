@@ -30,8 +30,6 @@ import { closeSidebar } from "@utils/sideBarUtils";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePagination } from "@contexts/PaginationContext";
 
-
-
 interface SidebarProps {
   currentDashboard: string;
 }
@@ -42,7 +40,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
   const { logout, user } = useAuth();
   const headers = useHeader();
   const { setCurrentPage } = usePagination();
-
 
   const handleLogout = () => {
     axios
@@ -58,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
       queryClient.removeQueries({ queryKey: ["orders"], exact: true });
       resolve();
     });
-    setCurrentPage(1)
+    setCurrentPage(1);
     navigate("/orders-of-day");
   };
 
@@ -67,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
       queryClient.removeQueries({ queryKey: ["orders"], exact: true });
       resolve();
     });
-    setCurrentPage(1)
+    setCurrentPage(1);
     navigate("/all-orders");
   };
 
@@ -76,8 +73,17 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
     //   queryClient.removeQueries({ queryKey: ["orders"], exact: true });
     //   resolve();
     // });
-    setCurrentPage(1)
+    setCurrentPage(1);
     navigate("/customers");
+  };
+
+  const handleNavigateToHistory = async () => {
+    await new Promise<void>((resolve) => {
+      queryClient.removeQueries({ queryKey: ["orders"], exact: true });
+      resolve();
+    });
+    setCurrentPage(1);
+    navigate("/history");
   };
 
   return (
@@ -196,7 +202,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
           </ListItem>
 
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              selected={currentDashboard === "history"}
+              onClick={handleNavigateToHistory}
+            >
               <HistoryRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Historique</Typography>

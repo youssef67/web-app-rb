@@ -65,15 +65,35 @@ export const resetPasswordApiCallResult = async (
   return resetPasswordApiCallResult;
 };
 
-export const activateUserApiCallResult = async (email: string | null, token: string | null): Promise<AxiosResponse<any, any>> => {
-  const activateUserApiCallResult = axios
-  .post("http://localhost:3333/api/v1/user/activate", {
-    token: token,
-    email: email,
-  })
-  
+export const activateUserApiCallResult = async (
+  email: string | null,
+  token: string | null
+): Promise<AxiosResponse<any, any>> => {
+  const activateUserApiCallResult = axios.post(
+    "http://localhost:3333/api/v1/user/activate",
+    {
+      token: token,
+      email: email,
+    }
+  );
+
   return activateUserApiCallResult;
-}
+};
+
+export const orderConfirmationApiCallResult = async (
+  id: string | null,
+  token: string | null
+): Promise<AxiosResponse<any, any>> => {
+  const activateUserApiCallResult = axios.post(
+    "http://localhost:3333/api/v1/order/confirmation",
+    {
+      id: id,
+      token: token,
+    }
+  );
+
+  return activateUserApiCallResult;
+};
 
 // Function to fetch orders for a daysOrdersDashboard
 export const fetchDaysOrders = async (user: User): Promise<Order[] | []> => {
@@ -91,7 +111,7 @@ export const fetchDaysOrders = async (user: User): Promise<Order[] | []> => {
   return orderList;
 };
 
-// Function to fetch all orders 
+// Function to fetch all orders
 export const fetchAllOrders = async (user: User): Promise<Order[] | []> => {
   const orderList = axios
     .get(`http://localhost:3333/api/v1/order/all-orders?userId=${user?.id}`, {
@@ -107,7 +127,23 @@ export const fetchAllOrders = async (user: User): Promise<Order[] | []> => {
   return orderList;
 };
 
+export const fetchOrdersHistory = async (user: User): Promise<Order[] | []> => {
+  const orderList = axios
+    .get(
+      `http://localhost:3333/api/v1/order/orders-history?userId=${user?.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((res) => {
+      return res.data;
+    });
 
+  return orderList;
+};
 
 export const addOrder = async (
   data: IFormInputOrder,
@@ -117,13 +153,13 @@ export const addOrder = async (
   try {
     const response = await axios.post(
       `http://localhost:3333/api/v1/order/add`,
-      { ...data, ...currentUser},
-      { headers}
-    )
-    return response.data
+      { ...data, ...currentUser },
+      { headers }
+    );
+    return response.data;
   } catch (error) {
-    console.log("Une erreur s'est produite lors de l'ajout de la commande")
-    throw new Error("Une erreur s'est produite lors de l'ajout de la commande")
+    console.log("Une erreur s'est produite lors de l'ajout de la commande");
+    throw new Error("Une erreur s'est produite lors de l'ajout de la commande");
   }
 };
 
@@ -150,8 +186,8 @@ export const fetchUpdateOrder = async (
 ): Promise<void> => {
   axios
     .post(
-      `http://localhost:3333/api/v1/order/${action}`,
-      { orderId: orderId },
+      `http://localhost:3333/api/v1/order/updateStatus`,
+      { orderId: orderId, action: action },
       { headers }
     )
     .then((res) => {
@@ -159,14 +195,19 @@ export const fetchUpdateOrder = async (
     });
 };
 
-export const fetchAllCustomers = async (user: User): Promise<CustomerFullData[] | []> => {
+export const fetchAllCustomers = async (
+  user: User
+): Promise<CustomerFullData[] | []> => {
   const customersList = axios
-    .get(`http://localhost:3333/api/v1/customer/all-customers?userId=${user?.id}`, {
-      headers: {
-        Authorization: `Bearer ${user?.token}`,
-        "Content-Type": "application/json",
-      },
-    })
+    .get(
+      `http://localhost:3333/api/v1/customer/all-customers?userId=${user?.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
     .then((res) => {
       return res.data;
     });

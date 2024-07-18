@@ -13,6 +13,9 @@ import ListDivider from "@mui/joy/ListDivider";
 import Box from "@mui/joy/Box";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import BlockIcon from "@mui/icons-material/Block";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { Order } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
@@ -138,16 +141,28 @@ const OrderList: React.FC<OrderProps> = ({
                 {
                   1: <CheckRoundedIcon />,
                   2: <BlockIcon />,
+                  3: <ThumbUpIcon />,
+                  4: <ThumbDownIcon />,
+                  5: <CloseIcon />,
                 }[order.stateId]
               }
               color={
                 {
                   1: "success",
                   2: "danger",
+                  3: "success",
+                  4: "danger",
+                  5: "warning",
                 }[order.stateId] as ColorPaletteProp
               }
             >
-              {order.stateId === 1 ? "confirmé" : "non confirmé "}
+              {{
+                1: "confirmé",
+                2: "non confirmé",
+                3: "commande récupérée",
+                4: "commande non récupérée",
+                5: "commande annulée",
+              }[order.stateId] || ""}
             </Chip>
           </ListItem>
           <ListDivider />

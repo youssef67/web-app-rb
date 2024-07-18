@@ -1,39 +1,27 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import CssBaseline from "@mui/joy/CssBaseline";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import Divider from "@mui/joy/Divider";
-import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import IconButton, { IconButtonProps } from "@mui/joy/IconButton";
-import Link from "@mui/joy/Link";
-import Input from "@mui/joy/Input";
 import Typography from "@mui/joy/Typography";
 import Stack from "@mui/joy/Stack";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@hooks/useAuth";
 import { useNotification } from "@contexts/NotificationContext";
-import { useSnackbar } from "notistack";
-import { loginApiCallResult } from "@utils/apiUtils";
 
-interface FormElements extends HTMLFormControlsCollection {
-  email: HTMLInputElement;
-  password: HTMLInputElement;
-}
-interface SignInFormElement extends HTMLFormElement {
-  readonly elements: FormElements;
-}
+import { orderConfirmationApiCallResult } from "@utils/apiUtils";
+
+import { useQuery } from "../../hooks/useQuery";
 
 function ColorSchemeToggle(props: IconButtonProps) {
   const { onClick, ...other } = props;
   const { mode, setMode } = useColorScheme();
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -54,18 +42,25 @@ function ColorSchemeToggle(props: IconButtonProps) {
   );
 }
 
-export default function Login() {
-  const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const { notification, setNotification } = useNotification();
-  const { login } = useAuth();
+export default function OrderConfirmation() {
+  const token: string | null = useQuery().get("token");
+  const id: string | null = useQuery().get("id");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [valueButton, setValueButton] = useState("Je m'engage à récupérer ma commande")
 
-  useEffect(() => {
-    if (notification) {
-      enqueueSnackbar(notification.message, { variant: notification.variant });
-      setNotification(null);
-    }
-  }, [notification, enqueueSnackbar, setNotification]);
+
+  const handleValidate = () => {
+    const orderConfirmationApiCall = orderConfirmationApiCallResult(id, token);
+
+    orderConfirmationApiCall
+      .then((res) => {
+        if (res.status === 200) 
+          setValueButton("Commande validée avec succès !")
+      })
+      .catch(() => {
+        setValueButton("Validation échouée, merci de bien vouloir nous contacter")
+      }).finally(() => setIsButtonDisabled(true))
+  };
 
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
@@ -144,14 +139,11 @@ export default function Login() {
           >
             <Stack gap={4} sx={{ mb: 2 }}>
               <Stack gap={1}>
-                <Typography component="h1" level="h3">
-                  Se connecter
+                <Typography level="body-sm">
+                  Votre commande sera préparée selon les informations présentes dans le mail.
                 </Typography>
                 <Typography level="body-sm">
-                  Pas encore de compte ?{" "}
-                  <Link onClick={() => navigate("/register")} level="title-sm">
-                    Inscrivez-vous
-                  </Link>
+                  Nous vous remercions de bien vouloir nous contacter en cas de désistement de votre part
                 </Typography>
               </Stack>
             </Stack>
@@ -161,67 +153,16 @@ export default function Login() {
                   color: { xs: "#FFF", md: "text.tertiary" },
                 },
               })}
-            >
-              OU
-            </Divider>
+            ></Divider>
             <Stack gap={4} sx={{ mt: 2 }}>
-              <form
-                onSubmit={(event: React.FormEvent<SignInFormElement>) => {
-                  event.preventDefault();
-                  const formElements = event.currentTarget.elements;
-                  const data = {
-                    email: formElements.email.value,
-                    password: formElements.password.value,
-                  };
-
-                  const loginApiCall = loginApiCallResult(data);
-
-                  loginApiCall
-                    .then((res) => {
-                      if (res.status === 200) {
-                        login({
-                          id: res.data.id,
-                          email: res.data.email,
-                          token: res.data.token,
-                        });
-                      }
-                    })
-                    .catch(() => {
-                      setNotification({
-                        message: "Identifiant ou mot de passe incorrectes",
-                        variant: "error",
-                      });
-                    });
-                }}
+              <Button
+                onClick={handleValidate}
+                type="submit"
+                fullWidth
+                disabled={isButtonDisabled}
               >
-                <FormControl required>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    name="email"
-                    defaultValue={"you.moudni+user-Bailee.Swaniawski93@gmail.com"}
-                  />
-                </FormControl>
-                <FormControl required>
-                  <FormLabel>Mot de passe</FormLabel>
-                  <Input
-                    type="password"
-                    name="password"
-                    defaultValue={"kurosaki"}
-                  />
-                </FormControl>
-                <Stack gap={4} sx={{ mt: 2 }}>
-                  <Link
-                    level="title-sm"
-                    onClick={() => navigate("/password-forgotten")}
-                  >
-                    Mot de passe oublié
-                  </Link>
-                  <Button type="submit" fullWidth>
-                    Se connecter
-                  </Button>
-                </Stack>
-              </form>
+                {valueButton}
+              </Button>
             </Stack>
           </Box>
           <Box component="footer" sx={{ py: 3 }}>
