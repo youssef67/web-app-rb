@@ -1,24 +1,22 @@
 import React, { useState } from "react";
 
 import { ColorPaletteProp } from "@mui/joy/styles";
-import Tooltip from "@mui/joy/Tooltip";
-import InfoIcon from "@mui/icons-material/Info";
 import Chip from "@mui/joy/Chip";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import MoodBadIcon from "@mui/icons-material/MoodBad";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import Typography from "@mui/joy/Typography";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemContent from "@mui/joy/ListItemContent";
-import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListDivider from "@mui/joy/ListDivider";
 import Box from "@mui/joy/Box";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import BlockIcon from "@mui/icons-material/Block";
 
 import { CustomerFullData } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
 import RowMenuCustomers from "@components/customers/RowMenuCustomers";
-import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
+import { formatPhoneNumber } from "@utils/commonUtils";
 
 interface OrderProps {
   customersList: CustomerFullData[];
@@ -33,7 +31,6 @@ const OrderList: React.FC<OrderProps> = ({
   numberOfPages,
   currentPage,
   openUpdateModal,
-  sortingValue,
 }) => {
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
@@ -66,7 +63,26 @@ const OrderList: React.FC<OrderProps> = ({
             >
               <div>
                 <Typography fontWeight={600} gutterBottom>
-                  {data.customer.name} {data.customer.lastname}
+                  <Chip
+                    variant="soft"
+                    size="sm"
+                    startDecorator={
+                      {
+                        1: <InsertEmoticonIcon />,
+                        2: <MoodBadIcon />,
+                        3: <SentimentNeutralIcon />,
+                      }[data.notation]
+                    }
+                    color={
+                      {
+                        1: "success",
+                        2: "danger",
+                        3: "success",
+                      }[data.notation] as ColorPaletteProp
+                    }
+                  >
+                    {data.customer.name} {data.customer.lastname}
+                  </Chip>
                 </Typography>
                 <Typography level="body-xs">{data.customer.email}</Typography>
                 <Typography level="body-xs">
@@ -79,9 +95,11 @@ const OrderList: React.FC<OrderProps> = ({
                   Montant total {data.totalOrderAmount} € ({data.ordersCount}{" "}
                   commandes)
                 </Typography>
-                <Typography level="body-xs" gutterBottom>
-                  1 commande non respectée
-                </Typography>
+                {data.notation >= 2 ? (
+                  <Typography level="body-xs">
+                    No show : {data.nbOfNoShowOrder} fois
+                  </Typography>
+                ) : null}
                 <Box
                   sx={{
                     display: "flex",

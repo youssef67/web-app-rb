@@ -22,6 +22,9 @@ import Typography from "@mui/joy/Typography";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Checkbox from "@mui/joy/Checkbox";
 import Box from "@mui/joy/Box";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import MoodBadIcon from "@mui/icons-material/MoodBad";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
@@ -221,6 +224,8 @@ const OrderTable: React.FC<OrderProps> = ({
   if (orderCount === 0) {
     <CustomCircularProgress />;
   }
+
+  console.log(ordersList);
 
   return (
     <>
@@ -525,19 +530,45 @@ const OrderTable: React.FC<OrderProps> = ({
                       2: "non confirmé",
                       3: "commande récupérée",
                       4: "commande non récupérée",
-                      5: "commande annulée"
+                      5: "commande annulée",
                     }[row.stateId] || ""}
                   </Chip>
                 </td>
                 <td>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center",  justifyContent: "center"  }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <div style={{ textAlign: "center" }}>
-                      <Typography level="body-xs">
-                        {row.customer.name} {row.customer.lastname}
-                      </Typography>
-                      <Typography level="body-xs">
-                        {row.customer.email}
-                      </Typography>
+                      <Chip
+                        variant="soft"
+                        size="sm"
+                        startDecorator={
+                          {
+                            1: <InsertEmoticonIcon />,
+                            2: <SentimentNeutralIcon />,
+                            3: <MoodBadIcon />,
+                          }[row.customer.notation]
+                        }
+                        color={
+                          {
+                            1: "success",
+                            2: "warning",
+                            3: "danger",
+                          }[row.customer.notation] as ColorPaletteProp
+                        }
+                      >
+                        <Typography level="body-xs">
+                          {row.customer.name} {row.customer.lastname}
+                        </Typography>
+                      </Chip>
+                        <Typography level="body-xs">
+                          {row.customer.email}
+                        </Typography>
                     </div>
                   </Box>
                 </td>

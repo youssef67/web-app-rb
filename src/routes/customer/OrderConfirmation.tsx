@@ -12,8 +12,6 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 
-import { useNotification } from "@contexts/NotificationContext";
-
 import { orderConfirmationApiCallResult } from "@utils/apiUtils";
 
 import { useQuery } from "../../hooks/useQuery";

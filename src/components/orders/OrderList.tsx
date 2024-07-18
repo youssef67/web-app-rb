@@ -16,12 +16,18 @@ import BlockIcon from "@mui/icons-material/Block";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import CloseIcon from "@mui/icons-material/Close";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import MoodBadIcon from "@mui/icons-material/MoodBad";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 
 import { Order } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
 import { useQueryClient } from "@tanstack/react-query";
 import RowMenuOrders from "@components/orders/RowMenuOrders";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
+
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface OrderProps {
   componentCallBy: string;
@@ -82,9 +88,28 @@ const OrderList: React.FC<OrderProps> = ({
                 </Tooltip>
               </ListItemDecorator>
               <div>
-                <Typography fontWeight={600} gutterBottom>
-                  {order.customer.name} {order.customer.lastname}
-                </Typography>
+                <Chip
+                  variant="soft"
+                  size="sm"
+                  startDecorator={
+                    {
+                      1: <InsertEmoticonIcon />,
+                      2: <SentimentNeutralIcon />,
+                      3: <MoodBadIcon />,
+                    }[order.customer.notation]
+                  }
+                  color={
+                    {
+                      1: "success",
+                      2: "warning",
+                      3: "danger",
+                    }[order.customer.notation] as ColorPaletteProp
+                  }
+                >
+                  <Typography fontWeight={600} gutterBottom>
+                    {order.customer.name} {order.customer.lastname}
+                  </Typography>
+                </Chip>
 
                 {componentCallBy === "daysOrders" ? (
                   <Typography level="body-xs" gutterBottom>
@@ -94,7 +119,11 @@ const OrderList: React.FC<OrderProps> = ({
                 ) : (
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                     <div style={{ width: 240 }}>
-                      <Typography level="body-xs">26/06/2024</Typography>
+                      <Typography level="body-xs">
+                        {format(new Date(order.pickupDate), "dd/MM/yyyy", {
+                          locale: fr,
+                        })}
+                      </Typography>
                       <Typography level="body-xs" gutterBottom>
                         Heure de retrait :{" "}
                         {order.pickupTime.replace(":", "H").slice(0, -3)}

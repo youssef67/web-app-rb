@@ -39,6 +39,7 @@ export interface Customer {
   name: string;
   phone: string;
   updatedAt: string;
+  notation: string;
 }
 
 export interface CustomerWithPivotData {
@@ -61,6 +62,8 @@ export interface CustomerFullData {
   ordersCount: number
   lastOrderDate: string
   totalOrderAmount: string
+  nbOfNoShowOrder: number
+  notation: number
 }
 
 export interface IFormInputOrder {

@@ -17,6 +17,10 @@ import IconButton from "@mui/joy/IconButton";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import Typography from "@mui/joy/Typography";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { ColorPaletteProp } from "@mui/joy/styles";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import MoodBadIcon from "@mui/icons-material/MoodBad";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import Box from "@mui/joy/Box";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
@@ -289,9 +293,28 @@ const OrderTable: React.FC<OrderProps> = ({
             {customersList.map((data: CustomerFullData) => (
               <tr key={data.customer.id}>
                 <td style={{ textAlign: "center", width: 140 }}>
-                  <Typography level="body-xs">
-                    {data.customer.name} {data.customer.lastname}
-                  </Typography>
+                  <Chip
+                    variant="soft"
+                    size="sm"
+                    startDecorator={
+                      {
+                        1: <InsertEmoticonIcon />,
+                        2: <SentimentNeutralIcon />,
+                        3: <MoodBadIcon />,
+                      }[data.notation]
+                    }
+                    color={
+                      {
+                        1: "success",
+                        2: "warning",
+                        3: "danger",
+                      }[data.notation] as ColorPaletteProp
+                    }
+                  >
+                    <Typography level="body-xs">
+                      {data.customer.name} {data.customer.lastname}
+                    </Typography>
+                  </Chip>
                 </td>
                 <td style={{ textAlign: "center" }}>
                   <div>
@@ -307,11 +330,24 @@ const OrderTable: React.FC<OrderProps> = ({
                   <Typography level="body-xs">{data.lastOrderDate}</Typography>
                 </td>
                 <td>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center",  justifyContent: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <div style={{ textAlign: "center" }}>
                       <Typography level="body-xs">
                         Nombre de commande : {data.ordersCount} fois
                       </Typography>
+                      {data.notation >= 2 ? (
+                        <Typography level="body-xs">
+                          No show :{" "}
+                          {data.nbOfNoShowOrder} fois
+                        </Typography>
+                      ) : null}
                       <Typography level="body-xs" sx={{ width: "100%" }}>
                         Montant total : {data.totalOrderAmount} €
                       </Typography>
