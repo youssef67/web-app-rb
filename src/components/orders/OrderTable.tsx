@@ -101,7 +101,6 @@ const OrderTable: React.FC<OrderProps> = ({
   };
 
   const handleFilterDateChange = (e: any, value: number | null) => {
-    console.log(value);
     setDateFilterValue(value);
     dateFilter(value);
   };
@@ -224,8 +223,6 @@ const OrderTable: React.FC<OrderProps> = ({
   if (orderCount === 0) {
     <CustomCircularProgress />;
   }
-
-  console.log(ordersList);
 
   return (
     <>

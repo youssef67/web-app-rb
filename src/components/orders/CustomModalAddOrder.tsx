@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebouncedCallback } from 'use-debounce';
 import Button from "@mui/joy/Button";
 import ModalOverflow from "@mui/joy/ModalOverflow";
 import DatePicker from "react-datepicker";
@@ -21,10 +22,11 @@ import { useHeader } from "@hooks/useHeader";
 import { useCurrentUser } from "@hooks/useCurrentUser";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { addOrder } from "@utils/apiUtils";
+import { addOrder, getNotation } from "@utils/apiUtils";
 import { validatePickupDate, validatePickupTime } from "@utils/commonUtils";
 import { NumericFormatAdapter } from "@utils/modalUtils";
 import { IFormInputOrder } from "@interfaces/interfaces";
+import { useAuth } from "@hooks/useAuth";
 
 interface CustomModalAddOrderProps {
   open: boolean;
@@ -42,6 +44,37 @@ const CustomModalAddOrder = ({
   const headers = useHeader();
   const [pickupDate, setPickupDate] = useState<Date | null>(null);
   const [pickupTime, setPickupTime] = useState<Date | null>(null);
+  const [email, setEmail] = useState<string>("")
+  const [showWarning, setShowWarning] = useState<boolean>(false);
+  const [colorWarning, setColorWarning] = useState<string>("")
+  const { user } = useAuth();
+
+
+  const debounced = useDebouncedCallback(
+    (value) => {
+      const response = getNotation(value, user.id, headers)
+
+      response.then((data) => {
+        if (parseInt(data.notation) === 2) { // Exemple de condition pour afficher le warning
+          setShowWarning(true);
+          setColorWarning('orange')
+        }
+        else if (parseInt(data.notation) === 3) {
+          setShowWarning(true);
+          setColorWarning('red')
+        } else {
+          setShowWarning(false);
+        }
+      })
+    },
+    1000
+  );
+
+  useEffect(() => {
+    if (email) {
+      debounced(email);
+    }
+  }, [email, debounced]);
 
   const mutation = useMutation({
     mutationFn: (data: IFormInputOrder) => addOrder(data, currentUser, headers),
@@ -65,17 +98,7 @@ const CustomModalAddOrder = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IFormInputOrder>({
-    defaultValues: {
-      name: "youssef",
-      lastname: "Moudni",
-      phone: "0668735937",
-      email: "you.moudni@gmail.com",
-      amount: 20,
-      detailsForCustomer: "test detailsForCustomer",
-      detailsForUser: "test detailsForUser",
-    },
-  });
+  } = useForm<IFormInputOrder>();
 
   const onSubmit: SubmitHandler<IFormInputOrder> = (data) => {
     mutation.mutate(data);
@@ -172,12 +195,22 @@ const CustomModalAddOrder = ({
                           value={field.value || ""}
                           size="lg"
                           placeholder="Email"
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            field.onChange(e);
+                          }}
                           required
                         />
                         {errors.email && (
                           <FormHelperText style={{ color: "red" }}>
                             <InfoOutlined style={{ color: "red" }} />
                             {errors.email.message}
+                          </FormHelperText>
+                        )}
+                        {showWarning && (
+                          <FormHelperText style={{ color: colorWarning }}>
+                            <InfoOutlined style={{ color: colorWarning }} />
+                            Ce client n'a pas respecté ses commandes
                           </FormHelperText>
                         )}
                       </>

@@ -158,8 +158,24 @@ export const addOrder = async (
     );
     return response.data;
   } catch (error) {
-    console.log("Une erreur s'est produite lors de l'ajout de la commande");
     throw new Error("Une erreur s'est produite lors de l'ajout de la commande");
+  }
+};
+
+export const getNotation = async (str: string, userId: number, headers: object) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3333/api/v1/customer/getNotation`,
+      {
+        str : str,
+        userId: userId,
+      },
+      { headers }
+    )
+
+    return response.data;
+  } catch (error) {
+    throw new Error("Une erreur s'est produite lors de la recherche de mail");
   }
 };
 

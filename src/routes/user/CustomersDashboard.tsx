@@ -118,8 +118,6 @@ const CustomerDashboard: React.FC = () => {
 
   }, [currentPage, customersList]);
 
-  console.log(customersList)
-
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
