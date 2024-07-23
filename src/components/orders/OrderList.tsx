@@ -19,6 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
+import Checkbox from "@mui/joy/Checkbox";
 
 import { Order } from "@interfaces/interfaces";
 import MobilePagination from "@components/common/MobilePagination";
@@ -36,6 +37,8 @@ interface OrderProps {
   currentPage: number;
   sortingValue: string;
   openUpdateModal: (orderId: number) => void;
+  setSelected: (value: any) => void;
+  selected: number[];
 }
 
 const OrderList: React.FC<OrderProps> = ({
@@ -45,9 +48,12 @@ const OrderList: React.FC<OrderProps> = ({
   currentPage,
   sortingValue,
   openUpdateModal,
+  setSelected,
+  selected,
 }) => {
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
+  // const [selected, setSelected] = useState<readonly number[]>([]);
 
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -56,6 +62,31 @@ const OrderList: React.FC<OrderProps> = ({
 
   return (
     <Box sx={{ display: { xs: "block", sm: "none" } }}>
+      {selected && setSelected && (
+        <>
+          <Checkbox
+            size="sm"
+            label="Tout sélectionner"
+            indeterminate={
+              selected.length > 0 && selected.length !== ordersList.length
+            }
+            checked={selected.length === ordersList.length}
+            onChange={(event) => {
+              setSelected(
+                event.target.checked ? ordersList.map((row) => row.id) : []
+              );
+            }}
+            color={
+              selected.length > 0 || selected.length === ordersList.length
+                ? "primary"
+                : undefined
+            }
+            sx={{ verticalAlign: "text-bottom", marginBottom: 2 }}
+          />
+          <ListDivider />
+        </>
+      )}
+
       {sortOrders(ordersList, sortingValue).map((order: Order) => (
         <List
           key={order.id}
@@ -70,11 +101,29 @@ const OrderList: React.FC<OrderProps> = ({
               justifyContent: "space-between",
               alignItems: "start",
             }}
+            color="warning"
           >
             <ListItemContent
               sx={{ display: "flex", gap: 2, alignItems: "start" }}
             >
-              <ListItemDecorator>
+              {selected && setSelected && (
+                <Checkbox
+                  size="sm"
+                  checked={selected.includes(order.id)}
+                  color={selected.includes(order.id) ? "primary" : undefined}
+                  onChange={(event) => {
+                    setSelected((ids: any[]) =>
+                      event.target.checked
+                        ? ids.concat(order.id)
+                        : ids.filter((itemId) => itemId !== order.id)
+                    );
+                  }}
+                  slotProps={{ checkbox: { sx: { textAlign: "left" } } }}
+                  sx={{ verticalAlign: "text-bottom" }}
+                />
+              )}
+
+              {/* <ListItemDecorator>
                 <Tooltip
                   title={
                     order.detailsForUser
@@ -86,7 +135,7 @@ const OrderList: React.FC<OrderProps> = ({
                 >
                   <InfoIcon sx={{ fontSize: "2rem" }} />
                 </Tooltip>
-              </ListItemDecorator>
+              </ListItemDecorator> */}
               <div>
                 <Chip
                   variant="soft"
@@ -110,7 +159,19 @@ const OrderList: React.FC<OrderProps> = ({
                     {order.customer.name} {order.customer.lastname}
                   </Typography>
                 </Chip>
-
+                <ListItemDecorator>
+                  <Tooltip
+                    title={
+                      order.detailsForUser
+                        ? order.detailsForUser
+                        : "Aucune information"
+                    }
+                    variant="solid"
+                    placement="right"
+                  >
+                    <InfoIcon sx={{ fontSize: "1.3rem" }} />
+                  </Tooltip>
+                </ListItemDecorator>
                 {componentCallBy === "daysOrders" ? (
                   <Typography level="body-xs" gutterBottom>
                     Heure de retrait :{" "}

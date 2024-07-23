@@ -37,6 +37,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useQueryClient } from "@tanstack/react-query";
 import DesktopPagination from "@components/common/DesktopPagination";
 import CustomCircularProgress from "@components/common/CustomCircularProgress";
+import ActionsButtonGroup from "@components/common/ActionsButtonGroup";
 import { Order } from "@interfaces/interfaces";
 import { formatPhoneNumber, sortOrders } from "@utils/commonUtils";
 import RowMenuOrders from "@components/orders/RowMenuOrders";
@@ -55,6 +56,9 @@ interface OrderProps {
   getSortingValue: (value: any) => void;
   numberOfPages: number;
   openUpdateModal: (orderId: number) => void;
+  setSelected?: (value: any) => void;
+  selected?: number[]
+  handleActionsButton?: (value: string) => void
 }
 
 const OrderTable: React.FC<OrderProps> = ({
@@ -68,9 +72,12 @@ const OrderTable: React.FC<OrderProps> = ({
   numberOfPages,
   openUpdateModal,
   getSortingValue,
+  setSelected,
+  selected,
+  handleActionsButton
 }) => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
+  // const [selected, setSelected] = useState<number[]>([]);
   const [customerFilterValue, setCustomerFilterValue] = useState<string | null>(
     null
   );
@@ -326,7 +333,14 @@ const OrderTable: React.FC<OrderProps> = ({
           <RefreshIcon />
         </IconButton>
       </Box>
-      <>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          marginBottom: 2, 
+        }}
+      >
         <Select
           placeholder=""
           onChange={getValueSort}
@@ -349,7 +363,10 @@ const OrderTable: React.FC<OrderProps> = ({
           <Option value="asc-time">Heure : plus tot</Option>
           <Option value="desc-time">Heure : plus tard</Option>
         </Select>
-      </>
+        {handleActionsButton && (
+          <ActionsButtonGroup handleAction={handleActionsButton} />
+        )}
+      </Box>
 
       <Sheet
         className="OrderTableContainer"
@@ -382,7 +399,8 @@ const OrderTable: React.FC<OrderProps> = ({
               <th
                 style={{ width: 48, textAlign: "center", padding: "12px 6px" }}
               >
-                <Checkbox
+                {selected && setSelected && (
+                  <Checkbox
                   size="sm"
                   indeterminate={
                     selected.length > 0 && selected.length !== ordersList.length
@@ -402,6 +420,8 @@ const OrderTable: React.FC<OrderProps> = ({
                   }
                   sx={{ verticalAlign: "text-bottom" }}
                 />
+                )}
+                
               </th>
               <th
                 style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
@@ -436,22 +456,25 @@ const OrderTable: React.FC<OrderProps> = ({
           <tbody>
             {sortOrders(ordersList, selectedSortValue).map((row: Order) => (
               <tr key={row.id}>
-                <td style={{ textAlign: "center", width: 48 }}>
+                {selected && setSelected && (
+                  <td style={{ textAlign: "center", width: 48 }}>
                   <Checkbox
                     size="sm"
                     checked={selected.includes(row.id)}
                     color={selected.includes(row.id) ? "primary" : undefined}
                     onChange={(event) => {
-                      setSelected((ids) =>
+                      setSelected((ids: any[]) =>
                         event.target.checked
                           ? ids.concat(row.id)
-                          : ids.filter((itemId) => itemId !== row.id)
+                          : ids.filter((itemId: number) => itemId !== row.id)
                       );
                     }}
                     slotProps={{ checkbox: { sx: { textAlign: "left" } } }}
                     sx={{ verticalAlign: "text-bottom" }}
                   />
                 </td>
+                )}
+                
                 <td style={{ textAlign: "center", width: 140 }}>
                   {componentCallBy === "daysOrders" ? (
                     <Typography level="body-xs">
@@ -563,9 +586,9 @@ const OrderTable: React.FC<OrderProps> = ({
                           {row.customer.name} {row.customer.lastname}
                         </Typography>
                       </Chip>
-                        <Typography level="body-xs">
-                          {row.customer.email}
-                        </Typography>
+                      <Typography level="body-xs">
+                        {row.customer.email}
+                      </Typography>
                     </div>
                   </Box>
                 </td>

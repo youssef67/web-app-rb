@@ -211,6 +211,22 @@ export const fetchUpdateOrder = async (
     });
 };
 
+export const UpdateStatusAll = async (
+  orderIds: number[],
+  action: string,
+  headers: object
+): Promise<void> => {
+  axios
+    .post(
+      `http://localhost:3333/api/v1/order/updateStatusAll`,
+      { orderIds: orderIds, action: action },
+      { headers }
+    )
+    .then((res) => {
+      return res.data;
+    });
+};
+
 export const fetchAllCustomers = async (
   user: User
 ): Promise<CustomerFullData[] | []> => {

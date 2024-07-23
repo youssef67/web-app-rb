@@ -4,7 +4,7 @@ import { useNotification } from "@contexts/NotificationContext";
 import { usePagination } from "@contexts/PaginationContext";
 
 import { useSnackbar } from "notistack";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import CssBaseline from "@mui/joy/CssBaseline";
 import { CssVarsProvider } from "@mui/joy/styles";
@@ -32,14 +32,17 @@ import {
   getUniqueCustomers,
 } from "@utils/commonUtils";
 import { Order } from "@interfaces/interfaces";
+import { useHeader } from "@hooks/useHeader";
 
-import { fetchDaysOrders } from "@utils/apiUtils";
+import { fetchDaysOrders, UpdateStatusAll } from "@utils/apiUtils";
 
 const DaysOrdersDashboard: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [openUpdateOrderModal, setOpenUpdateOrderModal] =
     useState<boolean>(false);
   const [order, setOrder] = useState<Order | undefined>(undefined);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [dummyState, setDummyState] = useState(0);
   // filters State
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [customerFilter, setCustomerFilter] = useState<string | null>(null);
@@ -52,6 +55,7 @@ const DaysOrdersDashboard: React.FC = () => {
   const [ordersForCurrentPage, setOrdersForCurrentPage] = useState<Order[]>([]);
   // Hook state
   const { user } = useAuth();
+  const headers = useHeader();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { notification, setNotification } = useNotification();
@@ -61,6 +65,32 @@ const DaysOrdersDashboard: React.FC = () => {
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
   };
+
+  const mutation = useMutation({
+    mutationFn: (action: string) => UpdateStatusAll(selected, action, headers),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      setDummyState(dummyState + 1);
+      setNotification({
+        message: "Action effectuée",
+        variant: "success",
+      });
+    },
+    onError: () => {
+      setNotification({
+        message: "Une erreur est survenue",
+        variant: "error",
+      });
+    },
+  });
+
+  const handleActionsButton = async (action: string) => {
+    console.log(selected)
+    console.log(action)
+
+    mutation.mutate(action)
+    queryClient.invalidateQueries({ queryKey: ["orders"] })
+  }
 
   // to open modal for update order
   const handleUpdateOrder = (orderId: number) => {
@@ -241,6 +271,9 @@ const DaysOrdersDashboard: React.FC = () => {
                 openUpdateModal={handleUpdateOrder}
                 getSortingValue={setSelectedSortValue}
                 uniqueCustomers={uniqueCustomers}
+                setSelected={setSelected}
+                selected={selected}
+                handleActionsButton={handleActionsButton}
               />
               <OrderList
                 componentCallBy="daysOrders"
@@ -249,6 +282,8 @@ const DaysOrdersDashboard: React.FC = () => {
                 currentPage={currentPage}
                 numberOfPages={numberOfPages}
                 sortingValue={selectedSortValue}
+                setSelected={setSelected}
+                selected={selected}
               />
             </>
           )}
