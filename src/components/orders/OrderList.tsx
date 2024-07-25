@@ -145,14 +145,14 @@ const OrderList: React.FC<OrderProps> = ({
                       1: <InsertEmoticonIcon />,
                       2: <SentimentNeutralIcon />,
                       3: <MoodBadIcon />,
-                    }[order.customer.notations[0].notation]
+                    }[order.customer.notations?.[0]?.notation ?? 0]
                   }
                   color={
                     {
                       1: "success",
                       2: "warning",
                       3: "danger",
-                    }[order.customer.notations[0].notation]as ColorPaletteProp
+                    }[order.customer.notations?.[0]?.notation ?? 0] as ColorPaletteProp
                   }
                 >
                   <Typography fontWeight={600} gutterBottom>

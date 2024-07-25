@@ -364,7 +364,10 @@ const OrderTable: React.FC<OrderProps> = ({
           <Option value="desc-time">Heure : plus tard</Option>
         </Select>
         {handleActionsButton && (
-          <ActionsButtonGroup handleAction={handleActionsButton} selected={selected}/>
+          <ActionsButtonGroup
+            handleAction={handleActionsButton}
+            selected={selected}
+          />
         )}
       </Box>
 
@@ -578,14 +581,16 @@ const OrderTable: React.FC<OrderProps> = ({
                             1: <InsertEmoticonIcon />,
                             2: <SentimentNeutralIcon />,
                             3: <MoodBadIcon />,
-                          }[row.customer.notations[0].notation]
+                          }[row.customer.notations?.[0]?.notation ?? 0]
                         }
                         color={
                           {
                             1: "success",
                             2: "warning",
                             3: "danger",
-                          }[row.customer.notations[0].notation] as ColorPaletteProp
+                          }[
+                            row.customer.notations?.[0]?.notation ?? 0
+                          ] as ColorPaletteProp
                         }
                       >
                         <Typography level="body-xs">
