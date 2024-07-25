@@ -37,8 +37,8 @@ interface OrderProps {
   currentPage: number;
   sortingValue: string;
   openUpdateModal: (orderId: number) => void;
-  setSelected: (value: any) => void;
-  selected: number[];
+  setSelected?: (value: any) => void;
+  selected?: number[];
 }
 
 const OrderList: React.FC<OrderProps> = ({
@@ -145,14 +145,14 @@ const OrderList: React.FC<OrderProps> = ({
                       1: <InsertEmoticonIcon />,
                       2: <SentimentNeutralIcon />,
                       3: <MoodBadIcon />,
-                    }[order.customer.notation]
+                    }[order.customer.notations[0].notation]
                   }
                   color={
                     {
                       1: "success",
                       2: "warning",
                       3: "danger",
-                    }[order.customer.notation] as ColorPaletteProp
+                    }[order.customer.notations[0].notation]as ColorPaletteProp
                   }
                 >
                   <Typography fontWeight={600} gutterBottom>

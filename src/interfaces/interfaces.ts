@@ -39,7 +39,18 @@ export interface Customer {
   name: string;
   phone: string;
   updatedAt: string;
-  notation: string;
+  notations: Notation[];
+}
+
+export interface Notation {
+  id: number;
+  userId: number
+  customerId: number
+  notation: number
+  nbNoShow: number
+  nbOrdersCompleted: number
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CustomerWithPivotData {

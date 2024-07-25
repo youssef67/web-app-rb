@@ -85,9 +85,6 @@ const DaysOrdersDashboard: React.FC = () => {
   });
 
   const handleActionsButton = async (action: string) => {
-    console.log(selected)
-    console.log(action)
-
     mutation.mutate(action)
     queryClient.invalidateQueries({ queryKey: ["orders"] })
   }

@@ -55,7 +55,7 @@ const CustomModalAddOrder = ({
       const response = getNotation(value, user.id, headers)
 
       response.then((data) => {
-        if (parseInt(data.notation) === 2) { // Exemple de condition pour afficher le warning
+        if (parseInt(data.notation) === 2) { 
           setShowWarning(true);
           setColorWarning('orange')
         }
@@ -210,7 +210,7 @@ const CustomModalAddOrder = ({
                         {showWarning && (
                           <FormHelperText style={{ color: colorWarning }}>
                             <InfoOutlined style={{ color: colorWarning }} />
-                            Ce client n'a pas respecté ses commandes
+                            Ce client n'a pas respecté ses commandes 
                           </FormHelperText>
                         )}
                       </>

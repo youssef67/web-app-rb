@@ -8,16 +8,16 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 interface ActionsButtonGroupProps {
     handleAction: (value: string) => void;
+    selected?: number[]
 }
 
 const options = ["Valider", "Annuler", "No show"];
 
-const ActionsButtonGroup: React.FC<ActionsButtonGroupProps> = ({handleAction}) => {
+const ActionsButtonGroup: React.FC<ActionsButtonGroupProps> = ({handleAction, selected}) => {
   const [open, setOpen] = useState(false);
   const actionRef = React.useRef<() => void | null>(null);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [activeMenu, setActiveMenu] = useState(false);
 
   const handleClick = () => {
     const value = options[selectedIndex] === "Valider" ? "recovered" : options[selectedIndex] === "Annuler" ? "canceled" : "noShow"
@@ -38,7 +38,7 @@ const ActionsButtonGroup: React.FC<ActionsButtonGroupProps> = ({handleAction}) =
         ref={anchorRef}
         variant="solid"
         color="success"
-        disabled={activeMenu}
+        disabled={selected?.length === 0} // Disable the button if no items are selected
         aria-label="split button"
       >
         <Button onClick={handleClick}>{options[selectedIndex]}</Button>

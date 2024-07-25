@@ -57,8 +57,8 @@ interface OrderProps {
   numberOfPages: number;
   openUpdateModal: (orderId: number) => void;
   setSelected?: (value: any) => void;
-  selected?: number[]
-  handleActionsButton?: (value: string) => void
+  selected?: number[];
+  handleActionsButton?: (value: string) => void;
 }
 
 const OrderTable: React.FC<OrderProps> = ({
@@ -74,7 +74,7 @@ const OrderTable: React.FC<OrderProps> = ({
   getSortingValue,
   setSelected,
   selected,
-  handleActionsButton
+  handleActionsButton,
 }) => {
   const [open, setOpen] = useState(false);
   // const [selected, setSelected] = useState<number[]>([]);
@@ -338,7 +338,7 @@ const OrderTable: React.FC<OrderProps> = ({
           display: "flex",
           alignItems: "center",
           gap: 2,
-          marginBottom: 2, 
+          marginBottom: 2,
         }}
       >
         <Select
@@ -364,7 +364,7 @@ const OrderTable: React.FC<OrderProps> = ({
           <Option value="desc-time">Heure : plus tard</Option>
         </Select>
         {handleActionsButton && (
-          <ActionsButtonGroup handleAction={handleActionsButton} />
+          <ActionsButtonGroup handleAction={handleActionsButton} selected={selected}/>
         )}
       </Box>
 
@@ -396,33 +396,39 @@ const OrderTable: React.FC<OrderProps> = ({
         >
           <thead>
             <tr>
-              <th
-                style={{ width: 48, textAlign: "center", padding: "12px 6px" }}
-              >
-                {selected && setSelected && (
-                  <Checkbox
-                  size="sm"
-                  indeterminate={
-                    selected.length > 0 && selected.length !== ordersList.length
-                  }
-                  checked={selected.length === ordersList.length}
-                  onChange={(event) => {
-                    setSelected(
-                      event.target.checked
-                        ? ordersList.map((row) => row.id)
-                        : []
-                    );
+              {selected && setSelected && (
+                <th
+                  style={{
+                    width: 48,
+                    textAlign: "center",
+                    padding: "12px 6px",
                   }}
-                  color={
-                    selected.length > 0 || selected.length === ordersList.length
-                      ? "primary"
-                      : undefined
-                  }
-                  sx={{ verticalAlign: "text-bottom" }}
-                />
-                )}
-                
-              </th>
+                >
+                  <Checkbox
+                    size="sm"
+                    indeterminate={
+                      selected.length > 0 &&
+                      selected.length !== ordersList.length
+                    }
+                    checked={selected.length === ordersList.length}
+                    onChange={(event) => {
+                      setSelected(
+                        event.target.checked
+                          ? ordersList.map((row) => row.id)
+                          : []
+                      );
+                    }}
+                    color={
+                      selected.length > 0 ||
+                      selected.length === ordersList.length
+                        ? "primary"
+                        : undefined
+                    }
+                    sx={{ verticalAlign: "text-bottom" }}
+                  />
+                </th>
+              )}
+
               <th
                 style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
               >
@@ -443,12 +449,12 @@ const OrderTable: React.FC<OrderProps> = ({
               <th
                 style={{ width: 240, textAlign: "center", padding: "12px 6px" }}
               >
-                client
+                Client
               </th>
               <th
                 style={{ width: 200, textAlign: "center", padding: "12px 6px" }}
               >
-                numéro de téléphone
+                Numéro de téléphone
               </th>
               <th style={{ width: 50, padding: "12px 6px" }}></th>
             </tr>
@@ -458,23 +464,23 @@ const OrderTable: React.FC<OrderProps> = ({
               <tr key={row.id}>
                 {selected && setSelected && (
                   <td style={{ textAlign: "center", width: 48 }}>
-                  <Checkbox
-                    size="sm"
-                    checked={selected.includes(row.id)}
-                    color={selected.includes(row.id) ? "primary" : undefined}
-                    onChange={(event) => {
-                      setSelected((ids: any[]) =>
-                        event.target.checked
-                          ? ids.concat(row.id)
-                          : ids.filter((itemId: number) => itemId !== row.id)
-                      );
-                    }}
-                    slotProps={{ checkbox: { sx: { textAlign: "left" } } }}
-                    sx={{ verticalAlign: "text-bottom" }}
-                  />
-                </td>
+                    <Checkbox
+                      size="sm"
+                      checked={selected.includes(row.id)}
+                      color={selected.includes(row.id) ? "primary" : undefined}
+                      onChange={(event) => {
+                        setSelected((ids: any[]) =>
+                          event.target.checked
+                            ? ids.concat(row.id)
+                            : ids.filter((itemId: number) => itemId !== row.id)
+                        );
+                      }}
+                      slotProps={{ checkbox: { sx: { textAlign: "left" } } }}
+                      sx={{ verticalAlign: "text-bottom" }}
+                    />
+                  </td>
                 )}
-                
+
                 <td style={{ textAlign: "center", width: 140 }}>
                   {componentCallBy === "daysOrders" ? (
                     <Typography level="body-xs">
@@ -572,14 +578,14 @@ const OrderTable: React.FC<OrderProps> = ({
                             1: <InsertEmoticonIcon />,
                             2: <SentimentNeutralIcon />,
                             3: <MoodBadIcon />,
-                          }[row.customer.notation]
+                          }[row.customer.notations[0].notation]
                         }
                         color={
                           {
                             1: "success",
                             2: "warning",
                             3: "danger",
-                          }[row.customer.notation] as ColorPaletteProp
+                          }[row.customer.notations[0].notation] as ColorPaletteProp
                         }
                       >
                         <Typography level="body-xs">
