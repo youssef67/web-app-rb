@@ -187,8 +187,8 @@ const CustomerDashboard: React.FC = () => {
               Listes des clients
             </Typography>
             <Button
-              variant="outlined"
-              color="neutral"
+              variant="solid"
+              color="primary"
               startDecorator={<Add />}
               onClick={() => setOpen(true)}
             >

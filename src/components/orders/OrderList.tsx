@@ -53,7 +53,6 @@ const OrderList: React.FC<OrderProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [dummyState, setDummyState] = useState(0);
-  // const [selected, setSelected] = useState<readonly number[]>([]);
 
   const handleChangeMade = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -122,20 +121,6 @@ const OrderList: React.FC<OrderProps> = ({
                   sx={{ verticalAlign: "text-bottom" }}
                 />
               )}
-
-              {/* <ListItemDecorator>
-                <Tooltip
-                  title={
-                    order.detailsForUser
-                      ? order.detailsForUser
-                      : "Aucune information"
-                  }
-                  variant="solid"
-                  placement="right"
-                >
-                  <InfoIcon sx={{ fontSize: "2rem" }} />
-                </Tooltip>
-              </ListItemDecorator> */}
               <div>
                 <Chip
                   variant="soft"

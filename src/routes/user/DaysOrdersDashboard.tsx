@@ -226,8 +226,8 @@ const DaysOrdersDashboard: React.FC = () => {
               Commandes du {currentDate()}
             </Typography>
             <Button
-              variant="outlined"
-              color="neutral"
+              variant="solid"
+              color="primary"
               startDecorator={<Add />}
               onClick={() => setOpen(true)}
             >

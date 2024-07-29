@@ -195,8 +195,8 @@ const HistoryDashboard: React.FC = () => {
               Historique des commandes
             </Typography>
             <Button
-              variant="outlined"
-              color="neutral"
+              variant="solid"
+              color="primary"
               startDecorator={<Add />}
               onClick={() => setOpen(true)}
             >

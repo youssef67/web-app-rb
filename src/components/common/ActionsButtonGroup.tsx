@@ -35,9 +35,10 @@ const ActionsButtonGroup: React.FC<ActionsButtonGroupProps> = ({handleAction, se
   return (
     <>
       <ButtonGroup
+        sx={{border: "1px solid #2F4558", color: "#5784BA"  }}
+
         ref={anchorRef}
         variant="solid"
-        color="success"
         disabled={selected?.length === 0} // Disable the button if no items are selected
         aria-label="split button"
       >
@@ -70,8 +71,6 @@ const ActionsButtonGroup: React.FC<ActionsButtonGroupProps> = ({handleAction, se
         {options.map((option, index) => (
           <MenuItem
             key={option}
-            // disabled={index === 2}
-            // selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
             {option}

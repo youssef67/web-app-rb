@@ -459,7 +459,7 @@ const OrderTable: React.FC<OrderProps> = ({
               >
                 Numéro de téléphone
               </th>
-              <th style={{ width: 50, padding: "12px 6px" }}></th>
+              <th style={{ width: 120, padding: "12px 6px" }}></th>
             </tr>
           </thead>
           <tbody>
@@ -615,7 +615,7 @@ const OrderTable: React.FC<OrderProps> = ({
                   </Box>
                 </td>
                 <td>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center", width: 108 }}>
                     <RowMenuOrders
                       idOrder={row.id}
                       onChangeMade={handleChangeMade}

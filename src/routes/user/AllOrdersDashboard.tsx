@@ -195,8 +195,8 @@ const AllOrdersDashboard: React.FC = () => {
               Toutes les commandes
             </Typography>
             <Button
-              variant="outlined"
-              color="neutral"
+              variant="solid"
+              color="primary"
               startDecorator={<Add />}
               onClick={() => setOpen(true)}
             >

@@ -15,10 +15,14 @@ import { useNotification } from "@contexts/NotificationContext";
 interface RowMenuProps {
   idOrder: number;
   onChangeMade: () => void;
-  openUpdateModal: (orderId: number) => void | null
+  openUpdateModal: (orderId: number) => void | null;
 }
 
-const RowMenuOrders: React.FC<RowMenuProps> = ({ idOrder, onChangeMade, openUpdateModal }) => {
+const RowMenuOrders: React.FC<RowMenuProps> = ({
+  idOrder,
+  onChangeMade,
+  openUpdateModal,
+}) => {
   const headers = useHeader();
   const { setNotification } = useNotification();
   const queryClient = useQueryClient();
@@ -41,23 +45,23 @@ const RowMenuOrders: React.FC<RowMenuProps> = ({ idOrder, onChangeMade, openUpda
   });
 
   const updateOrder = (action: string) => {
-    mutation.mutate(action)
-    queryClient.invalidateQueries({ queryKey: ["orders"] })
-  }
-
+    mutation.mutate(action);
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
 
   return (
     <>
       <Dropdown>
         <MenuButton
+        sx={{ paddingLeft: 4, paddingRight: 4, border: "1px solid #2F4558"  }}
           slots={{ root: IconButton }}
           slotProps={{
-            root: { variant: "plain", color: "neutral", size: "sm" },
+            root: { variant: "soft", color: "neutral", size: "sm" },
           }}
         >
-          <MoreHorizRoundedIcon />
+          Actions
         </MenuButton>
-        <Menu size="sm" sx={{ minWidth: 140 }}>
+        <Menu size="sm" sx={{ minWidth: 150 }} variant="soft">
           <MenuItem onClick={() => updateOrder("recovered")}>Valider</MenuItem>
           <MenuItem onClick={() => openUpdateModal(idOrder)}>Modifier</MenuItem>
           <MenuItem onClick={() => updateOrder("canceled")}>Annuler</MenuItem>
