@@ -143,7 +143,7 @@ const OrderTable: React.FC<OrderProps> = ({
   const renderFilters = () => (
     <>
       <FormControl size="sm">
-        <FormLabel>Statut</FormLabel>
+        <FormLabel sx={{ fontSize: "1.1rem" }}>Statut</FormLabel>
         <Select
           size="sm"
           placeholder="Filtrer par statut"
@@ -161,13 +161,19 @@ const OrderTable: React.FC<OrderProps> = ({
             },
           }}
         >
-          <Option value={0}>Tous</Option>
-          <Option value={1}>Commande confirmée</Option>
-          <Option value={2}>Commande non confirmée</Option>
+          <Option value={0} sx={{ fontSize: "1.1rem" }}>
+            Tous
+          </Option>
+          <Option value={1} sx={{ fontSize: "1.1rem" }}>
+            Commande confirmée
+          </Option>
+          <Option value={2} sx={{ fontSize: "1.1rem" }}>
+            Commande non confirmée
+          </Option>
         </Select>
       </FormControl>
       <FormControl size="sm">
-        <FormLabel>Client</FormLabel>
+        <FormLabel sx={{ fontSize: "1.1rem" }}>Client</FormLabel>
         <Select
           size="sm"
           placeholder="Filtrer par client"
@@ -199,7 +205,7 @@ const OrderTable: React.FC<OrderProps> = ({
       </FormControl>
       {componentCallBy === "allOrders" ? (
         <FormControl size="sm">
-          <FormLabel>Date</FormLabel>
+          <FormLabel sx={{ fontSize: "1.1rem" }}>Date</FormLabel>
           <Select
             size="sm"
             placeholder="Filtrer par date"
@@ -217,10 +223,18 @@ const OrderTable: React.FC<OrderProps> = ({
               },
             }}
           >
-            <Option value={0}>Tous</Option>
-            <Option value={1}>7 prochains jours</Option>
-            <Option value={2}>15 prochains jours</Option>
-            <Option value={3}>30 prochains jours</Option>
+            <Option value={0} sx={{ fontSize: "1rem" }}>
+              Tous
+            </Option>
+            <Option value={1} sx={{ fontSize: "1rem" }}>
+              7 prochains jours
+            </Option>
+            <Option value={2} sx={{ fontSize: "1rem" }}>
+              15 prochains jours
+            </Option>
+            <Option value={3} sx={{ fontSize: "1rem" }}>
+              30 prochains jours
+            </Option>
           </Select>
         </FormControl>
       ) : null}
@@ -247,7 +261,7 @@ const OrderTable: React.FC<OrderProps> = ({
           value={freeFieldFilterValue}
           onChange={handleFreeFilterChange}
           startDecorator={<SearchIcon />}
-          sx={{ flexGrow: 1 }}
+          sx={{ flexGrow: 1, fontSize: "1.1rem" }}
           endDecorator={
             freeFieldFilterValue && (
               <IconButton size="sm" variant="plain" onClick={handleClearInput}>
@@ -275,13 +289,17 @@ const OrderTable: React.FC<OrderProps> = ({
         <Modal open={open} onClose={() => setOpen(false)}>
           <ModalDialog aria-labelledby="filter-modal" layout="center">
             <ModalClose />
-            <Typography id="filter-modal" level="h2">
+            <Typography id="filter-modal" level="h2" sx={{ fontSize: "1rem" }}>
               Filtres
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Sheet sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {renderFilters()}
-              <Button color="primary" onClick={() => setOpen(false)}>
+              <Button
+                color="primary"
+                onClick={() => setOpen(false)}
+                sx={{ fontSize: "1rem" }}
+              >
                 Envoyer
               </Button>
             </Sheet>
@@ -302,7 +320,7 @@ const OrderTable: React.FC<OrderProps> = ({
         }}
       >
         <FormControl sx={{ flex: 1 }} size="sm">
-          <FormLabel>Recherche</FormLabel>
+          <FormLabel sx={{ fontSize: "1rem" }}>Recherche</FormLabel>
           <Input
             size="sm"
             placeholder="Rechercher"
@@ -357,11 +375,21 @@ const OrderTable: React.FC<OrderProps> = ({
             },
           }}
         >
-          <Option value="latest">Derniers arrivées</Option>
-          <Option value="asc-price">Prix : ordre croissant</Option>
-          <Option value="desc-price">Prix : ordre decroissant</Option>
-          <Option value="asc-time">Heure : plus tot</Option>
-          <Option value="desc-time">Heure : plus tard</Option>
+          <Option value="latest" sx={{ fontSize: "1rem" }}>
+            Derniers arrivées
+          </Option>
+          <Option value="asc-price" sx={{ fontSize: "1rem" }}>
+            Prix : ordre croissant
+          </Option>
+          <Option value="desc-price" sx={{ fontSize: "1rem" }}>
+            Prix : ordre decroissant
+          </Option>
+          <Option value="asc-time" sx={{ fontSize: "1rem" }}>
+            Heure : plus tot
+          </Option>
+          <Option value="desc-time" sx={{ fontSize: "1rem" }}>
+            Heure : plus tard
+          </Option>
         </Select>
         {handleActionsButton && (
           <ActionsButtonGroup
@@ -433,40 +461,71 @@ const OrderTable: React.FC<OrderProps> = ({
               )}
 
               <th
-                style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
+                style={{
+                  width: 140,
+                  textAlign: "center",
+                  padding: "12px 6px",
+                  fontSize: "1rem",
+                }}
               >
                 {componentCallBy === "daysOrders"
                   ? "Heure de retrait"
                   : "Date/Heure"}
               </th>
               <th
-                style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
+                style={{
+                  width: 140,
+                  textAlign: "center",
+                  padding: "12px 6px",
+                  fontSize: "1rem",
+                }}
               >
                 Montant
               </th>
               <th
-                style={{ width: 170, textAlign: "center", padding: "12px 6px" }}
+                style={{
+                  width: 170,
+                  textAlign: "center",
+                  padding: "12px 6px",
+                  fontSize: "1rem",
+                }}
               >
                 Statut
               </th>
               <th
-                style={{ width: 240, textAlign: "center", padding: "12px 6px" }}
+                style={{
+                  width: 240,
+                  textAlign: "center",
+                  padding: "12px 6px",
+                  fontSize: "1rem",
+                }}
               >
                 Client
               </th>
               <th
-                style={{ width: 200, textAlign: "center", padding: "12px 6px" }}
+                style={{
+                  width: 200,
+                  textAlign: "center",
+                  padding: "12px 6px",
+                  fontSize: "1rem",
+                }}
               >
                 Numéro de téléphone
               </th>
-              <th style={{ width: 120, padding: "12px 6px" }}></th>
+              {componentCallBy !== "historyOrders" ? (
+                <th
+                  style={{ width: 120, padding: "12px 6px", fontSize: "1rem" }}
+                ></th>
+              ) : null}
             </tr>
           </thead>
           <tbody>
             {sortOrders(ordersList, selectedSortValue).map((row: Order) => (
               <tr key={row.id}>
                 {selected && setSelected && (
-                  <td style={{ textAlign: "center", width: 48 }}>
+                  <td
+                    style={{ textAlign: "center", width: 48, fontSize: "1rem" }}
+                  >
                     <Checkbox
                       size="sm"
                       checked={selected.includes(row.id)}
@@ -486,18 +545,18 @@ const OrderTable: React.FC<OrderProps> = ({
 
                 <td style={{ textAlign: "center", width: 140 }}>
                   {componentCallBy === "daysOrders" ? (
-                    <Typography level="body-xs">
+                    <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                       {row.pickupTime.replace(":", "H").slice(0, -3)}
                     </Typography>
                   ) : (
                     <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                       <div style={{ textAlign: "center", width: 240 }}>
-                        <Typography level="body-xs">
+                        <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                           {format(new Date(row.pickupDate), "dd/MM/yyyy", {
                             locale: fr,
                           })}
                         </Typography>
-                        <Typography level="body-xs">
+                        <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                           {row.pickupTime.replace(":", "H").slice(0, -3)}
                         </Typography>
                       </div>
@@ -514,7 +573,11 @@ const OrderTable: React.FC<OrderProps> = ({
                   >
                     <Typography
                       level="body-xs"
-                      sx={{ display: "flex", alignItems: "center" }}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: "1rem",
+                      }}
                     >
                       <Tooltip
                         title={
@@ -535,6 +598,7 @@ const OrderTable: React.FC<OrderProps> = ({
                   <Chip
                     variant="soft"
                     size="sm"
+                    sx={{ fontSize: "1rem" }}
                     startDecorator={
                       {
                         1: <CheckRoundedIcon />,
@@ -593,11 +657,11 @@ const OrderTable: React.FC<OrderProps> = ({
                           ] as ColorPaletteProp
                         }
                       >
-                        <Typography level="body-xs">
+                        <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                           {row.customer.name} {row.customer.lastname}
                         </Typography>
                       </Chip>
-                      <Typography level="body-xs">
+                      <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                         {row.customer.email}
                       </Typography>
                     </div>
@@ -607,22 +671,35 @@ const OrderTable: React.FC<OrderProps> = ({
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                     <Typography
                       level="body-xs"
-                      style={{ textAlign: "center", width: 240 }}
+                      style={{
+                        textAlign: "center",
+                        width: 240,
+                        fontSize: "1rem",
+                      }}
                     >
                       {formatPhoneNumber(row.customer.phone) ??
                         "Pas de numéro disponible"}
                     </Typography>
                   </Box>
                 </td>
-                <td>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center", width: 108 }}>
-                    <RowMenuOrders
-                      idOrder={row.id}
-                      onChangeMade={handleChangeMade}
-                      openUpdateModal={openUpdateModal}
-                    />
-                  </Box>
-                </td>
+                {componentCallBy !== "historyOrders" ? (
+                  <td>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        alignItems: "center",
+                        width: 108,
+                      }}
+                    >
+                      <RowMenuOrders
+                        idOrder={row.id}
+                        onChangeMade={handleChangeMade}
+                        openUpdateModal={openUpdateModal}
+                      />
+                    </Box>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>

@@ -64,7 +64,7 @@ const OrderList: React.FC<OrderProps> = ({
       {selected && setSelected && (
         <>
           <Checkbox
-            size="sm"
+            size="lg"
             label="Tout sélectionner"
             indeterminate={
               selected.length > 0 && selected.length !== ordersList.length
@@ -137,15 +137,22 @@ const OrderList: React.FC<OrderProps> = ({
                       1: "success",
                       2: "warning",
                       3: "danger",
-                    }[order.customer.notations?.[0]?.notation ?? 0] as ColorPaletteProp
+                    }[
+                      order.customer.notations?.[0]?.notation ?? 0
+                    ] as ColorPaletteProp
                   }
                 >
-                  <Typography fontWeight={600} gutterBottom>
+                  <Typography
+                    fontWeight={600}
+                    gutterBottom
+                    sx={{ fontSize: "1rem" }}
+                  >
                     {order.customer.name} {order.customer.lastname}
                   </Typography>
                 </Chip>
                 <ListItemDecorator>
                   <Tooltip
+                    sx={{ fontSize: "1rem" }}
                     title={
                       order.detailsForUser
                         ? order.detailsForUser
@@ -158,19 +165,30 @@ const OrderList: React.FC<OrderProps> = ({
                   </Tooltip>
                 </ListItemDecorator>
                 {componentCallBy === "daysOrders" ? (
-                  <Typography level="body-xs" gutterBottom>
+                  <Typography
+                    level="body-xs"
+                    gutterBottom
+                    sx={{ fontSize: "1rem" }}
+                  >
                     Heure de retrait :{" "}
                     {order.pickupTime.replace(":", "H").slice(0, -3)}
                   </Typography>
                 ) : (
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                     <div style={{ width: 240 }}>
-                      <Typography level="body-xs">
+                      <Typography
+                        level="body-xs"
+                        sx={{ fontSize: "1rem", fontWeight: "bold" }}
+                      >
                         {format(new Date(order.pickupDate), "dd/MM/yyyy", {
                           locale: fr,
                         })}
                       </Typography>
-                      <Typography level="body-xs" gutterBottom>
+                      <Typography
+                        level="body-xs"
+                        gutterBottom
+                        sx={{ fontSize: "1rem", fontWeight: "bold" }}
+                      >
                         Heure de retrait :{" "}
                         {order.pickupTime.replace(":", "H").slice(0, -3)}
                       </Typography>
@@ -178,8 +196,16 @@ const OrderList: React.FC<OrderProps> = ({
                   </Box>
                 )}
 
-                <Typography level="body-xs" gutterBottom>
-                  Montant de la commande : {order.orderPrice} €
+                <Typography
+                  level="body-xs"
+                  gutterBottom
+                  sx={{ fontSize: "1rem" }}
+                >
+                  Montant de la commande :{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    {order.orderPrice} €
+                  </span>
+                  :
                 </Typography>
                 <Box
                   sx={{
@@ -191,25 +217,33 @@ const OrderList: React.FC<OrderProps> = ({
                     mb: 1,
                   }}
                 >
-                  <Typography level="body-xs">
+                  <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                     {order.customer.email}
                   </Typography>
-                  <Typography level="body-xs">
+                  <Typography level="body-xs" sx={{ fontSize: "1rem" }}>
                     {formatPhoneNumber(order.customer.phone)}
                   </Typography>
                 </Box>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
-                >
-                  <RowMenuOrders
-                    idOrder={order.id}
-                    onChangeMade={handleChangeMade}
-                    openUpdateModal={openUpdateModal}
-                  />
-                </Box>
+                {componentCallBy !== "historyOrders" ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 1,
+                    }}
+                  >
+                    <RowMenuOrders
+                      idOrder={order.id}
+                      onChangeMade={handleChangeMade}
+                      openUpdateModal={openUpdateModal}
+                    />
+                  </Box>
+                ) : null}
               </div>
             </ListItemContent>
             <Chip
+              sx={{ fontSize: "1rem" }}
               variant="soft"
               size="sm"
               startDecorator={

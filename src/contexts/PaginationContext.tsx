@@ -16,7 +16,7 @@ export const usePagination = (): PaginationContextType => {
 }
 
 export const PaginationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [currentPage, setCurrentPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState<number>(1)
 
     return(
         <PaginationContext.Provider value={{ currentPage, setCurrentPage }}>

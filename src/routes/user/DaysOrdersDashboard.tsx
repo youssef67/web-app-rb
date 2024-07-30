@@ -206,7 +206,7 @@ const DaysOrdersDashboard: React.FC = () => {
               >
                 Accueil
               </Link>
-              <Typography color="primary" fontWeight={500} fontSize={12}>
+              <Typography color="primary" fontWeight={500} fontSize={17}>
                 Mes commandes
               </Typography>
             </Breadcrumbs>

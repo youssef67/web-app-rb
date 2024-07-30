@@ -69,10 +69,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
   };
 
   const handleNavigateToCustomers = async () => {
-    // await new Promise<void>((resolve) => {
-    //   queryClient.removeQueries({ queryKey: ["orders"], exact: true });
-    //   resolve();
-    // });
     setCurrentPage(1);
     navigate("/customers");
   };
@@ -172,7 +168,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
             >
               <HomeRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Aujourd'hui</Typography>
+                <Typography level="title-sm" sx={{fontSize: "1.2rem"}}>Aujourd'hui</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -184,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
             >
               <ShoppingCartRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Mes commandes</Typography>
+                <Typography level="title-sm" sx={{fontSize: "1.2rem"}}>Mes commandes</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -196,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
             >
               <GroupRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Clients</Typography>
+                <Typography level="title-sm" sx={{fontSize: "1.2rem"}}>Clients</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -208,7 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentDashboard }) => {
             >
               <HistoryRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Historique</Typography>
+                <Typography level="title-sm" sx={{fontSize: "1.2rem"}}>Historique</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>

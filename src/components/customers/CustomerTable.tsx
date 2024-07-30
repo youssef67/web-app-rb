@@ -93,7 +93,7 @@ const OrderTable: React.FC<OrderProps> = ({
   const renderFilters = () => (
     <>
       <FormControl size="sm">
-        <FormLabel>Client</FormLabel>
+        <FormLabel sx={{fontSize: "1rem"}}>Client</FormLabel>
         <Select
           size="sm"
           placeholder="Filtrer par client"
@@ -115,9 +115,9 @@ const OrderTable: React.FC<OrderProps> = ({
           }
           value={customerFilterValue && customerFilterValue}
         >
-          <Option value="all">Tous</Option>
+          <Option value="all" sx={{fontSize: "1rem"}}>Tous</Option>
           {uniqueCustomers.map((customer) => (
-            <Option key={customer} value={customer}>
+            <Option key={customer} value={customer} sx={{fontSize: "1rem"}}>
               {customer}
             </Option>
           ))}
@@ -174,13 +174,13 @@ const OrderTable: React.FC<OrderProps> = ({
         <Modal open={open} onClose={() => setOpen(false)}>
           <ModalDialog aria-labelledby="filter-modal" layout="center">
             <ModalClose />
-            <Typography id="filter-modal" level="h2">
+            <Typography id="filter-modal" level="h2" sx={{fontSize: "1rem"}}>
               Filtres
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Sheet sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {renderFilters()}
-              <Button color="primary" onClick={() => setOpen(false)}>
+              <Button color="primary" onClick={() => setOpen(false)} sx={{fontSize: "1rem"}}>
                 Envoyer
               </Button>
             </Sheet>
@@ -201,7 +201,7 @@ const OrderTable: React.FC<OrderProps> = ({
         }}
       >
         <FormControl sx={{ flex: 1 }} size="sm">
-          <FormLabel>Recherche</FormLabel>
+          <FormLabel sx={{fontSize: "1rem"}}>Recherche</FormLabel>
           <Input
             size="sm"
             placeholder="Rechercher"
@@ -261,12 +261,12 @@ const OrderTable: React.FC<OrderProps> = ({
           <thead>
             <tr>
               <th
-                style={{ width: 140, textAlign: "center", padding: "12px 6px" }}
+                style={{ width: 140, textAlign: "center", padding: "12px 6px", fontSize: "1rem" }}
               >
                 Client
               </th>
               <th
-                style={{ width: 230, textAlign: "center", padding: "12px 6px" }}
+                style={{ width: 230, textAlign: "center", padding: "12px 6px", fontSize: "1rem" }}
               >
                 Téléphone/email
               </th>
@@ -276,16 +276,17 @@ const OrderTable: React.FC<OrderProps> = ({
                   textAlign: "center",
                   padding: "12px 6px",
                   whiteSpace: "nowrap",
+                  fontSize: "1rem"
                 }}
               >
                 Dernière commande
               </th>
               <th
-                style={{ width: 200, textAlign: "center", padding: "12px 6px" }}
+                style={{ width: 200, textAlign: "center", padding: "12px 6px", fontSize: "1rem" }}
               >
                 Commandes
               </th>
-              <th style={{ width: 100, padding: "12px 6px" }}></th>
+              <th style={{ width: 100, padding: "12px 6px", fontSize: "1rem" }}></th>
             </tr>
           </thead>
           <tbody>
@@ -311,23 +312,23 @@ const OrderTable: React.FC<OrderProps> = ({
                       }[data.notation] as ColorPaletteProp
                     }
                   >
-                    <Typography level="body-xs">
+                    <Typography level="body-xs" sx={{fontSize: "1rem"}}>
                       {data.customer.name} {data.customer.lastname}
                     </Typography>
                   </Chip>
                 </td>
                 <td style={{ textAlign: "center" }}>
                   <div>
-                    <Typography level="body-xs">
+                    <Typography level="body-xs" sx={{fontSize: "1rem"}}>
                       {formatPhoneNumber(data.customer.phone)}
                     </Typography>
-                    <Typography level="body-xs" sx={{ width: "100%" }}>
+                    <Typography level="body-xs" sx={{ width: "100%", fontSize: "1rem" }}>
                       {data.customer.email}
                     </Typography>
                   </div>
                 </td>
                 <td style={{ textAlign: "center", width: 170 }}>
-                  <Typography level="body-xs">{data.lastOrderDate}</Typography>
+                  <Typography level="body-xs" sx={{fontSize: "1rem"}}>{data.lastOrderDate}</Typography>
                 </td>
                 <td>
                   <Box
@@ -336,19 +337,20 @@ const OrderTable: React.FC<OrderProps> = ({
                       gap: 2,
                       alignItems: "center",
                       justifyContent: "center",
+                      fontSize: "1rem"
                     }}
                   >
                     <div style={{ textAlign: "center" }}>
-                      <Typography level="body-xs">
+                      <Typography level="body-xs" sx={{fontSize: "1rem"}}>
                         Nombre de commande : {data.ordersCount} fois
                       </Typography>
                       {data.notation >= 2 ? (
-                        <Typography level="body-xs">
+                        <Typography level="body-xs" sx={{fontSize: "1rem"}}>
                           No show :{" "}
                           {data.nbOfNoShowOrder} fois
                         </Typography>
                       ) : null}
-                      <Typography level="body-xs" sx={{ width: "100%" }}>
+                      <Typography level="body-xs" sx={{ width: "100%", fontSize: "1rem" }}>
                         Montant total : {data.totalOrderAmount} €
                       </Typography>
                     </div>

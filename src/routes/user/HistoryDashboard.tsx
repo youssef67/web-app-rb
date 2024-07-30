@@ -227,7 +227,7 @@ const HistoryDashboard: React.FC = () => {
           {!isLoading && !error && ordersList && ordersList.length > 0 && (
             <>
               <OrderTable
-                componentCallBy="allOrders"
+                componentCallBy="historyOrders"
                 ordersList={ordersForCurrentPage}
                 statusFilter={setStatusFilter}
                 customerFilter={setCustomerFilter}
@@ -239,7 +239,7 @@ const HistoryDashboard: React.FC = () => {
                 uniqueCustomers={uniqueCustomers}
               />
               <OrderList
-                componentCallBy="allOrders"
+                componentCallBy="historyOrders"
                 ordersList={ordersForCurrentPage}
                 openUpdateModal={handleUpdateOrder}
                 currentPage={currentPage}

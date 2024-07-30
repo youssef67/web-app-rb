@@ -3,7 +3,6 @@ import React from "react";
 import Dropdown from "@mui/joy/Dropdown";
 import MenuButton from "@mui/joy/MenuButton";
 import IconButton from "@mui/joy/IconButton";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import Menu from "@mui/joy/Menu";
 import MenuItem from "@mui/joy/MenuItem";
 
@@ -53,7 +52,12 @@ const RowMenuOrders: React.FC<RowMenuProps> = ({
     <>
       <Dropdown>
         <MenuButton
-        sx={{ paddingLeft: 4, paddingRight: 4, border: "1px solid #2F4558"  }}
+          sx={{
+            paddingLeft: 4,
+            paddingRight: 4,
+            border: "1px solid #2F4558",
+            fontSize: "1rem",
+          }}
           slots={{ root: IconButton }}
           slotProps={{
             root: { variant: "soft", color: "neutral", size: "sm" },

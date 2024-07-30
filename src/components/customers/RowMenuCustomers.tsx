@@ -16,7 +16,7 @@ const RowMenuCustomers: React.FC<RowMenuProps> = ({
       <Button
         variant="outlined"
         color="warning"
-        size="sm"
+        size="lg"
         sx={{ minWidth: 100 }}
         onClick={() => openUpdateModal(customerId)}
       >
